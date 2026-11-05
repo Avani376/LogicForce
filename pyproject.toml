@@ -29,6 +29,7 @@ packages = [
   "logic_engine",
   "sequential_engine",
   "verify_engine",
+  "fault_engine",
   "logicforge_api",
   "logicforge_api.routers",
 ]
@@ -37,6 +38,7 @@ packages = [
 logic_engine = "engines/logic/logic_engine"
 sequential_engine = "engines/sequential/sequential_engine"
 verify_engine = "engines/verify/verify_engine"
+fault_engine = "engines/faults/fault_engine"
 logicforge_api = "apps/api/logicforge_api"
 "logicforge_api.routers" = "apps/api/logicforge_api/routers"
 
@@ -60,5 +62,5 @@ extend-exclude = [".venv", "apps/web"]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
 
 [tool.coverage.run]
-source = ["logic_engine", "sequential_engine", "verify_engine", "logicforge_api"]
+source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "logicforge_api"]
 branch = true
