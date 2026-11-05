@@ -90,8 +90,5 @@ def truth_table_to_dict(result: TruthTableResult) -> dict[str, object]:
         "scope": result.scope,
         "input_names": list(result.input_names),
         "output_names": list(result.output_names),
-        "rows": [
-            {"inputs": dict(row.inputs), "outputs": dict(row.outputs)}
-            for row in result.rows
-        ],
+        "rows": [{"inputs": dict(row.inputs), "outputs": dict(row.outputs)} for row in result.rows],
     }

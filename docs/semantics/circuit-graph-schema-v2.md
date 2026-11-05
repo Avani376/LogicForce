@@ -46,6 +46,10 @@ All v1 codes apply unchanged, plus:
 |---|---|---|
 | `INVALID_STATE_WIDTH` | error | `width` missing/out-of-range on `REGISTER`/`COUNTER` |
 | `UNKNOWN_STATE_PIN` | error | net references a pin that does not exist on a sequential component |
+| `RESERVED_IO_NAME` | error | primary INPUT/OUTPUT name uses the engine-reserved `SQ:`/`SP:` namespace |
+
+Bit order: for multi-bit state components `q0` is the **least significant bit**;
+counter arithmetic is `value(q0..q(w-1)) + 1 mod 2^w`.
 
 `COMBINATIONAL_LOOP` detection ignores paths that pass through state components:
 state elements *cut* combinational cycles (their `q` output is a cycle boundary).

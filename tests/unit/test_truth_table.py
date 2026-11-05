@@ -114,8 +114,7 @@ def test_limit_refuses_beyond_twelve_inputs() -> None:
 
     names = [f"i{i:02d}" for i in range(13)]
     components: list[dict[str, object]] = [
-        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}}
-        for name in names
+        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}} for name in names
     ]
     components.append({"id": "G", "type": "AND", "params": {"width": 13}})
     components.append({"id": "OUT_y", "type": "OUTPUT", "params": {"name": "y"}})

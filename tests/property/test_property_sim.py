@@ -80,9 +80,7 @@ def acyclic_circuits(draw: st.DrawFn) -> tuple[dict[str, Any], list[str]]:
     return doc, input_names
 
 
-def naive_evaluate(
-    doc: dict[str, Any], vector: dict[str, LogicValue]
-) -> dict[str, str]:
+def naive_evaluate(doc: dict[str, Any], vector: dict[str, LogicValue]) -> dict[str, str]:
     """Independent recursive evaluator over the raw document (no topo sort)."""
     comp_by_id = {comp["id"]: comp for comp in doc["components"]}
     net_of_pin: dict[tuple[str, str], dict[str, Any]] = {}
@@ -110,9 +108,7 @@ def naive_evaluate(
         if not isinstance(width, int) or isinstance(width, bool):
             width = 2
         pins = gate_pins(ctype, int(width))
-        values = [
-            driver_value(net_of_pin[(comp["id"], pin)]["driver"]) for pin in pins
-        ]
+        values = [driver_value(net_of_pin[(comp["id"], pin)]["driver"]) for pin in pins]
         if ctype == "NOT":
             result = not_(values[0])
         elif ctype == "BUFFER":
@@ -147,9 +143,7 @@ def test_simulation_matches_naive_evaluator_on_all_vectors(
     result = truth_table(graph)
     for row in result.rows:
         vector = {name: LogicValue(value) for name, value in row.inputs.items()}
-        assert row.outputs == naive_evaluate(doc, vector), (
-            f"mismatch for vector {row.inputs}"
-        )
+        assert row.outputs == naive_evaluate(doc, vector), f"mismatch for vector {row.inputs}"
 
 
 @given(data=acyclic_circuits())

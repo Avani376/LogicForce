@@ -79,15 +79,11 @@ def _parse_components(raw: object) -> tuple[Component, ...]:
     out: list[Component] = []
     for entry in raw:
         if not isinstance(entry, Mapping):
-            raise SchemaError(
-                "INVALID_DOCUMENT", "every component must be a JSON object"
-            )
+            raise SchemaError("INVALID_DOCUMENT", "every component must be a JSON object")
         comp_id = entry.get("id")
         comp_type = entry.get("type")
         if not isinstance(comp_id, str) or not comp_id:
-            raise SchemaError(
-                "INVALID_DOCUMENT", "every component needs a non-empty string 'id'"
-            )
+            raise SchemaError("INVALID_DOCUMENT", "every component needs a non-empty string 'id'")
         if not isinstance(comp_type, str) or not comp_type:
             raise SchemaError(
                 "INVALID_DOCUMENT", f"component {comp_id!r} needs a non-empty string 'type'"
@@ -127,15 +123,11 @@ def _parse_nets(raw: object) -> tuple[Net, ...]:
             raise SchemaError("INVALID_DOCUMENT", "every net must be a JSON object")
         net_id = entry.get("id")
         if not isinstance(net_id, str) or not net_id:
-            raise SchemaError(
-                "INVALID_DOCUMENT", "every net needs a non-empty string 'id'"
-            )
+            raise SchemaError("INVALID_DOCUMENT", "every net needs a non-empty string 'id'")
         driver = _parse_pin_ref(entry.get("driver"), net_id, "driver")
         raw_sinks = entry.get("sinks", [])
         if not isinstance(raw_sinks, Sequence) or isinstance(raw_sinks, (str, bytes)):
-            raise SchemaError(
-                "INVALID_DOCUMENT", f"net {net_id!r}: 'sinks' must be an array"
-            )
+            raise SchemaError("INVALID_DOCUMENT", f"net {net_id!r}: 'sinks' must be an array")
         sinks: list[PinRef] = []
         for sink_raw in raw_sinks:
             ref = _parse_pin_ref(sink_raw, net_id, "sink")
@@ -166,14 +158,10 @@ def parse_circuit(raw: object) -> CircuitGraph:
     name = doc.get("name")
     name = name if isinstance(name, str) else None
     if "components" not in doc or "nets" not in doc:
-        raise SchemaError(
-            "INVALID_DOCUMENT", "'components' and 'nets' arrays are required"
-        )
+        raise SchemaError("INVALID_DOCUMENT", "'components' and 'nets' arrays are required")
     components = _parse_components(doc["components"])
     nets = _parse_nets(doc["nets"])
-    return CircuitGraph(
-        schema_version=SCHEMA_VERSION, name=name, components=components, nets=nets
-    )
+    return CircuitGraph(schema_version=SCHEMA_VERSION, name=name, components=components, nets=nets)
 
 
 def circuit_to_dict(graph: CircuitGraph) -> dict[str, object]:
@@ -193,13 +181,9 @@ def circuit_to_dict(graph: CircuitGraph) -> dict[str, object]:
         net_entry: dict[str, object] = {
             "id": net.id,
             "driver": (
-                {"component": net.driver.component, "pin": net.driver.pin}
-                if net.driver
-                else None
+                {"component": net.driver.component, "pin": net.driver.pin} if net.driver else None
             ),
-            "sinks": [
-                {"component": s.component, "pin": s.pin} for s in net.sinks
-            ],
+            "sinks": [{"component": s.component, "pin": s.pin} for s in net.sinks],
         }
         nets.append(net_entry)
     doc: dict[str, object] = {

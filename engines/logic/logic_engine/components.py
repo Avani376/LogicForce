@@ -20,9 +20,7 @@ TYPE_BUFFER = "BUFFER"
 TYPE_NOT = "NOT"
 
 #: Multi-input gate types (``width`` param, default 2, max 16).
-MULTI_INPUT_GATES: frozenset[str] = frozenset(
-    {"AND", "OR", "NAND", "NOR", "XOR", "XNOR"}
-)
+MULTI_INPUT_GATES: frozenset[str] = frozenset({"AND", "OR", "NAND", "NOR", "XOR", "XNOR"})
 
 #: Every component type accepted by schema v1.
 SUPPORTED_TYPES: frozenset[str] = frozenset(
@@ -80,11 +78,7 @@ def input_pins_for(component_type: str, params: dict[str, object]) -> tuple[str,
         return (OUTPUT_INPUT_PIN,)
     if component_type in MULTI_INPUT_GATES:
         raw_width = params.get("width", 2)
-        width = (
-            raw_width
-            if isinstance(raw_width, int) and not isinstance(raw_width, bool)
-            else 2
-        )
+        width = raw_width if isinstance(raw_width, int) and not isinstance(raw_width, bool) else 2
         if not 2 <= width <= MAX_GATE_WIDTH:
             width = 2
         return tuple(string.ascii_lowercase[:width])

@@ -53,7 +53,7 @@ def test_fixture_is_valid_and_matches_scope(path: Path) -> None:
     expected = fixture["expected"]
     result = truth_table(graph)
     n = len(expected["input_names"])
-    assert result.scope == f"EXHAUSTIVE({2 ** n})"
+    assert result.scope == f"EXHAUSTIVE({2**n})"
     assert result.input_names == tuple(expected["input_names"])
     assert result.output_names == tuple(expected["output_names"])
 
@@ -64,8 +64,7 @@ def test_truth_table_matches_committed_expected(path: Path) -> None:
     graph = parse_circuit(fixture["circuit"])
     result = truth_table(graph)
     actual_rows = [
-        {"inputs": dict(row.inputs), "outputs": dict(row.outputs)}
-        for row in result.rows
+        {"inputs": dict(row.inputs), "outputs": dict(row.outputs)} for row in result.rows
     ]
     assert actual_rows == fixture["expected"]["rows"], path.name
 

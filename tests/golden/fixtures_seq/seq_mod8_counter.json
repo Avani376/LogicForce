@@ -1,0 +1,362 @@
+{
+  "circuit": {
+    "schema_version": 2,
+    "name": "mod8_counter",
+    "components": [
+      {
+        "id": "C0",
+        "type": "CONST0"
+      },
+      {
+        "id": "C1",
+        "type": "CONST1"
+      },
+      {
+        "id": "CNT",
+        "type": "COUNTER",
+        "params": {
+          "width": 3
+        }
+      },
+      {
+        "id": "OUT_q0",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q0"
+        }
+      },
+      {
+        "id": "OUT_q1",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q1"
+        }
+      },
+      {
+        "id": "OUT_q2",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q2"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_clr",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "CNT",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_en",
+        "driver": {
+          "component": "C1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "CNT",
+            "pin": "en"
+          }
+        ]
+      },
+      {
+        "id": "n_q0",
+        "driver": {
+          "component": "CNT",
+          "pin": "q0"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q0",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_q1",
+        "driver": {
+          "component": "CNT",
+          "pin": "q1"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q1",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_q2",
+        "driver": {
+          "component": "CNT",
+          "pin": "q2"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q2",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "cycles": 8,
+  "inputs_per_cycle": [],
+  "expected": {
+    "cycles": [
+      {
+        "CNT.q0": "0",
+        "CNT.q1": "0",
+        "CNT.q2": "0",
+        "q0": "0",
+        "q1": "0",
+        "q2": "0"
+      },
+      {
+        "CNT.q0": "1",
+        "CNT.q1": "0",
+        "CNT.q2": "0",
+        "q0": "1",
+        "q1": "0",
+        "q2": "0"
+      },
+      {
+        "CNT.q0": "0",
+        "CNT.q1": "1",
+        "CNT.q2": "0",
+        "q0": "0",
+        "q1": "1",
+        "q2": "0"
+      },
+      {
+        "CNT.q0": "1",
+        "CNT.q1": "1",
+        "CNT.q2": "0",
+        "q0": "1",
+        "q1": "1",
+        "q2": "0"
+      },
+      {
+        "CNT.q0": "0",
+        "CNT.q1": "0",
+        "CNT.q2": "1",
+        "q0": "0",
+        "q1": "0",
+        "q2": "1"
+      },
+      {
+        "CNT.q0": "1",
+        "CNT.q1": "0",
+        "CNT.q2": "1",
+        "q0": "1",
+        "q1": "0",
+        "q2": "1"
+      },
+      {
+        "CNT.q0": "0",
+        "CNT.q1": "1",
+        "CNT.q2": "1",
+        "q0": "0",
+        "q1": "1",
+        "q2": "1"
+      },
+      {
+        "CNT.q0": "1",
+        "CNT.q1": "1",
+        "CNT.q2": "1",
+        "q0": "1",
+        "q1": "1",
+        "q2": "1"
+      }
+    ],
+    "events": [
+      {
+        "cycle": 0,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 1,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 1,
+        "component": "CNT",
+        "pin": "q1",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 2,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 3,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 3,
+        "component": "CNT",
+        "pin": "q1",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 3,
+        "component": "CNT",
+        "pin": "q2",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 4,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 5,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 5,
+        "component": "CNT",
+        "pin": "q1",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 6,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 7,
+        "component": "CNT",
+        "pin": "q0",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 7,
+        "component": "CNT",
+        "pin": "q1",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 7,
+        "component": "CNT",
+        "pin": "q2",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      }
+    ],
+    "waveforms": {
+      "CNT.q0": [
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1"
+      ],
+      "out:q0": [
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1"
+      ],
+      "CNT.q1": [
+        "0",
+        "0",
+        "1",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1"
+      ],
+      "out:q1": [
+        "0",
+        "0",
+        "1",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1"
+      ],
+      "CNT.q2": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "out:q2": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    "final_state": {
+      "CNT.q0": "0",
+      "CNT.q1": "0",
+      "CNT.q2": "0"
+    }
+  }
+}

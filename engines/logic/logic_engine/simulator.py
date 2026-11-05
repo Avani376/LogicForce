@@ -145,9 +145,7 @@ def _compute_depths(
     return depths
 
 
-def simulate(
-    graph: CircuitGraph, inputs: Mapping[str, object]
-) -> SimulationResult:
+def simulate(graph: CircuitGraph, inputs: Mapping[str, object]) -> SimulationResult:
     """Run one combinational simulation of a validated circuit.
 
     Preconditions: the circuit must pass :func:`logic_engine.validation.validate`
@@ -242,12 +240,8 @@ def simulate(
             assign(net_id, out_value, TraceCause("gate", comp.id), delta)
 
     # 4. Primary outputs (sorted by name).
-    output_comps = [
-        comp for comp in graph.components if comp.type == TYPE_OUTPUT
-    ]
-    output_comps = [
-        comp for comp in output_comps if isinstance(comp.params.get("name"), str)
-    ]
+    output_comps = [comp for comp in graph.components if comp.type == TYPE_OUTPUT]
+    output_comps = [comp for comp in output_comps if isinstance(comp.params.get("name"), str)]
     output_comps = sorted(output_comps, key=lambda comp: str(comp.params["name"]))
     outputs: dict[str, str] = {}
     for comp in output_comps:

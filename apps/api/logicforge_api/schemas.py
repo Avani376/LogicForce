@@ -102,9 +102,7 @@ def present_issue(issue: ValidationIssue) -> ValidationIssueOut:
     )
 
 
-def present_report(
-    report: ValidationReport, engine_version: str
-) -> ValidationReportOut:
+def present_report(report: ValidationReport, engine_version: str) -> ValidationReportOut:
     return ValidationReportOut(
         schema_version=SCHEMA_VERSION,
         engine_version=engine_version,
@@ -125,9 +123,7 @@ def present_trace_event(event: TraceEvent) -> TraceEventOut:
     )
 
 
-def present_simulation(
-    result: SimulationResult, input_hash_hex: str
-) -> SimulationOut:
+def present_simulation(result: SimulationResult, input_hash_hex: str) -> SimulationOut:
     return SimulationOut(
         schema_version=SCHEMA_VERSION,
         engine_version=result.engine_version,
@@ -139,9 +135,7 @@ def present_simulation(
     )
 
 
-def present_truth_table(
-    result: TruthTableResult, input_hash_hex: str
-) -> TruthTableOut:
+def present_truth_table(result: TruthTableResult, input_hash_hex: str) -> TruthTableOut:
     return TruthTableOut(
         schema_version=SCHEMA_VERSION,
         engine_version=result.engine_version,

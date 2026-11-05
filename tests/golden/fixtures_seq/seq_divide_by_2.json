@@ -1,0 +1,194 @@
+{
+  "circuit": {
+    "schema_version": 2,
+    "name": "divide_by_2",
+    "components": [
+      {
+        "id": "C0",
+        "type": "CONST0"
+      },
+      {
+        "id": "FF1",
+        "type": "DFF"
+      },
+      {
+        "id": "N1",
+        "type": "NOT"
+      },
+      {
+        "id": "OUT_q",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_pre",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "pre"
+          }
+        ]
+      },
+      {
+        "id": "n_clr",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_q",
+        "driver": {
+          "component": "FF1",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "N1",
+            "pin": "a"
+          },
+          {
+            "component": "OUT_q",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_qn",
+        "driver": {
+          "component": "FF1",
+          "pin": "qn"
+        },
+        "sinks": []
+      },
+      {
+        "id": "n_d",
+        "driver": {
+          "component": "N1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "cycles": 6,
+  "inputs_per_cycle": [],
+  "expected": {
+    "cycles": [
+      {
+        "FF1.q": "0",
+        "q": "0"
+      },
+      {
+        "FF1.q": "1",
+        "q": "1"
+      },
+      {
+        "FF1.q": "0",
+        "q": "0"
+      },
+      {
+        "FF1.q": "1",
+        "q": "1"
+      },
+      {
+        "FF1.q": "0",
+        "q": "0"
+      },
+      {
+        "FF1.q": "1",
+        "q": "1"
+      }
+    ],
+    "events": [
+      {
+        "cycle": 0,
+        "component": "FF1",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 1,
+        "component": "FF1",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 2,
+        "component": "FF1",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 3,
+        "component": "FF1",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 4,
+        "component": "FF1",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 5,
+        "component": "FF1",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      }
+    ],
+    "waveforms": {
+      "FF1.q": [
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1"
+      ],
+      "out:q": [
+        "0",
+        "1",
+        "0",
+        "1",
+        "0",
+        "1"
+      ]
+    },
+    "final_state": {
+      "FF1.q": "0"
+    }
+  }
+}

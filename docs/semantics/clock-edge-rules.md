@@ -14,28 +14,47 @@ combinational-only and fully supported)
   order (below). **No delays, no setup/hold, no pulse widths** are modeled — this is
   cycle-accurate abstract timing, and it is the only timing claim this engine makes.
 
-## Tick order (normative — five stages per cycle)
+## Tick order (normative — per cycle, 0-indexed)
 
-1. **Async sample.** Every state component's async pins (`pre`, `clr` / `clr`) are
-   read from the *current* input vector (they are combinational inputs sampled at
-   cycle start, not mid-cycle events).
+Let `S_c` be the state at the start of cycle `c` (`S_0` = power-on zeros) and `I_c`
+the cycle's primary input vector. One cycle is:
+
+1. **Settle.** The combinational network is evaluated exactly once with `S_c` on all
+   `q`/`qn` feedback nets and `I_c` on primary inputs (v1 propagation rules,
+   `docs/semantics/propagation.md`). This produces settled values for every
+   combinational net — including async pins (`pre`/`clr`), capture pins
+   (`d`/`j`/`k`/`s`/`r`/`t`/`en`), and primary outputs.
+2. **Async apply.** Every state component's async pins are read from the *settled*
+   network (so gate-driven resets work):
    - `pre=1, clr=0` → state forced to 1 (async set)
    - `pre=0, clr=1` → state forced to 0 (async clear)
-   - `pre=1, clr=1` → **invalid** → state becomes `X`
-   - `pre` or `clr` is `X`/`Z` → **invalid** → state becomes `X` (honesty rule: an
-     unknown control input cannot be assumed inactive)
-2. **Settle.** The combinational network is evaluated exactly once with the *current*
-   state values on all `q`/`qn` feedback nets, using the v1 propagation rules
-   (`docs/semantics/propagation.md`). Primary inputs for this cycle come from the
-   input vector (missing names default to `X`, unchanged rule).
+   - `pre=1, clr=1` → **invalid** → state bit becomes `X`
+   - `pre` or `clr` is `X`/`Z` → **invalid** → state bit becomes `X` (honesty rule:
+     an unknown control input cannot be assumed inactive)
+
+   Overridden bits take the forced value **immediately**; an `async` event is
+   emitted, and the combinational network is **re-settled** once with the corrected
+   state so downstream values and primary outputs reflect the override.
 3. **Capture.** Each state component computes its *next state* from the settled
    input pins via its characteristic table (below). No component sees another
-   component's new state — all captures read the settled network only.
-4. **Commit.** All state components update **simultaneously**. There is no
-   component ordering at the edge (simultaneous commit is what makes this
-   deterministic and race-free). Events are recorded afterwards in component-id
-   order.
-5. **Record.** Outputs, state, and waveform entries for this cycle are snapshotted.
+   component's new state — all captures read the settled network only. A component
+   whose bits were async-overridden this cycle captures the forced value (the
+   override holds through the edge).
+4. **Commit.** All state components update **simultaneously** — `S_{c+1}` is formed
+   with no component ordering (race-free by construction). Changed bits emit
+   `clock_edge` events.
+5. **Record.** The cycle row records the *observed* state (`S_c`, corrected if an
+   async override applied), the settled outputs, and waveform entries. Events are
+   reported ordered by `(cycle, component id, bit)`; the commit itself is unordered.
+
+After `N` cycles the result includes `final_state = S_N`. Waveform entries are the
+states/outputs observed during cycles `0..N-1` (each has exactly `N` entries).
+
+> Amendment note (2026-11-05, pre-implementation): the stage order was refined from
+> "async sample → settle" to "settle → async apply (+re-settle)" because async pins
+> may be driven by combinational logic; sampling them from the settled network is
+> the only well-defined reading. The characteristic tables, async truth table, and
+> all other rules are unchanged.
 
 ## Characteristic tables (normative)
 

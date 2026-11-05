@@ -15,22 +15,16 @@ from logic_engine import (
 
 
 def io_circuit(gate_type: str = "BUFFER", extra_inputs: int = 0) -> dict[str, object]:
-    components: list[dict[str, object]] = [
-        {"id": "IN_a", "type": "INPUT", "params": {"name": "a"}}
-    ]
+    components: list[dict[str, object]] = [{"id": "IN_a", "type": "INPUT", "params": {"name": "a"}}]
     if gate_type in ("AND", "OR", "NAND", "NOR", "XOR", "XNOR"):
         components.append({"id": "IN_b", "type": "INPUT", "params": {"name": "b"}})
     for k in range(extra_inputs):
-        components.append(
-            {"id": f"IN_x{k}", "type": "INPUT", "params": {"name": f"x{k}"}}
-        )
+        components.append({"id": f"IN_x{k}", "type": "INPUT", "params": {"name": f"x{k}"}})
     components.append({"id": "G", "type": gate_type})
     components.append({"id": "OUT_y", "type": "OUTPUT", "params": {"name": "y"}})
 
     sinks: list[dict[str, str]] = [{"component": "G", "pin": "a"}]
-    nets = [
-        {"id": "n_a", "driver": {"component": "IN_a", "pin": "out"}, "sinks": sinks}
-    ]
+    nets = [{"id": "n_a", "driver": {"component": "IN_a", "pin": "out"}, "sinks": sinks}]
     if gate_type in ("AND", "OR", "NAND", "NOR", "XOR", "XNOR"):
         nets.append(
             {

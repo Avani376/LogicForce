@@ -1,0 +1,566 @@
+{
+  "circuit": {
+    "schema_version": 2,
+    "name": "johnson_counter",
+    "components": [
+      {
+        "id": "C0",
+        "type": "CONST0"
+      },
+      {
+        "id": "FF0",
+        "type": "DFF"
+      },
+      {
+        "id": "OUT_q0",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q0"
+        }
+      },
+      {
+        "id": "FF1",
+        "type": "DFF"
+      },
+      {
+        "id": "OUT_q1",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q1"
+        }
+      },
+      {
+        "id": "FF2",
+        "type": "DFF"
+      },
+      {
+        "id": "OUT_q2",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q2"
+        }
+      },
+      {
+        "id": "FF3",
+        "type": "DFF"
+      },
+      {
+        "id": "OUT_q3",
+        "type": "OUTPUT",
+        "params": {
+          "name": "q3"
+        }
+      },
+      {
+        "id": "N1",
+        "type": "NOT"
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_pre0",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF0",
+            "pin": "pre"
+          }
+        ]
+      },
+      {
+        "id": "n_clr0",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF0",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_pre1",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "pre"
+          }
+        ]
+      },
+      {
+        "id": "n_clr1",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_pre2",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF2",
+            "pin": "pre"
+          }
+        ]
+      },
+      {
+        "id": "n_clr2",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF2",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_pre3",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF3",
+            "pin": "pre"
+          }
+        ]
+      },
+      {
+        "id": "n_clr3",
+        "driver": {
+          "component": "C0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF3",
+            "pin": "clr"
+          }
+        ]
+      },
+      {
+        "id": "n_d0",
+        "driver": {
+          "component": "N1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "FF0",
+            "pin": "d"
+          }
+        ]
+      },
+      {
+        "id": "n_d1",
+        "driver": {
+          "component": "FF0",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "FF1",
+            "pin": "d"
+          }
+        ]
+      },
+      {
+        "id": "n_d2",
+        "driver": {
+          "component": "FF1",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "FF2",
+            "pin": "d"
+          }
+        ]
+      },
+      {
+        "id": "n_d3",
+        "driver": {
+          "component": "FF2",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "FF3",
+            "pin": "d"
+          }
+        ]
+      },
+      {
+        "id": "n_q0",
+        "driver": {
+          "component": "FF0",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q0",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_q1",
+        "driver": {
+          "component": "FF1",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q1",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_q2",
+        "driver": {
+          "component": "FF2",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q2",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_q3",
+        "driver": {
+          "component": "FF3",
+          "pin": "q"
+        },
+        "sinks": [
+          {
+            "component": "OUT_q3",
+            "pin": "in"
+          },
+          {
+            "component": "N1",
+            "pin": "a"
+          }
+        ]
+      }
+    ]
+  },
+  "cycles": 10,
+  "inputs_per_cycle": [],
+  "expected": {
+    "cycles": [
+      {
+        "FF0.q": "0",
+        "q0": "0",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "0",
+        "q3": "0"
+      },
+      {
+        "FF0.q": "1",
+        "q0": "1",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "0",
+        "q3": "0"
+      },
+      {
+        "FF0.q": "1",
+        "q0": "1",
+        "FF1.q": "1",
+        "q1": "1",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "0",
+        "q3": "0"
+      },
+      {
+        "FF0.q": "1",
+        "q0": "1",
+        "FF1.q": "1",
+        "q1": "1",
+        "FF2.q": "1",
+        "q2": "1",
+        "FF3.q": "0",
+        "q3": "0"
+      },
+      {
+        "FF0.q": "1",
+        "q0": "1",
+        "FF1.q": "1",
+        "q1": "1",
+        "FF2.q": "1",
+        "q2": "1",
+        "FF3.q": "1",
+        "q3": "1"
+      },
+      {
+        "FF0.q": "0",
+        "q0": "0",
+        "FF1.q": "1",
+        "q1": "1",
+        "FF2.q": "1",
+        "q2": "1",
+        "FF3.q": "1",
+        "q3": "1"
+      },
+      {
+        "FF0.q": "0",
+        "q0": "0",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "1",
+        "q2": "1",
+        "FF3.q": "1",
+        "q3": "1"
+      },
+      {
+        "FF0.q": "0",
+        "q0": "0",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "1",
+        "q3": "1"
+      },
+      {
+        "FF0.q": "0",
+        "q0": "0",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "0",
+        "q3": "0"
+      },
+      {
+        "FF0.q": "1",
+        "q0": "1",
+        "FF1.q": "0",
+        "q1": "0",
+        "FF2.q": "0",
+        "q2": "0",
+        "FF3.q": "0",
+        "q3": "0"
+      }
+    ],
+    "events": [
+      {
+        "cycle": 0,
+        "component": "FF0",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 1,
+        "component": "FF1",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 2,
+        "component": "FF2",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 3,
+        "component": "FF3",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 4,
+        "component": "FF0",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 5,
+        "component": "FF1",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 6,
+        "component": "FF2",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 7,
+        "component": "FF3",
+        "pin": "q",
+        "old": "1",
+        "new": "0",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 8,
+        "component": "FF0",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      },
+      {
+        "cycle": 9,
+        "component": "FF1",
+        "pin": "q",
+        "old": "0",
+        "new": "1",
+        "cause": "clock_edge"
+      }
+    ],
+    "waveforms": {
+      "FF0.q": [
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "out:q0": [
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "FF1.q": [
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "out:q1": [
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "FF2.q": [
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "out:q2": [
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "FF3.q": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      "out:q3": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "1",
+        "0",
+        "0"
+      ]
+    },
+    "final_state": {
+      "FF0.q": "1",
+      "FF1.q": "1",
+      "FF2.q": "0",
+      "FF3.q": "0"
+    }
+  }
+}

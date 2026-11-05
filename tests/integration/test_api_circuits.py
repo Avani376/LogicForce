@@ -86,9 +86,7 @@ def test_validate_invalid_circuit_returns_report_not_error() -> None:
 
 
 def test_validate_malformed_document_is_400_typed() -> None:
-    response = client.post(
-        "/api/circuits/validate", json={"circuit": {"schema_version": 2}}
-    )
+    response = client.post("/api/circuits/validate", json={"circuit": {"schema_version": 2}})
     assert response.status_code == 400
     detail = response.json()["detail"]
     assert detail["code"] == "UNSUPPORTED_SCHEMA_VERSION"
@@ -119,9 +117,7 @@ def test_simulate_accepts_integer_inputs() -> None:
 
 
 def test_simulate_omitted_inputs_default_to_x() -> None:
-    response = client.post(
-        "/api/circuits/simulate", json={"circuit": half_adder(), "inputs": {}}
-    )
+    response = client.post("/api/circuits/simulate", json={"circuit": half_adder(), "inputs": {}})
     assert response.status_code == 200
     assert response.json()["outputs"] == {"sum": "X", "carry_out": "X"}
 
@@ -129,9 +125,7 @@ def test_simulate_omitted_inputs_default_to_x() -> None:
 def test_simulate_invalid_circuit_is_400_validation_failed() -> None:
     doc = half_adder()
     doc["nets"] = [doc["nets"][0]]
-    response = client.post(
-        "/api/circuits/simulate", json={"circuit": doc, "inputs": {"a": "1"}}
-    )
+    response = client.post("/api/circuits/simulate", json={"circuit": doc, "inputs": {"a": "1"}})
     assert response.status_code == 400
     detail = response.json()["detail"]
     assert detail["code"] == "VALIDATION_FAILED"
@@ -172,8 +166,7 @@ def test_truth_table_over_limit_is_400_not_truncated() -> None:
     import string
 
     components: list[dict[str, Any]] = [
-        {"id": f"IN_i{i:02d}", "type": "INPUT", "params": {"name": f"i{i:02d}"}}
-        for i in range(13)
+        {"id": f"IN_i{i:02d}", "type": "INPUT", "params": {"name": f"i{i:02d}"}} for i in range(13)
     ]
     components.append({"id": "G", "type": "AND", "params": {"width": 13}})
     components.append({"id": "OUT_y", "type": "OUTPUT", "params": {"name": "y"}})

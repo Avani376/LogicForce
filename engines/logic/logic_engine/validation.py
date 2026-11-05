@@ -110,8 +110,7 @@ def validate(graph: CircuitGraph) -> ValidationReport:
                     ValidationIssue(
                         code="INVALID_PARAM",
                         message=(
-                            f"{kind} component {comp.id!r}: 'name' must be a "
-                            "non-empty string"
+                            f"{kind} component {comp.id!r}: 'name' must be a non-empty string"
                         ),
                         component_id=comp.id,
                     )
@@ -158,9 +157,7 @@ def validate(graph: CircuitGraph) -> ValidationReport:
             continue
         comp_type_of[comp.id] = comp.type
         comp_params_of[comp.id] = comp.params
-        in_pins[comp.id] = frozenset(
-            input_pins_for(comp.type, comp.params)
-        )
+        in_pins[comp.id] = frozenset(input_pins_for(comp.type, comp.params))
         out_pins[comp.id] = frozenset(output_pins_for(comp.type))
 
     def known_output_pin(ref: PinRef) -> bool:
@@ -259,21 +256,15 @@ def validate(graph: CircuitGraph) -> ValidationReport:
                 errors.append(
                     ValidationIssue(
                         code="DANGLING_INPUT_PIN",
-                        message=(
-                            f"input pin {comp_id}.{pin} is not connected to any net"
-                        ),
+                        message=(f"input pin {comp_id}.{pin} is not connected to any net"),
                         component_id=comp_id,
                     )
                 )
 
     # --- combinational cycle detection (Kahn over known components) -------------
-    errors.extend(
-        _detect_cycles(graph.nets, comp_type_of, in_pins, input_pin_owner)
-    )
+    errors.extend(_detect_cycles(graph.nets, comp_type_of, in_pins, input_pin_owner))
 
-    return ValidationReport(
-        ok=not errors, errors=tuple(errors), warnings=tuple(warnings)
-    )
+    return ValidationReport(ok=not errors, errors=tuple(errors), warnings=tuple(warnings))
 
 
 def _detect_cycles(
@@ -324,10 +315,7 @@ def _detect_cycles(
     return (
         ValidationIssue(
             code="COMBINATIONAL_LOOP",
-            message=(
-                "combinational dependency cycle through components: "
-                + ", ".join(remaining)
-            ),
+            message=("combinational dependency cycle through components: " + ", ".join(remaining)),
         ),
     )
 

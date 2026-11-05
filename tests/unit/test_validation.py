@@ -126,17 +126,13 @@ def test_duplicate_input_name() -> None:
 
 def test_duplicate_output_name() -> None:
     doc = circuit()
-    doc["components"].append(
-        {"id": "OUT_y2", "type": "OUTPUT", "params": {"name": "y"}}
-    )
+    doc["components"].append({"id": "OUT_y2", "type": "OUTPUT", "params": {"name": "y"}})
     assert "DUPLICATE_IO_NAME" in codes(doc)
 
 
 def test_same_name_across_kinds_is_allowed() -> None:
     doc = circuit()
-    doc["components"].append(
-        {"id": "OUT_a", "type": "OUTPUT", "params": {"name": "a"}}
-    )
+    doc["components"].append({"id": "OUT_a", "type": "OUTPUT", "params": {"name": "a"}})
     out_net = {
         "id": "n3",
         "driver": {"component": "G", "pin": "out"},
@@ -182,9 +178,7 @@ def test_label_and_position_are_display_only() -> None:
 def test_unread_net_is_warning_not_error() -> None:
     doc = circuit()
     doc["components"].append({"id": "IN_sp", "type": "INPUT", "params": {"name": "spare"}})
-    doc["nets"].append(
-        {"id": "n9", "driver": {"component": "IN_sp", "pin": "out"}, "sinks": []}
-    )
+    doc["nets"].append({"id": "n9", "driver": {"component": "IN_sp", "pin": "out"}, "sinks": []})
     report = validate(parse_circuit(doc))
     assert report.ok
     assert [w.code for w in report.warnings] == ["UNREAD_NET"]
