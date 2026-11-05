@@ -5,6 +5,7 @@ executor with exact documented flag semantics. Native machine-code encoding is
 out of scope (see docs/semantics/cpu8086.md).
 """
 
+from cpu8086.assembler import AssembledProgram, Instruction, assemble
 from cpu8086.errors import AsmError, CpuRuntimeError, UnsupportedInstructionError
 from cpu8086.memory import ADDRESS_SPACE, Memory, physical
 from cpu8086.registers import (
@@ -25,6 +26,9 @@ from cpu8086.version import CPU8086_ENGINE_VERSION
 __all__ = [
     "CPU8086_ENGINE_VERSION",
     "AsmError",
+    "AssembledProgram",
+    "Instruction",
+    "assemble",
     "CpuRuntimeError",
     "UnsupportedInstructionError",
     "Memory",
