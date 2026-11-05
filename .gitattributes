@@ -1,0 +1,9 @@
+# Normalize line endings: repository stores LF, working tree follows the platform.
+* text=auto eol=lf
+
+# Explicit binary types
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary

@@ -24,3 +24,19 @@ jobs:
         run: mypy engines/logic/logic_engine apps/api/logicforge_api
       - name: Tests + coverage gate
         run: pytest --cov --cov-report=term-missing --cov-fail-under=90
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install
+        run: npm ci
+        working-directory: apps/web
+      - name: Build (typecheck + vite)
+        run: npm run build
+        working-directory: apps/web
