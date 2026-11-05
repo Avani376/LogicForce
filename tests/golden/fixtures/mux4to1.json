@@ -1,0 +1,1223 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "mux4to1",
+    "components": [
+      {
+        "id": "IN_in0",
+        "type": "INPUT",
+        "params": {
+          "name": "in0"
+        }
+      },
+      {
+        "id": "IN_in1",
+        "type": "INPUT",
+        "params": {
+          "name": "in1"
+        }
+      },
+      {
+        "id": "IN_in2",
+        "type": "INPUT",
+        "params": {
+          "name": "in2"
+        }
+      },
+      {
+        "id": "IN_in3",
+        "type": "INPUT",
+        "params": {
+          "name": "in3"
+        }
+      },
+      {
+        "id": "IN_s0",
+        "type": "INPUT",
+        "params": {
+          "name": "s0"
+        }
+      },
+      {
+        "id": "IN_s1",
+        "type": "INPUT",
+        "params": {
+          "name": "s1"
+        }
+      },
+      {
+        "id": "G_nots0",
+        "type": "NOT"
+      },
+      {
+        "id": "G_nots1",
+        "type": "NOT"
+      },
+      {
+        "id": "G_and_i0",
+        "type": "AND"
+      },
+      {
+        "id": "G_and_i1",
+        "type": "AND"
+      },
+      {
+        "id": "G_or_lo",
+        "type": "OR"
+      },
+      {
+        "id": "G_and_i2",
+        "type": "AND"
+      },
+      {
+        "id": "G_and_i3",
+        "type": "AND"
+      },
+      {
+        "id": "G_or_hi",
+        "type": "OR"
+      },
+      {
+        "id": "G_and_lo",
+        "type": "AND"
+      },
+      {
+        "id": "G_and_hi",
+        "type": "AND"
+      },
+      {
+        "id": "G_or_out",
+        "type": "OR"
+      },
+      {
+        "id": "OUT_out",
+        "type": "OUTPUT",
+        "params": {
+          "name": "out"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n01_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_nots0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n02_from_IN_s1",
+        "driver": {
+          "component": "IN_s1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_nots1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n03_from_IN_in0",
+        "driver": {
+          "component": "IN_in0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n04_from_G_nots0",
+        "driver": {
+          "component": "G_nots0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i0",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n05_from_IN_in1",
+        "driver": {
+          "component": "IN_in1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n06_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n07_from_G_and_i0",
+        "driver": {
+          "component": "G_and_i0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_lo",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n08_from_G_and_i1",
+        "driver": {
+          "component": "G_and_i1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_lo",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n09_from_IN_in2",
+        "driver": {
+          "component": "IN_in2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i2",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n10_from_G_nots0",
+        "driver": {
+          "component": "G_nots0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i2",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n11_from_IN_in3",
+        "driver": {
+          "component": "IN_in3",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i3",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n12_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_i3",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n13_from_G_and_i2",
+        "driver": {
+          "component": "G_and_i2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_hi",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n14_from_G_and_i3",
+        "driver": {
+          "component": "G_and_i3",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_hi",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n15_from_G_or_lo",
+        "driver": {
+          "component": "G_or_lo",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_lo",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n16_from_G_nots1",
+        "driver": {
+          "component": "G_nots1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_lo",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n17_from_G_or_hi",
+        "driver": {
+          "component": "G_or_hi",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_hi",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n18_from_IN_s1",
+        "driver": {
+          "component": "IN_s1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_hi",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n19_from_G_and_lo",
+        "driver": {
+          "component": "G_and_lo",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_out",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n20_from_G_and_hi",
+        "driver": {
+          "component": "G_and_hi",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or_out",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n21_from_G_or_out",
+        "driver": {
+          "component": "G_or_out",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_out",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "input_names": [
+      "in0",
+      "in1",
+      "in2",
+      "in3",
+      "s0",
+      "s1"
+    ],
+    "output_names": [
+      "out"
+    ],
+    "rows": [
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "0",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "in2": "1",
+          "in3": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      }
+    ]
+  }
+}

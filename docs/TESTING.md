@@ -26,9 +26,11 @@ CI runs the same four steps plus a coverage gate (`--cov-fail-under=90` on
 ## Golden fixtures
 
 `tests/golden/fixtures/*.json` contain the circuit (schema v1) **and** the expected truth
-table, derived by hand from the semantics contracts and version-controlled. A failing
-golden test means engine behavior changed — never edit a fixture to make a test pass
-without a semantics-doc change in the same commit.
+table. Expected tables are generated from **closed-form reference definitions** committed
+in `scripts/gen_golden_fixtures.py` — deliberately not produced by running the engine, so
+the engine cannot rewrite its own oracle. A failing golden test means engine behavior
+changed — never edit a fixture to make a test pass without a semantics-doc change in the
+same commit.
 
 ## Regression rule
 

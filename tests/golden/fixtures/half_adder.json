@@ -1,0 +1,158 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "half_adder",
+    "components": [
+      {
+        "id": "IN_a",
+        "type": "INPUT",
+        "params": {
+          "name": "a"
+        }
+      },
+      {
+        "id": "IN_b",
+        "type": "INPUT",
+        "params": {
+          "name": "b"
+        }
+      },
+      {
+        "id": "G_xor",
+        "type": "XOR"
+      },
+      {
+        "id": "G_and",
+        "type": "AND"
+      },
+      {
+        "id": "OUT_sum",
+        "type": "OUTPUT",
+        "params": {
+          "name": "sum"
+        }
+      },
+      {
+        "id": "OUT_carry_out",
+        "type": "OUTPUT",
+        "params": {
+          "name": "carry_out"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n01_from_IN_a",
+        "driver": {
+          "component": "IN_a",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor",
+            "pin": "a"
+          },
+          {
+            "component": "G_and",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n02_from_IN_b",
+        "driver": {
+          "component": "IN_b",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor",
+            "pin": "b"
+          },
+          {
+            "component": "G_and",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n03_from_G_xor",
+        "driver": {
+          "component": "G_xor",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_sum",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n04_from_G_and",
+        "driver": {
+          "component": "G_and",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_carry_out",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "input_names": [
+      "a",
+      "b"
+    ],
+    "output_names": [
+      "carry_out",
+      "sum"
+    ],
+    "rows": [
+      {
+        "inputs": {
+          "a": "0",
+          "b": "0"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "1"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "0"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "1"
+        },
+        "outputs": {
+          "carry_out": "1",
+          "sum": "0"
+        }
+      }
+    ]
+  }
+}

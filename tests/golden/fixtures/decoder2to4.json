@@ -1,0 +1,448 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "decoder2to4",
+    "components": [
+      {
+        "id": "IN_E",
+        "type": "INPUT",
+        "params": {
+          "name": "E"
+        }
+      },
+      {
+        "id": "IN_s0",
+        "type": "INPUT",
+        "params": {
+          "name": "s0"
+        }
+      },
+      {
+        "id": "IN_s1",
+        "type": "INPUT",
+        "params": {
+          "name": "s1"
+        }
+      },
+      {
+        "id": "G_nots0",
+        "type": "NOT"
+      },
+      {
+        "id": "G_nots1",
+        "type": "NOT"
+      },
+      {
+        "id": "G_and_y0",
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
+      },
+      {
+        "id": "G_and_y1",
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
+      },
+      {
+        "id": "G_and_y2",
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
+      },
+      {
+        "id": "G_and_y3",
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
+      },
+      {
+        "id": "OUT_y0",
+        "type": "OUTPUT",
+        "params": {
+          "name": "y0"
+        }
+      },
+      {
+        "id": "OUT_y1",
+        "type": "OUTPUT",
+        "params": {
+          "name": "y1"
+        }
+      },
+      {
+        "id": "OUT_y2",
+        "type": "OUTPUT",
+        "params": {
+          "name": "y2"
+        }
+      },
+      {
+        "id": "OUT_y3",
+        "type": "OUTPUT",
+        "params": {
+          "name": "y3"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n01_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_nots0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n02_from_IN_s1",
+        "driver": {
+          "component": "IN_s1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_nots1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n03_from_IN_E",
+        "driver": {
+          "component": "IN_E",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n04_from_G_nots1",
+        "driver": {
+          "component": "G_nots1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y0",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n05_from_G_nots0",
+        "driver": {
+          "component": "G_nots0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y0",
+            "pin": "c"
+          }
+        ]
+      },
+      {
+        "id": "n06_from_IN_E",
+        "driver": {
+          "component": "IN_E",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n07_from_G_nots1",
+        "driver": {
+          "component": "G_nots1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n08_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y1",
+            "pin": "c"
+          }
+        ]
+      },
+      {
+        "id": "n09_from_IN_E",
+        "driver": {
+          "component": "IN_E",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y2",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n10_from_IN_s1",
+        "driver": {
+          "component": "IN_s1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y2",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n11_from_G_nots0",
+        "driver": {
+          "component": "G_nots0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y2",
+            "pin": "c"
+          }
+        ]
+      },
+      {
+        "id": "n12_from_IN_E",
+        "driver": {
+          "component": "IN_E",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y3",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n13_from_IN_s1",
+        "driver": {
+          "component": "IN_s1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y3",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n14_from_IN_s0",
+        "driver": {
+          "component": "IN_s0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and_y3",
+            "pin": "c"
+          }
+        ]
+      },
+      {
+        "id": "n15_from_G_and_y0",
+        "driver": {
+          "component": "G_and_y0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_y0",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n16_from_G_and_y1",
+        "driver": {
+          "component": "G_and_y1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_y1",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n17_from_G_and_y2",
+        "driver": {
+          "component": "G_and_y2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_y2",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n18_from_G_and_y3",
+        "driver": {
+          "component": "G_and_y3",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_y3",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "input_names": [
+      "E",
+      "s0",
+      "s1"
+    ],
+    "output_names": [
+      "y0",
+      "y1",
+      "y2",
+      "y3"
+    ],
+    "rows": [
+      {
+        "inputs": {
+          "E": "0",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "0",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "0",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "0",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "1",
+          "s0": "0",
+          "s1": "0"
+        },
+        "outputs": {
+          "y0": "1",
+          "y1": "0",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "1",
+          "s0": "0",
+          "s1": "1"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "1",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "1",
+          "s0": "1",
+          "s1": "0"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "1",
+          "y2": "0",
+          "y3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "E": "1",
+          "s0": "1",
+          "s1": "1"
+        },
+        "outputs": {
+          "y0": "0",
+          "y1": "0",
+          "y2": "0",
+          "y3": "1"
+        }
+      }
+    ]
+  }
+}

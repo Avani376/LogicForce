@@ -1,0 +1,241 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "mux2to1",
+    "components": [
+      {
+        "id": "IN_in0",
+        "type": "INPUT",
+        "params": {
+          "name": "in0"
+        }
+      },
+      {
+        "id": "IN_in1",
+        "type": "INPUT",
+        "params": {
+          "name": "in1"
+        }
+      },
+      {
+        "id": "IN_sel",
+        "type": "INPUT",
+        "params": {
+          "name": "sel"
+        }
+      },
+      {
+        "id": "G_notsel",
+        "type": "NOT"
+      },
+      {
+        "id": "G_and0",
+        "type": "AND"
+      },
+      {
+        "id": "G_and1",
+        "type": "AND"
+      },
+      {
+        "id": "G_or",
+        "type": "OR"
+      },
+      {
+        "id": "OUT_out",
+        "type": "OUTPUT",
+        "params": {
+          "name": "out"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n01_from_IN_sel",
+        "driver": {
+          "component": "IN_sel",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_notsel",
+            "pin": "a"
+          },
+          {
+            "component": "G_and1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n02_from_G_notsel",
+        "driver": {
+          "component": "G_notsel",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and0",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n03_from_IN_in0",
+        "driver": {
+          "component": "IN_in0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n04_from_IN_in1",
+        "driver": {
+          "component": "IN_in1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_and1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n05_from_G_and0",
+        "driver": {
+          "component": "G_and0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n06_from_G_and1",
+        "driver": {
+          "component": "G_and1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n07_from_G_or",
+        "driver": {
+          "component": "G_or",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_out",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "input_names": [
+      "in0",
+      "in1",
+      "sel"
+    ],
+    "output_names": [
+      "out"
+    ],
+    "rows": [
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "sel": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "0",
+          "sel": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "sel": "0"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "0",
+          "in1": "1",
+          "sel": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "sel": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "0",
+          "sel": "1"
+        },
+        "outputs": {
+          "out": "0"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "sel": "0"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      },
+      {
+        "inputs": {
+          "in0": "1",
+          "in1": "1",
+          "sel": "1"
+        },
+        "outputs": {
+          "out": "1"
+        }
+      }
+    ]
+  }
+}

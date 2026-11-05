@@ -1,0 +1,286 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "full_adder",
+    "components": [
+      {
+        "id": "IN_a",
+        "type": "INPUT",
+        "params": {
+          "name": "a"
+        }
+      },
+      {
+        "id": "IN_b",
+        "type": "INPUT",
+        "params": {
+          "name": "b"
+        }
+      },
+      {
+        "id": "IN_cin",
+        "type": "INPUT",
+        "params": {
+          "name": "cin"
+        }
+      },
+      {
+        "id": "G_xor1",
+        "type": "XOR"
+      },
+      {
+        "id": "G_xor2",
+        "type": "XOR"
+      },
+      {
+        "id": "G_and1",
+        "type": "AND"
+      },
+      {
+        "id": "G_and2",
+        "type": "AND"
+      },
+      {
+        "id": "G_or",
+        "type": "OR"
+      },
+      {
+        "id": "OUT_sum",
+        "type": "OUTPUT",
+        "params": {
+          "name": "sum"
+        }
+      },
+      {
+        "id": "OUT_carry_out",
+        "type": "OUTPUT",
+        "params": {
+          "name": "carry_out"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n01_from_IN_a",
+        "driver": {
+          "component": "IN_a",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor1",
+            "pin": "a"
+          },
+          {
+            "component": "G_and1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n02_from_IN_b",
+        "driver": {
+          "component": "IN_b",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor1",
+            "pin": "b"
+          },
+          {
+            "component": "G_and1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n03_from_IN_cin",
+        "driver": {
+          "component": "IN_cin",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor2",
+            "pin": "b"
+          },
+          {
+            "component": "G_and2",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n04_from_G_xor1",
+        "driver": {
+          "component": "G_xor1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_xor2",
+            "pin": "a"
+          },
+          {
+            "component": "G_and2",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n05_from_G_and1",
+        "driver": {
+          "component": "G_and1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n06_from_G_and2",
+        "driver": {
+          "component": "G_and2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "G_or",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n07_from_G_xor2",
+        "driver": {
+          "component": "G_xor2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_sum",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n08_from_G_or",
+        "driver": {
+          "component": "G_or",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_carry_out",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "input_names": [
+      "a",
+      "b",
+      "cin"
+    ],
+    "output_names": [
+      "carry_out",
+      "sum"
+    ],
+    "rows": [
+      {
+        "inputs": {
+          "a": "0",
+          "b": "0",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "0",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "1",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "1",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry_out": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "0",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry_out": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "0",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry_out": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "1",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry_out": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "1",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry_out": "1",
+          "sum": "1"
+        }
+      }
+    ]
+  }
+}

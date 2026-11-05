@@ -23,7 +23,8 @@ Schema version: **1** · Engine version: 0.1.0
 {
   "id": "G1",                         // required, non-empty, unique, any string without surrounding whitespace
   "type": "XOR",                      // required, one of the supported types below
-  "params": { "name": "a", "width": 2 },  // optional object; type-dependent
+  "params": { "name": "a", "width": 2 },  // optional object; type-dependent (strictly validated)
+  "label": "carry generator",         // optional string; display-only, ignored by the engine
   "position": { "x": 100.0, "y": 80.0 }   // optional; UI metadata, ignored by the engine
 }
 ```
@@ -79,6 +80,8 @@ whose validation has any error — a warning-level circuit is simulable.
 
 ## Canonical serialization
 
-For hashing (`input_hash`) the engine canonicalizes: JSON with keys in insertion order per
-the schemas above, lists in document order, no insignificant whitespace, UTF-8. The hash is
-SHA-256 over `schema_version + canonical(circuit) + canonical(inputs)`.
+For hashing (`input_hash`) the engine canonicalizes: JSON with **keys sorted
+lexicographically** (so two documents differing only in key order hash identically — the
+hash identifies the design, not serialization quirks), lists in document order, no
+insignificant whitespace, UTF-8. The hash is SHA-256 over
+`schema_version + canonical(circuit) + canonical(inputs)`.
