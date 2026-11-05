@@ -11,16 +11,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type {
   HealthStatus,
   PinRefDoc,
+  SequentialResult,
   SimulationResult,
   TruthTableResult,
   ValidationReport,
 } from './types'
-import {
-  ApiHttpError,
-  apiHealth,
-  apiSimulate,
-  apiTruthTable,
-} from './lib/api'
+import { ApiHttpError, apiHealth, apiSimulate, apiSimulateSequential, apiTruthTable } from './lib/api'
 import {
   addComponent,
   connectPins,
@@ -28,6 +24,8 @@ import {
   fromDoc,
   GATE_TYPES,
   halfAdderExample,
+  isSequential,
+  johnsonExample,
   moveComponent,
   toDoc,
   toggleInput,
@@ -37,8 +35,10 @@ import { Canvas } from './components/Canvas'
 import { TruthTablePanel } from './components/TruthTablePanel'
 import { TracePanel } from './components/TracePanel'
 import { ValidationPanel } from './components/ValidationPanel'
+import { WaveformPanel } from './components/WaveformPanel'
 
 const STORAGE_KEY = 'logicforge.circuit.v1'
+const SEQ_CYCLES = 8
 
 interface History {
   past: EditorState[]
@@ -58,6 +58,7 @@ export function App(): JSX.Element {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [pendingPin, setPendingPin] = useState<PinRefDoc | null>(null)
   const [sim, setSim] = useState<SimulationResult | null>(null)
+  const [seqResult, setSeqResult] = useState<SequentialResult | null>(null)
   const [validation, setValidation] = useState<ValidationReport | null>(null)
   const [connError, setConnError] = useState<string | null>(null)
   const [statusMsg, setStatusMsg] = useState<string>('Ready')
@@ -88,33 +89,66 @@ export function App(): JSX.Element {
   }, [])
 
   // --- auto-simulation (engine is the source of truth) -----------------------
+  // Combinational circuits settle via the v1 engine; circuits containing state
+  // components run the sequential engine (8 cycles, inputs held constant).
   useEffect(() => {
     const doc = JSON.parse(docJson) as Parameters<typeof apiSimulate>[0]
     const inputs = JSON.parse(inputsJson) as Record<string, string>
     let cancelled = false
-    apiSimulate(doc, inputs)
-      .then((result) => {
-        if (cancelled) return
-        setSim(result)
-        setValidation(null)
+    const hasStateComponents = (doc as { components?: { type?: string }[] }).components?.some(
+      (c) => isSequential((c.type ?? '') as never),
+    )
+
+    const reportFailure = (cause: unknown): void => {
+      if (cancelled) return
+      if (cause instanceof ApiHttpError && cause.detail.code === 'VALIDATION_FAILED') {
+        setSim(null)
         setConnError(null)
-      })
-      .catch((cause: unknown) => {
-        if (cancelled) return
-        if (cause instanceof ApiHttpError && cause.detail.code === 'VALIDATION_FAILED') {
-          setSim(null)
+        setValidation({
+          schema_version: 1,
+          engine_version: '',
+          ok: false,
+          errors: cause.detail.errors ?? [],
+          warnings: cause.detail.warnings ?? [],
+        })
+      } else {
+        setConnError(cause instanceof Error ? cause.message : String(cause))
+      }
+    }
+
+    if (hasStateComponents) {
+      setSim(null)
+      apiSimulateSequential(
+        doc as never,
+        SEQ_CYCLES,
+        Array.from({ length: SEQ_CYCLES }, () => inputs),
+      )
+        .then((result) => {
+          if (cancelled) return
+          setSeqResult(result)
+          setValidation(null)
           setConnError(null)
-          setValidation({
-            schema_version: 1,
-            engine_version: '',
-            ok: false,
-            errors: cause.detail.errors ?? [],
-            warnings: cause.detail.warnings ?? [],
-          })
-        } else {
-          setConnError(cause instanceof Error ? cause.message : String(cause))
-        }
-      })
+        })
+        .catch((cause: unknown) => {
+          if (cancelled) return
+          setSeqResult(null)
+          reportFailure(cause)
+        })
+    } else {
+      setSeqResult(null)
+      apiSimulate(doc, inputs)
+        .then((result) => {
+          if (cancelled) return
+          setSim(result)
+          setValidation(null)
+          setConnError(null)
+        })
+        .catch((cause: unknown) => {
+          if (cancelled) return
+          setSim(null)
+          reportFailure(cause)
+        })
+    }
     return () => {
       cancelled = true
     }
@@ -408,6 +442,9 @@ export function App(): JSX.Element {
           />
         </label>
         <button type="button" onClick={handleTruthTable}>Truth table</button>
+        <button type="button" onClick={() => commit(johnsonExample())}>
+          Johnson counter
+        </button>
         <button type="button" onClick={() => commit(halfAdderExample())}>
           Example
         </button>
@@ -422,7 +459,11 @@ export function App(): JSX.Element {
           <Canvas
             state={present}
             netValues={netValues}
-            outputs={sim?.outputs ?? {}}
+            outputs={
+              sim?.outputs ??
+              seqResult?.cycles[seqResult.cycles.length - 1]?.outputs ??
+              {}
+            }
             selectedId={selectedId}
             pendingPin={pendingPin}
             onSelect={setSelectedId}
@@ -491,6 +532,7 @@ export function App(): JSX.Element {
       </div>
 
       <TracePanel trace={sim?.trace ?? []} eventCount={sim?.event_count ?? 0} scope={sim?.scope ?? ''} hash={sim?.input_hash ?? ''} />
+      <WaveformPanel result={seqResult} />
 
       {showTt && (
         <TruthTablePanel

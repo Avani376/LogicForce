@@ -12,7 +12,7 @@ import type { PinRefDoc } from '../types'
 import {
   gateWidth,
   inputPins,
-  isMultiInput,
+  outputPins,
   type EditorComponent,
   type EditorState,
 } from '../lib/circuit'
@@ -277,14 +277,16 @@ export function Canvas(props: CanvasProps): JSX.Element {
             )
           }
 
-          const pins = isMultiInput(component.type)
-            ? inputPins(component)
-            : ['a']
+          const pins = inputPins(component)
+          const outPins = outputPins(component)
           const width = gateWidth(component.type, component)
           const pinNetValues = pins.map(
             (pin) => netValues[netIdFor(state, component.id, pin) ?? ''] ?? 'X',
           )
-          const outValue = netValues[netIdFor(state, component.id, 'out') ?? ''] ?? 'X'
+          const outValues = outPins.map(
+            (pin) => netValues[netIdFor(state, component.id, pin) ?? ''] ?? 'X',
+          )
+          const outValue = outValues[0] ?? 'X'
           return (
             <g
               key={component.id}
@@ -296,7 +298,7 @@ export function Canvas(props: CanvasProps): JSX.Element {
                 onSelect(component.id)
               }}
               role="button"
-              aria-label={`${component.type} gate ${component.id}${
+              aria-label={`${component.type} ${component.id}${
                 component.label ? `, ${component.label}` : ''
               }${width > 2 ? `, ${width} inputs` : ''}`}
             >
@@ -332,17 +334,24 @@ export function Canvas(props: CanvasProps): JSX.Element {
                   <title>{`input pin ${pin} of ${component.id}: ${pinNetValues[index]}`}</title>
                 </g>
               ))}
-              <g
-                className="pin pin-out"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  onPinClick({ component: component.id, pin: 'out' })
-                }}
-                aria-label={`output pin of ${component.id}`}
-              >
-                <circle cx={GATE_W} cy={GATE_H / 2} r={PIN_R} />
-                <title>{`output pin of ${component.id}: ${outValue}`}</title>
-              </g>
+              {outPins.map((pin, index) => (
+                <g
+                  key={pin}
+                  className="pin pin-out"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    onPinClick({ component: component.id, pin })
+                  }}
+                  aria-label={`output pin ${pin} of ${component.id}, currently ${outValues[index]}`}
+                >
+                  <circle
+                    cx={GATE_W}
+                    cy={((index + 1) * GATE_H) / (outPins.length + 1)}
+                    r={PIN_R}
+                  />
+                  <title>{`output pin ${pin} of ${component.id}: ${outValues[index]}`}</title>
+                </g>
+              ))}
             </g>
           )
         })}

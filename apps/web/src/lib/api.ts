@@ -8,6 +8,7 @@ import type {
   ApiErrorDetail,
   CircuitDoc,
   HealthStatus,
+  SequentialResult,
   SimulationResult,
   TruthTableResult,
   ValidationReport,
@@ -83,4 +84,16 @@ export function apiSimulate(
 
 export function apiTruthTable(circuit: CircuitDoc): Promise<TruthTableResult> {
   return postJson('/api/circuits/truth-table', { circuit })
+}
+
+export function apiSimulateSequential(
+  circuit: CircuitDoc,
+  cycles: number,
+  inputsPerCycle: Record<string, string>[],
+): Promise<SequentialResult> {
+  return postJson('/api/sequential/simulate', {
+    circuit,
+    cycles,
+    inputs_per_cycle: inputsPerCycle,
+  })
 }

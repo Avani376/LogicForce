@@ -548,3 +548,62 @@ button:disabled {
 .tt-table th.tt-out {
   color: var(--warn);
 }
+
+/* --- waveform viewer ------------------------------------------------------------ */
+.waveform-panel {
+  background: var(--panel);
+  border-top: 1px solid var(--panel-edge);
+  padding: 12px 18px;
+}
+
+.waveform-panel h2 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.final-state {
+  font-family: Consolas, monospace;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.waveform-scroll {
+  overflow: auto;
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+}
+
+.waveform-svg {
+  display: block;
+}
+
+.wf-cycle-num {
+  fill: var(--ink-dim);
+  font-size: 11px;
+  font-family: Consolas, monospace;
+}
+
+.wf-label {
+  fill: var(--ink);
+  font-size: 12px;
+  font-family: Consolas, monospace;
+}
+
+.wf-row-bg {
+  fill: rgba(255, 255, 255, 0.02);
+  stroke: var(--panel-edge);
+  stroke-width: 0.5;
+}
+
+.wf-signal {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}

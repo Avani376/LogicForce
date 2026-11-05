@@ -18,6 +18,12 @@ export type ComponentType =
   | 'NOR'
   | 'XOR'
   | 'XNOR'
+  | 'DFF'
+  | 'TFF'
+  | 'JKFF'
+  | 'SRFF'
+  | 'REGISTER'
+  | 'COUNTER'
 
 export interface ComponentParams {
   name?: string
@@ -119,4 +125,25 @@ export interface ApiErrorDetail {
   limit?: number
   errors?: ValidationIssue[]
   warnings?: ValidationIssue[]
+}
+
+/** Sequential engine result (schema v2, docs/semantics/clock-edge-rules.md). */
+export interface SeqEvent {
+  cycle: number
+  component: string
+  pin: string
+  old: string
+  new: string
+  cause: string
+}
+
+export interface SequentialResult {
+  engine_version: string
+  scope: string
+  input_hash: string
+  cycles: { cycle: number; inputs: Record<string, string>; state: Record<string, string>; outputs: Record<string, string> }[]
+  events: SeqEvent[]
+  waveforms: Record<string, string[]>
+  final_state: Record<string, string>
+  state_components: string[]
 }

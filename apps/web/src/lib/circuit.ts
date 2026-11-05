@@ -56,18 +56,50 @@ export function isMultiInput(type: ComponentType): boolean {
   return ['AND', 'OR', 'NAND', 'NOR', 'XOR', 'XNOR'].includes(type)
 }
 
+export function isSequential(type: ComponentType): boolean {
+  return ['DFF', 'TFF', 'JKFF', 'SRFF', 'REGISTER', 'COUNTER'].includes(type)
+}
+
 export function gateWidth(type: ComponentType, component: EditorComponent | undefined): number {
   if (!isMultiInput(type)) return 1
   return Math.max(2, component?.width ?? 2)
 }
 
-/** Input pin names for a component ('a', 'b', ... per width). */
+/** State width for sequential multi-bit components (1 for flip-flops). */
+export function stateWidth(type: ComponentType, component: EditorComponent | undefined): number {
+  if (type !== 'REGISTER' && type !== 'COUNTER') return 1
+  return Math.max(1, component?.width ?? 1)
+}
+
+/** Input pin names for any component type (schema v1 + v2 pin inventory). */
 export function inputPins(component: EditorComponent): string[] {
-  if (component.type === 'OUTPUT') return ['in']
-  if (!isMultiInput(component.type)) return ['a']
-  return Array.from({ length: gateWidth(component.type, component) }, (_, i) =>
+  const t = component.type
+  if (t === 'OUTPUT') return ['in']
+  if (t === 'DFF') return ['d', 'pre', 'clr']
+  if (t === 'TFF') return ['t', 'pre', 'clr']
+  if (t === 'JKFF') return ['j', 'k', 'pre', 'clr']
+  if (t === 'SRFF') return ['s', 'r', 'pre', 'clr']
+  if (t === 'REGISTER')
+    return [
+      ...Array.from({ length: stateWidth(t, component) }, (_, i) => `d${i}`),
+      'pre',
+      'clr',
+    ]
+  if (t === 'COUNTER') return ['en', 'clr']
+  if (!isMultiInput(t)) return ['a']
+  return Array.from({ length: gateWidth(t, component) }, (_, i) =>
     String.fromCharCode(97 + i),
   )
+}
+
+/** Output pin names for any component type. */
+export function outputPins(component: EditorComponent): string[] {
+  const t = component.type
+  if (t === 'OUTPUT') return []
+  if (t === 'DFF' || t === 'TFF' || t === 'JKFF' || t === 'SRFF') return ['q', 'qn']
+  if (t === 'REGISTER' || t === 'COUNTER')
+    return Array.from({ length: stateWidth(t, component) }, (_, i) => `q${i}`)
+  return ['out']
 }
 
 export function hasOutputPin(type: ComponentType): boolean {
@@ -167,10 +199,8 @@ export function connectPins(
   if (!fromComp || !toComp) {
     return { state, message: 'Unknown pin' }
   }
-  const fromIsOutput = hasOutputPin(fromComp.type) && from.pin === 'out'
-  const toIsInput =
-    (toComp.type === 'OUTPUT' && to.pin === 'in') ||
-    inputPins(toComp).includes(to.pin)
+  const fromIsOutput = outputPins(fromComp).includes(from.pin)
+  const toIsInput = inputPins(toComp).includes(to.pin)
 
   let driver: PinRefDoc
   let sink: PinRefDoc
@@ -339,6 +369,52 @@ export function halfAdderExample(): EditorState {
       },
       { id: 'w3', driver: { component: 'C3', pin: 'out' }, sinks: [{ component: 'C5', pin: 'in' }] },
       { id: 'w4', driver: { component: 'C4', pin: 'out' }, sinks: [{ component: 'C6', pin: 'in' }] },
+    ],
+  }
+  return state
+}
+
+/**
+ * Sequential example: 4-bit Johnson (twisted-ring) counter, mirroring
+ * tests/golden/fixtures_seq/seq_johnson_counter.json. DFF feedback: d0=~q3,
+ * d1=q0, d2=q1, d3=q2. Click "Run 8 cycles" to see the waveform.
+ */
+export function johnsonExample(): EditorState {
+  const state: EditorState = {
+    ...emptyState(),
+    name: 'johnson_counter',
+    nextAutoId: 30,
+    components: [
+      { id: 'C0', type: 'CONST0', x: 20, y: 20 },
+      { id: 'F0', type: 'DFF', x: 300, y: 60, label: 'bit0' },
+      { id: 'F1', type: 'DFF', x: 300, y: 180, label: 'bit1' },
+      { id: 'F2', type: 'DFF', x: 300, y: 300, label: 'bit2' },
+      { id: 'F3', type: 'DFF', x: 300, y: 420, label: 'bit3' },
+      { id: 'N1', type: 'NOT', x: 80, y: 420, label: 'invert q3' },
+      { id: 'OUT_q0', type: 'OUTPUT', x: 520, y: 70, ioName: 'q0' },
+      { id: 'OUT_q1', type: 'OUTPUT', x: 520, y: 190, ioName: 'q1' },
+      { id: 'OUT_q2', type: 'OUTPUT', x: 520, y: 310, ioName: 'q2' },
+      { id: 'OUT_q3', type: 'OUTPUT', x: 520, y: 430, ioName: 'q3' },
+    ],
+    inputValues: {},
+    nets: [
+      { id: 'w_pre0', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F0', pin: 'pre' }] },
+      { id: 'w_pre1', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F1', pin: 'pre' }] },
+      { id: 'w_pre2', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F2', pin: 'pre' }] },
+      { id: 'w_pre3', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F3', pin: 'pre' }] },
+      { id: 'w_clr0', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F0', pin: 'clr' }] },
+      { id: 'w_clr1', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F1', pin: 'clr' }] },
+      { id: 'w_clr2', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F2', pin: 'clr' }] },
+      { id: 'w_clr3', driver: { component: 'C0', pin: 'out' }, sinks: [{ component: 'F3', pin: 'clr' }] },
+      { id: 'w_q3', driver: { component: 'F3', pin: 'q' }, sinks: [{ component: 'N1', pin: 'a' }, { component: 'OUT_q3', pin: 'in' }] },
+      { id: 'w_qn3', driver: { component: 'F3', pin: 'qn' }, sinks: [] },
+      { id: 'w_d0', driver: { component: 'N1', pin: 'out' }, sinks: [{ component: 'F0', pin: 'd' }] },
+      { id: 'w_q0', driver: { component: 'F0', pin: 'q' }, sinks: [{ component: 'F1', pin: 'd' }, { component: 'OUT_q0', pin: 'in' }] },
+      { id: 'w_qn0', driver: { component: 'F0', pin: 'qn' }, sinks: [] },
+      { id: 'w_q1', driver: { component: 'F1', pin: 'q' }, sinks: [{ component: 'F2', pin: 'd' }, { component: 'OUT_q1', pin: 'in' }] },
+      { id: 'w_qn1', driver: { component: 'F1', pin: 'qn' }, sinks: [] },
+      { id: 'w_q2', driver: { component: 'F2', pin: 'q' }, sinks: [{ component: 'F3', pin: 'd' }, { component: 'OUT_q2', pin: 'in' }] },
+      { id: 'w_qn2', driver: { component: 'F2', pin: 'qn' }, sinks: [] },
     ],
   }
   return state
