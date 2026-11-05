@@ -9,15 +9,16 @@ from __future__ import annotations
 
 from fastapi import APIRouter, FastAPI
 from logic_engine import ENGINE_VERSION
+from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 
 from logicforge_api import API_VERSION
-from logicforge_api.routers import circuits
+from logicforge_api.routers import circuits, sequential
 
 app = FastAPI(
     title="LogicForge API",
     description=(
         "Deterministic digital-system engineering engines. "
-        "All results are computed by logic_engine; scope labels state exactly "
+        "All results are computed by the engines; scope labels state exactly "
         "what was explored."
     ),
     version=ENGINE_VERSION,
@@ -29,8 +30,14 @@ root = APIRouter(prefix="/api", tags=["meta"])
 @root.get("/health")
 def health() -> dict[str, str]:
     """Liveness plus versions, for reproducibility bookkeeping."""
-    return {"status": "ok", "api_version": API_VERSION, "engine_version": ENGINE_VERSION}
+    return {
+        "status": "ok",
+        "api_version": API_VERSION,
+        "engine_version": ENGINE_VERSION,
+        "sequential_engine_version": SEQUENTIAL_ENGINE_VERSION,
+    }
 
 
 app.include_router(root)
 app.include_router(circuits.router)
+app.include_router(sequential.router)
