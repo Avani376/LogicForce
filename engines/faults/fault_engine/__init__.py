@@ -4,6 +4,12 @@ Faults are pure document transformations; nominal models are never mutated.
 Normative contract: ``docs/semantics/faults-and-repair.md``.
 """
 
+from fault_engine.experiment import (
+    CheckResult,
+    FaultExperimentReport,
+    fault_experiment_report_to_dict,
+    run_fault_experiment,
+)
 from fault_engine.faults import (
     ALL_OPERATORS,
     COMB_OPERATORS,
@@ -30,4 +36,8 @@ __all__ = [
     "FAULT_MODEL_KINDS",
     "parse_fault",
     "apply_fault",
+    "run_fault_experiment",
+    "fault_experiment_report_to_dict",
+    "FaultExperimentReport",
+    "CheckResult",
 ]
