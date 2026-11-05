@@ -11,7 +11,10 @@ Two property kinds, both checked **exhaustively** over their (bounded) model spa
    primary outputs must evaluate to `1` for **every** input vector
    (`EXHAUSTIVE(2^n)`, n ≤ 12 — the truth-table bound).
 2. `fsm_invariant` — a boolean expression over an FSM's declared outputs must
-   evaluate to `1` in **every reachable state** (`EXHAUSTIVE(k of N states)`).
+   evaluate to `1` for **every reachable transition firing** (`EXHAUSTIVE(F firings
+   over k of N states)`). Firing semantics are identical to `fsm_simulate`: for
+   every reachable `(state, input vector)` pair, the first matching transition
+   (document order) produces the output vector; unmatched vectors hold the state.
 
 Anything outside these bounds is refused with an `INCOMPLETE` verdict and a reason —
 never silently bounded, never sampled.
@@ -52,17 +55,16 @@ An invariant **holds** only where the expression evaluates to exactly `1`.
 unknowns; a design that produces X under legal inputs is not proven safe. This is
 checked and reported, never assumed away.
 
-## Reachability and output assignment (FSM)
+## Reachability and firings (FSM)
 
 - Reachable states: BFS from `initial` over **all** binary input vectors
   (`2^|inputs|`), matching transitions as in `fsm-model.md` (first match in
   document order; unmatched vectors hold the state).
-- Output assignment: each state's output vector is the `outputs` of the **first
-  transition (document order) that enters it**; the initial state uses the first
-  transition (document order) whose source is the initial state. The convention is
-  deterministic and reported in `assumptions`.
-- Bounds: states ≤ 256 and inputs ≤ 10 (2^10 vectors per state ⇒ ≤ 262,144 firings).
-  Beyond either: verdict `INCOMPLETE`, reason `MODEL_TOO_LARGE` with the numbers.
+- Checking unit is the **firing** (reachable `(state, vector)` pair with a matched
+  transition): its output vector is what `fsm_simulate` records as that cycle's
+  outputs — so counterexamples and replays cannot disagree about semantics.
+- Bounds: states ≤ 256 and inputs ≤ 10 (≤ 262,144 firings). Beyond either: verdict
+  `INCOMPLETE`, reason `MODEL_TOO_LARGE` with the numbers.
 
 ## Verdicts and reports
 
@@ -89,8 +91,10 @@ checked and reported, never assumed away.
   - combinational: `{ "inputs": {...}, "outputs": {...} }` — replay via
     `POST /api/circuits/simulate` with that vector.
   - FSM: `{ "inputs_sequence": [...], "violating_state": "…", "outputs": {...} }` —
-    replay via `POST /api/fsm/simulate`; the last cycle must reach the violating
-    state. The sequence is the BFS shortest path from `initial`.
+    replay via `POST /api/fsm/simulate`. The sequence is the BFS shortest path to
+    the violating state's *source* plus the violating input vector; in the replay,
+    the last row's outputs are exactly the violating firing's outputs and
+    `final_state` is `violating_state`.
 - `INCOMPLETE` — model outside bounds or malformed model data at verification time;
   `reason` is mandatory; `counterexample` is null. INCOMPLETE is never rendered as
   a pass.
