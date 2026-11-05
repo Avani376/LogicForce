@@ -24,7 +24,20 @@ from cpu8086.registers import (
 )
 from cpu8086.version import MAX_RUN_STEPS, POWER_ON_SP
 
-_ARITHMETIC = {"ADD", "ADC", "SUB", "SBB", "CMP", "AND", "OR", "XOR", "TEST"}
+_ARITHMETIC = {
+    "ADD",
+    "ADC",
+    "SUB",
+    "SBB",
+    "CMP",
+    "AND",
+    "OR",
+    "XOR",
+    "TEST",
+    "INC",
+    "DEC",
+    "NEG",
+}
 
 
 @dataclass(frozen=True)
@@ -144,8 +157,8 @@ class Cpu:
             arithmetic_changes, halted = self._execute_arithmetic(instruction)
             memory_changes.extend(arithmetic_changes)
         elif mnemonic == "PUSH":
-            assert instruction.src is not None
-            value = self._resolve_read(instruction.src) & 0xFFFF
+            assert instruction.dest is not None
+            value = self._resolve_read(instruction.dest) & 0xFFFF
             sp = (self.registers.get("SP") - 2) & 0xFFFF
             self.registers.set("SP", sp)
             self.memory.write_word(self.registers.get("SS"), sp, value)
@@ -255,6 +268,7 @@ class Cpu:
         elif mnemonic == "SUB" or mnemonic == "CMP":
             deltas = sub_flags(old, source_value, 0, width)
             result = (old - source_value) & mask
+            self.registers.set_flags(deltas)
             if mnemonic == "CMP":
                 return memory_changes, halted  # flags only; dest unchanged
         elif mnemonic == "SBB":
@@ -272,7 +286,8 @@ class Cpu:
         elif mnemonic == "TEST":
             result = old & source_value
             deltas = logic_flags(result, width)
-            return memory_changes, halted  # flags only
+            self.registers.set_flags(deltas)
+            return memory_changes, halted  # flags only; dest unchanged
         elif mnemonic == "INC":
             result = (old + 1) & mask
             deltas = inc_dec_flags(old, result, width, increment=True)
