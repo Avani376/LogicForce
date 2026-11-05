@@ -39,7 +39,11 @@ list of what the platform cannot do today.
   `logic_depth` is an abstract gate-level count — **no delay model exists and no
   delay/hardware timing is claimed**. Optimization beyond 12 inputs is refused
   (equivalence cannot be verified exhaustively).
-- **No 8086 emulator, interrupts, or co-simulation** (Phases 6–8).
+- **8086 core is IR-based and subset-scoped**: the assembler produces typed internal
+  instructions (native machine-code encoding/decoding is excluded), IP is an
+  instruction index, and the declared subset (MOV, add/sub group, logic group,
+  stack, jumps, CALL/RET, LOOP, NOP/HLT) covers a fraction of real 8086 behavior.
+  Interrupts are Phase 7; co-simulation Phase 8. Not an 8086 compatibility claim.
 - **No AI assistance** (Phase 9). When it arrives it will be advisory and labeled; it will
   not compute results.
 - **No persistence, users, auth, or multi-tenancy** (D5): the API is a stateless compute

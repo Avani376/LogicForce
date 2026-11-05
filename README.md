@@ -34,6 +34,10 @@ of truth and every result traceable.
   rewrites (double negation, buffers, constant folding, duplicate merge, dead gates) with
   **per-transformation exhaustive equivalence evidence** — objective improves, truth
   table provably unchanged.
+- **8086 educational core** (`engines/cpu8086`, v0.6.0): IR-based assembler + executor
+  for a declared instruction subset with exact Intel-documented flag semantics, 1MiB
+  segmented memory with mod-2^20 wraparound, and debugger controls (step, bounded run,
+  breakpoints, full trace).
 - **Operator workspace** (`apps/web`): accessible gate editor — palette, drag placement,
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
   sequential waveform viewer, undo/redo, save/load.

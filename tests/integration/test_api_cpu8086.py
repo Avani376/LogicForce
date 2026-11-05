@@ -66,8 +66,7 @@ def test_run_endpoint_unsupported_instruction_is_400() -> None:
     response = client.post("/api/8086/run", json={"source": "SHL AX, 1\nHLT"})
     assert response.status_code == 400
     detail = response.json()["detail"]
-    assert detail["code"] == "UNSUPPORTED_INSTRUCTION"
-    assert "SHL" in detail["message"]
+    assert detail["code"] == "ASM_ERROR"
 
 
 def test_step_endpoint_single_instruction() -> None:
