@@ -32,7 +32,7 @@ class TraceRecord:
     step: int
     ip: int
     instruction: str
-    register_changes: dict[str, object]
+    register_changes: dict[str, int]
     flag_changes: dict[str, int]
     memory_changes: tuple[tuple[int, int], ...]
     halted: bool
@@ -90,11 +90,11 @@ class Cpu:
             segment, offset = self._effective_address(operand)
             if operand.width == 8:
                 self.memory.write_byte(segment, offset, value)
-                return (physical(self.memory, segment, offset), value & 0xFF)
+                return ((physical(segment, offset), value & 0xFF),)
             self.memory.write_word(segment, offset, value)
             return (
-                physical(self.memory, segment, offset),
-                physical(self.memory, segment, offset + 1),
+                (physical(segment, offset), value & 0xFF),
+                (physical(segment, offset + 1), (value >> 8) & 0xFF),
             )
         raise CpuRuntimeError(self._steps_taken, f"unwritable operand kind {operand.kind!r}")
 
@@ -141,9 +141,8 @@ class Cpu:
             if memory_changes_result:
                 memory_changes.extend(memory_changes_result)
         elif mnemonic in _ARITHMETIC:
-            memory_changes_result, halted = self._execute_arithmetic(instruction)
-            if memory_changes_result:
-                memory_changes.extend(memory_changes_result)
+            arithmetic_changes, halted = self._execute_arithmetic(instruction)
+            memory_changes.extend(arithmetic_changes)
         elif mnemonic == "PUSH":
             assert instruction.src is not None
             value = self._resolve_read(instruction.src) & 0xFFFF
@@ -152,8 +151,8 @@ class Cpu:
             self.memory.write_word(self.registers.get("SS"), sp, value)
             memory_changes.extend(
                 [
-                    (physical(self.memory, self.registers.get("SS"), sp), value & 0xFF),
-                    (physical(self.memory, self.registers.get("SS"), sp + 1), (value >> 8) & 0xFF),
+                    (physical(self.registers.get("SS"), sp), value & 0xFF),
+                    (physical(self.registers.get("SS"), sp + 1), (value >> 8) & 0xFF),
                 ]
             )
         elif mnemonic == "POP":
@@ -197,9 +196,9 @@ class Cpu:
             self.memory.write_word(self.registers.get("SS"), sp, return_ip)
             memory_changes.extend(
                 [
-                    (physical(self.memory, self.registers.get("SS"), sp), return_ip & 0xFF),
+                    (physical(self.registers.get("SS"), sp), return_ip & 0xFF),
                     (
-                        physical(self.memory, self.registers.get("SS"), sp + 1),
+                        physical(self.registers.get("SS"), sp + 1),
                         (return_ip >> 8) & 0xFF,
                     ),
                 ]
@@ -242,11 +241,8 @@ class Cpu:
         width = _operand_width_bits(instruction.dest)
         mask = (1 << width) - 1
         old = self._read_dest(instruction.dest, width)
-        source_value: int
-        if instruction.src is None:
-            source_value = 1  # INC/DEC implicit
-        else:
-            source_value = self._resolve_read(instruction.src) & mask
+        # INC/DEC have an implicit +1/-1; all other ops read their source operand
+        source_value = 1 if instruction.src is None else self._resolve_read(instruction.src) & mask
         memory_changes: list[tuple[int, int]] = []
         halted = False
 

@@ -67,7 +67,8 @@ _BASE_COMBOS = {
 class Operand:
     kind: str  # "reg" | "seg" | "imm" | "mem"
     name: str = ""  # register/segment name (reg/seg kinds)
-    value: int | str = 0  # immediate value, or label name for jump operands
+    value: int = 0  # immediate value (imm kind)
+    label: str = ""  # symbolic jump target (jump-family operands only)
     width: int = 0  # 8 or 16; 0 = not yet pinned (mem without prefix — rejected later)
     mem_terms: tuple[str, ...] = ()  # base/index register terms (mem kind)
     mem_disp: int = 0  # displacement (mem kind)
@@ -233,14 +234,15 @@ def _check_operand_compat(
             "SIZE_MISMATCH",
             "memory operand needs an explicit BYTE or WORD size prefix",
         )
-    if src is not None and src.kind == "imm":
-        # immediate must fit the destination width
-        if dest is not None and dest.kind in ("reg", "mem"):
-            dest_width = _operand_width(dest)
-            if dest_width == 8 and not (-128 <= src.value <= 255):
-                raise AsmError(
-                    line, "SIZE_MISMATCH", f"immediate {src.value} does not fit a byte operand"
-                )
+    if (
+        src is not None
+        and src.kind == "imm"
+        and dest is not None
+        and dest.kind in ("reg", "mem")
+        and _operand_width(dest) == 8
+        and not (-128 <= src.value <= 255)
+    ):
+        raise AsmError(line, "SIZE_MISMATCH", f"immediate {src.value} does not fit a byte operand")
     if (
         dest is not None
         and src is not None
@@ -352,7 +354,7 @@ def assemble(source: str) -> AssembledProgram:
                 label_name = target_text.strip().upper()
                 if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", label_name):
                     raise AsmError(line_number, "SYNTAX", f"bad jump target {target_text!r}")
-                operands = [Operand(kind="imm", value=label_name, width=16)]
+                operands = [Operand(kind="imm", label=label_name, width=16)]
             dest, src = _validate_signature(mnemonic, line_number, operands)
         else:
             operands = [_parse_operand(o, line_number) for o in raw_operands]
@@ -383,22 +385,22 @@ def assemble(source: str) -> AssembledProgram:
     # second pass: resolve symbolic label targets to instruction indices
     resolved: list[Instruction] = []
     for instruction in instructions:
-        if instruction.mnemonic in MNEMONICS_JUMP and instruction.dest is not None:
-            raw_value = instruction.dest.value
-            if isinstance(raw_value, str):
-                label = raw_value
-                if label not in labels:
-                    raise AsmError(
-                        instruction.line, "UNKNOWN_LABEL", f"label {label!r} is not defined"
-                    )
-                instruction = Instruction(
-                    index=instruction.index,
-                    mnemonic=instruction.mnemonic,
-                    dest=Operand(kind="imm", value=labels[label], width=16),
-                    src=None,
-                    line=instruction.line,
-                    text=instruction.text,
-                )
+        if (
+            instruction.mnemonic in MNEMONICS_JUMP
+            and instruction.dest is not None
+            and instruction.dest.label
+        ):
+            label = instruction.dest.label
+            if label not in labels:
+                raise AsmError(instruction.line, "UNKNOWN_LABEL", f"label {label!r} is not defined")
+            instruction = Instruction(
+                index=instruction.index,
+                mnemonic=instruction.mnemonic,
+                dest=Operand(kind="imm", value=labels[label], width=16),
+                src=None,
+                line=instruction.line,
+                text=instruction.text,
+            )
         resolved.append(instruction)
 
     return AssembledProgram(instructions=tuple(resolved), labels=labels, source_lines=len(lines))
