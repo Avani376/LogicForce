@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from cpu8086 import AsmError, CpuRuntimeError, UnsupportedInstructionError, assemble
+from cpu8086.interrupts import ScheduledInterrupt
 from cpu8086.machine import Cpu, assemble_and_load
 from cpu8086.version import CPU8086_ENGINE_VERSION
 from fastapi import APIRouter, HTTPException
@@ -17,10 +18,18 @@ class AssembleRequest(BaseModel):
     source: str
 
 
+class ScheduledInterruptIn(BaseModel):
+    source: str
+    at_step: int
+    number: int
+
+
 class RunRequest(BaseModel):
     source: str
     max_steps: int = 10_000
     breakpoints: list[int] = Field(default_factory=list)
+    interrupts: dict[int, str] = Field(default_factory=dict)
+    schedule: list[ScheduledInterruptIn] = Field(default_factory=list)
 
 
 class StepRequest(BaseModel):
@@ -56,7 +65,11 @@ def assemble_endpoint(request: AssembleRequest) -> dict[str, Any]:
 def run_endpoint(request: RunRequest) -> dict[str, Any]:
     machine: Cpu
     try:
-        machine = assemble_and_load(request.source)
+        schedule = [
+            ScheduledInterrupt(source=s.source, at_step=s.at_step, number=s.number)
+            for s in request.schedule
+        ]
+        machine = assemble_and_load(request.source, request.interrupts, schedule)
         trace, stop_reason = machine.run(
             max_steps=request.max_steps, breakpoints=tuple(request.breakpoints)
         )
@@ -78,6 +91,11 @@ def run_endpoint(request: RunRequest) -> dict[str, Any]:
         "flags": dict(machine.registers.flags),
         "trace": [
             {
+                "kind": record.kind,
+                "number": record.number,
+                "source": record.source,
+                "handler": record.handler,
+                "resumed_at": record.resumed_at,
                 "step": record.step,
                 "ip": record.ip,
                 "instruction": record.instruction,
