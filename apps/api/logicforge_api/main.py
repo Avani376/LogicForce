@@ -12,7 +12,7 @@ from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 
 from logicforge_api import API_VERSION
-from logicforge_api.routers import circuits, sequential
+from logicforge_api.routers import circuits, sequential, verify
 
 app = FastAPI(
     title="LogicForge API",
@@ -41,3 +41,4 @@ def health() -> dict[str, str]:
 app.include_router(root)
 app.include_router(circuits.router)
 app.include_router(sequential.router)
+app.include_router(verify.router)
