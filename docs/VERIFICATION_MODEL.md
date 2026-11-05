@@ -1,7 +1,8 @@
 # Verification Model — LogicForge
 
-Status: model and schema **defined** (Phase 0). The verification engine itself is
-**Phase 3**; nothing in this file claims it exists yet.
+Status: **implemented** (verify_engine 0.3.0, Phase 3) — invariants over bounded
+models with exhaustive scope labels and replayable counterexamples. Normative
+contract: [`semantics/verification-engine.md`](semantics/verification-engine.md).
 
 ## What verification means here
 
@@ -13,9 +14,9 @@ not AI, not sampling of demo examples, and never a UI-side assertion.
 
 | v | Property kinds | Algorithm |
 |---|---|---|
-| Phase 1 (now) | Truth-table equivalence of a circuit against expected rows | exhaustive enumeration (bounded to 12 inputs) |
-| Phase 3 | Output conditions, forbidden state combinations (`G !(A & B)`), transition constraints | exhaustive over finite input space; BFS reachability over FSM state space with visited-set hashing |
-| Phase 3+ | Bounded reachability for larger models | bounded model checking; scope label `BOUNDED(k)` mandatory |
+| Phase 1 (done) | Truth-table equivalence of a circuit against expected rows | exhaustive enumeration (bounded to 12 inputs) |
+| Phase 3 (done) | Invariants over outputs: `G !(A & B)` — combinational (all input vectors) and FSM (all reachable firings) | exhaustive over the bounded model; refusals beyond bounds become INCOMPLETE with reason |
+| Later | Bounded reachability for larger models, transition constraints | bounded model checking; scope label `BOUNDED(k)` mandatory |
 
 ## Verdicts
 

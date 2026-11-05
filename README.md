@@ -20,9 +20,15 @@ of truth and every result traceable.
   committed expected truth tables.
 - **API service** (`apps/api`): `POST /api/circuits/validate`, `/simulate`,
   `/truth-table` (exhaustive ≤ 12 inputs), `GET /api/health`.
+- **Sequential engine** (`engines/sequential`, v0.2.0): DFF/TFF/JK/SR flip-flops,
+  registers, counters with a documented global-clock tick model; waveform trace.
+- **Verification engine** (`engines/verify`, v0.3.0): exhaustive invariant checking
+  (combinational + FSM firing space) with `EXHAUSTIVE`/`INCOMPLETE` scope labels and
+  **replayable counterexamples** — the faulty traffic-light controller is an automated
+  acceptance test.
 - **Operator workspace** (`apps/web`): accessible gate editor — palette, drag placement,
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
-  undo/redo, save/load.
+  sequential waveform viewer, undo/redo, save/load.
 
 ## Quickstart
 
