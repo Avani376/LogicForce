@@ -32,6 +32,8 @@ stepping stone to the Phase 3 verification engine (reachability + counterexample
 
 Rules:
 
+- `inputs` and `outputs` may be **empty arrays** (autonomous machines with no
+  environment inputs); `states` must be non-empty.
 - `when` is an **exact partial assignment**: names listed must match the cycle's
   input values exactly; names omitted match any value. Deterministic matching order:
   1. All transitions from the current state whose `when` matches exactly.

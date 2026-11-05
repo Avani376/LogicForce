@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from logic_engine import CircuitNotValidError, SchemaError
+from logic_engine import CircuitNotValidError, InvalidInputValueError, SchemaError
 from pydantic import BaseModel, Field
 from sequential_engine import (
     SEQUENTIAL_ENGINE_VERSION,
@@ -28,7 +28,7 @@ router = APIRouter(prefix="/api", tags=["sequential"])
 
 class SequentialRequest(BaseModel):
     circuit: dict[str, Any]
-    cycles: int
+    cycles: int = Field(strict=True)
     inputs_per_cycle: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -72,6 +72,15 @@ def simulate_sequential_endpoint(request: SequentialRequest) -> dict[str, Any]:
                     }
                     for issue in exc.report.warnings
                 ],
+            },
+        ) from exc
+    except InvalidInputValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "INVALID_INPUT_VALUE",
+                "message": str(exc),
+                "input": exc.name,
             },
         ) from exc
     except SchemaError as exc:

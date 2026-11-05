@@ -61,6 +61,60 @@ def test_sequential_invalid_circuit_is_400() -> None:
     assert any(e["code"] == "DANGLING_INPUT_PIN" for e in detail["errors"])
 
 
+def test_sequential_invalid_input_value_is_400_not_500() -> None:
+    """Audit regression: InvalidInputValueError must map to a typed 400, never 500."""
+    doc = {
+        "schema_version": 2,
+        "components": [
+            {"id": "C0", "type": "CONST0"},
+            {"id": "IN_d", "type": "INPUT", "params": {"name": "d"}},
+            {"id": "FF1", "type": "DFF"},
+            {"id": "OUT_q", "type": "OUTPUT", "params": {"name": "q"}},
+        ],
+        "nets": [
+            {
+                "id": "n1",
+                "driver": {"component": "C0", "pin": "out"},
+                "sinks": [{"component": "FF1", "pin": "pre"}],
+            },
+            {
+                "id": "n2",
+                "driver": {"component": "C0", "pin": "out"},
+                "sinks": [{"component": "FF1", "pin": "clr"}],
+            },
+            {
+                "id": "n3",
+                "driver": {"component": "IN_d", "pin": "out"},
+                "sinks": [{"component": "FF1", "pin": "d"}],
+            },
+            {
+                "id": "n4",
+                "driver": {"component": "FF1", "pin": "q"},
+                "sinks": [{"component": "OUT_q", "pin": "in"}],
+            },
+        ],
+    }
+    response = client.post(
+        "/api/sequential/simulate",
+        json={"circuit": doc, "cycles": 2, "inputs_per_cycle": [{"d": "2"}]},
+    )
+    assert response.status_code == 400, response.text
+    detail = response.json()["detail"]
+    assert detail["code"] == "INVALID_INPUT_VALUE"
+    assert detail["input"] == "d"
+
+
+def test_sequential_bool_cycles_is_a_shape_error() -> None:
+    """cycles=true is a bool, not an integer — pydantic strict mode rejects the
+    shape (HTTP 422); the engine's own bool guard remains defense in depth."""
+    fixture = load(SEQ_FIXTURE)
+    response = client.post(
+        "/api/sequential/simulate",
+        json={"circuit": fixture["circuit"], "cycles": True, "inputs_per_cycle": []},
+    )
+    assert response.status_code == 422
+
+
 def test_sequential_cycles_bound_is_400() -> None:
     fixture = load(SEQ_FIXTURE)
     response = client.post(

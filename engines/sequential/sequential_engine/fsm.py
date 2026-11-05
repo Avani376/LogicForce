@@ -79,14 +79,21 @@ def parse_fsm(raw: object) -> FSM:
     states = raw.get("states")
     initial = raw.get("initial")
     transitions_raw = raw.get("transitions")
-    for field, value in (("inputs", inputs), ("outputs", outputs), ("states", states)):
-        if not isinstance(value, list) or not value:
-            raise SchemaError("FSM_SCHEMA_ERROR", f"'{field}' must be a non-empty array")
+    # inputs/outputs may be empty (autonomous machines); states may not.
+    for field, value in (("inputs", inputs), ("outputs", outputs)):
+        if not isinstance(value, list):
+            raise SchemaError("FSM_SCHEMA_ERROR", f"'{field}' must be an array")
         if not all(isinstance(item, str) and item for item in value):
             raise SchemaError("FSM_SCHEMA_ERROR", f"'{field}' entries must be non-empty strings")
         if len(set(value)) != len(value):
             raise SchemaError("FSM_SCHEMA_ERROR", f"'{field}' contains duplicates")
-    # The loop above proved all three are non-empty string arrays; narrow for mypy.
+    if not isinstance(states, list) or not states:
+        raise SchemaError("FSM_SCHEMA_ERROR", "'states' must be a non-empty array")
+    if not all(isinstance(item, str) and item for item in states):
+        raise SchemaError("FSM_SCHEMA_ERROR", "'states' entries must be non-empty strings")
+    if len(set(states)) != len(states):
+        raise SchemaError("FSM_SCHEMA_ERROR", "'states' contains duplicates")
+    # The checks above proved all three are string arrays; narrow for mypy.
     assert isinstance(inputs, list) and isinstance(outputs, list) and isinstance(states, list)
     if not isinstance(initial, str) or initial not in states:
         raise SchemaError("FSM_SCHEMA_ERROR", f"'initial' {initial!r} is not a declared state")
