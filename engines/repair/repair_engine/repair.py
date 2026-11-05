@@ -275,6 +275,12 @@ def search_repairs(
             "FAULT_SCHEMA_ERROR",
             f"max_candidates must be in [1, {MAX_CANDIDATES}], got {max_candidates}",
         )
+    if not properties:
+        raise SchemaError(
+            "FAULT_SCHEMA_ERROR",
+            "repair requires at least one property: 'repaired' is a safety claim "
+            "and cannot be verified against an empty suite",
+        )
     deltas = compute_deltas(model_kind, nominal, faulty)
     candidates: list[dict[str, object]] = [{"op": "restore_nominal", "ops": copy.deepcopy(deltas)}]
     candidates.extend(copy.deepcopy(delta) for delta in deltas)

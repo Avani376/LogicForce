@@ -99,8 +99,11 @@ Request: nominal model + faulty model + the property suite + `max_candidates`
 (1–32, default 16). The v1 strategy is **delta-guided repair toward the nominal
 reference**:
 
-1. Diff faulty vs nominal (FSM: per-transition `to`/`outputs` fields; combinational:
-   per-component type, per-net driver).
+1. Diff faulty vs nominal (FSM: per-transition `to`/`outputs` fields aligned by
+   index; combinational: per-component type, per-net driver by id). **v1 limitation**:
+   FSM transitions are index-aligned — inserting/removing a *middle* transition shifts
+   every later index and degrades delta quality (content-based alignment is future
+   work); tail removals align cleanly.
 2. Each differing field yields one **candidate patch** restoring that field to the
    nominal value (single-field patches; deterministic order: index, then field name).
 3. Candidates are capped at `max_candidates` — the cap is reported, never hidden.
