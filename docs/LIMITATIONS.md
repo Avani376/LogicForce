@@ -42,8 +42,11 @@ list of what the platform cannot do today.
 - **8086 core is IR-based and subset-scoped**: the assembler produces typed internal
   instructions (native machine-code encoding/decoding is excluded), IP is an
   instruction index, and the declared subset (MOV, add/sub group, logic group,
-  stack, jumps, CALL/RET, LOOP, NOP/HLT) covers a fraction of real 8086 behavior.
-  Interrupts are Phase 7; co-simulation Phase 8. Not an 8086 compatibility claim.
+  stack, jumps, CALL/RET, LOOP, INT n/IRET/STI/CLI, NOP/HLT) covers a fraction of
+  real 8086 behavior. Interrupts are educational (software INT + deterministically
+  scheduled NMI/INTR at instruction boundaries — no async edge timing, no 8259 PIC
+  model, no interrupt priorities). Co-simulation is Phase 8. Not an 8086
+  compatibility claim.
 - **No AI assistance** (Phase 9). When it arrives it will be advisory and labeled; it will
   not compute results.
 - **No persistence, users, auth, or multi-tenancy** (D5): the API is a stateless compute
