@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
 from cpu8086 import AsmError, CpuRuntimeError, UnsupportedInstructionError, assemble
 from cpu8086.executor import Cpu, assemble_and_load
 from cpu8086.version import CPU8086_ENGINE_VERSION
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
 
 router = APIRouter(prefix="/api/8086", tags=["8086"])
 

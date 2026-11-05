@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi.testclient import TestClient
-
 from logicforge_api.main import app
 
 client = TestClient(app)
@@ -33,9 +30,7 @@ def test_assemble_syntax_error_is_400_with_line() -> None:
 
 
 def test_run_endpoint_hlt_and_registers() -> None:
-    response = client.post(
-        "/api/8086/run", json={"source": SUM_PROGRAM, "max_steps": 100}
-    )
+    response = client.post("/api/8086/run", json={"source": SUM_PROGRAM, "max_steps": 100})
     assert response.status_code == 200
     body = response.json()
     assert body["stop_reason"] == "hlt"
@@ -45,9 +40,7 @@ def test_run_endpoint_hlt_and_registers() -> None:
 
 
 def test_run_endpoint_bounded_loop_reports_max_steps() -> None:
-    response = client.post(
-        "/api/8086/run", json={"source": "top:\nJMP top\n", "max_steps": 25}
-    )
+    response = client.post("/api/8086/run", json={"source": "top:\nJMP top\n", "max_steps": 25})
     assert response.status_code == 200
     body = response.json()
     assert body["stop_reason"] == "max_steps"
@@ -55,9 +48,7 @@ def test_run_endpoint_bounded_loop_reports_max_steps() -> None:
 
 
 def test_run_endpoint_max_steps_out_of_bounds_is_400() -> None:
-    response = client.post(
-        "/api/8086/run", json={"source": "HLT", "max_steps": 200_000}
-    )
+    response = client.post("/api/8086/run", json={"source": "HLT", "max_steps": 200_000})
     assert response.status_code == 400
     assert response.json()["detail"]["code"] == "CPU_RUNTIME_ERROR"
 
