@@ -69,6 +69,10 @@ class Cpu:
         self.halted = False
         self._steps_taken = 0
 
+    def _trace_history(self) -> tuple[TraceRecord, ...]:
+        """Test-only: full trace of the last run (run() returns records already)."""
+        return self._last_run
+
     def reset(self) -> None:
         """Power-on state: registers zeroed, SP = 0xFFFE, IP = 0, memory as loaded."""
         self.registers = Registers()
@@ -340,16 +344,20 @@ class Cpu:
         if not 1 <= max_steps <= MAX_RUN_STEPS:
             raise CpuRuntimeError(self._steps_taken, f"max_steps must be in [1, {MAX_RUN_STEPS}]")
         records: list[TraceRecord] = []
+        self._last_run: tuple[TraceRecord, ...] = ()
         for _ in range(max_steps):
             next_ip = self.registers.get("IP")
             if next_ip in breakpoints and self._steps_taken > 0:
-                return tuple(records), "breakpoint"
+                self._last_run = tuple(records)
+                return self._last_run, "breakpoint"
             if self.halted:
                 return tuple(records), "hlt"
             records.append(self.step())
             if records[-1].halted:
-                return tuple(records), "hlt"
-        return tuple(records), "max_steps"
+                self._last_run = tuple(records)
+                return self._last_run, "hlt"
+        self._last_run = tuple(records)
+        return self._last_run, "max_steps"
 
 
 def _operand_width_bits(operand: Operand) -> int:
