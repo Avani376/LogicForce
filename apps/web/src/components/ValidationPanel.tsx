@@ -1,17 +1,21 @@
 /** Validation report panel: errors first, then warnings. Honest and complete. */
 
-import type { SimulationResult, ValidationReport } from '../types'
+import type { SequentialResult, SimulationResult, ValidationReport } from '../types'
 
 interface ValidationPanelProps {
   report: ValidationReport | null
   sim: SimulationResult | null
+  seq: SequentialResult | null
 }
 
-export function ValidationPanel({ report, sim }: ValidationPanelProps): JSX.Element {
+export function ValidationPanel({ report, sim, seq }: ValidationPanelProps): JSX.Element {
   if (report !== null && !report.ok) {
     return (
       <section className="panel panel-error" aria-label="Validation report">
-        <h2>Validation — {report.errors.length} error{report.errors.length === 1 ? '' : 's'}</h2>
+        <h2>
+          Validation — {report.errors.length} error
+          {report.errors.length === 1 ? '' : 's'}
+        </h2>
         <ul className="issue-list">
           {report.errors.map((issue, index) => (
             <li key={`${issue.code}_${index}`} className="issue issue-error">
@@ -20,9 +24,7 @@ export function ValidationPanel({ report, sim }: ValidationPanelProps): JSX.Elem
             </li>
           ))}
         </ul>
-        <p className="muted">
-          The engine refuses to simulate circuits with validation errors.
-        </p>
+        <p className="muted">The engine refuses to simulate circuits with validation errors.</p>
       </section>
     )
   }
@@ -46,6 +48,16 @@ export function ValidationPanel({ report, sim }: ValidationPanelProps): JSX.Elem
       <section className="panel panel-ok" aria-label="Validation report">
         <h2>Validation</h2>
         <p className="ok-text">✓ No validation errors — simulated by engine {sim.engine_version}</p>
+      </section>
+    )
+  }
+  if (seq !== null) {
+    return (
+      <section className="panel panel-ok" aria-label="Validation report">
+        <h2>Validation</h2>
+        <p className="ok-text">
+          ✓ No validation errors — simulated by sequential engine {seq.engine_version}
+        </p>
       </section>
     )
   }

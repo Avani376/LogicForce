@@ -50,7 +50,7 @@ export interface NetDoc {
 }
 
 export interface CircuitDoc {
-  schema_version: 1
+  schema_version: 1 | 2
   name?: string
   components: ComponentDoc[]
   nets: NetDoc[]

@@ -6,8 +6,8 @@ a phase is *Done* only when its exit criterion has actually passed with executed
 | Phase | Deliverable | Exit criterion | Status |
 |---|---|---|---|
 | 0 | Architecture, semantics docs, repo scaffold, CI | Scope and engine rules documented; toolchain verified; CI config committed | **Done (this session)** |
-| 1 | Deterministic combinational engine + truth tables + FastAPI service + gate editor MVP | Reference circuits (half adder, full adder, 2:1 mux, 4:1 mux, 2:4 decoder) pass golden tests; engine + API tests green; web production build passes | **In progress (this session)** |
-| 2 | Sequential engine: flip-flops, registers, counters, FSM, waveforms | Clock/state semantics documented + tested; waveform trace from engine | Planned |
+| 1 | Deterministic combinational engine + truth tables + FastAPI service + gate editor MVP | Reference circuits (half adder, full adder, 2:1 mux, 4:1 mux, 2:4 decoder) pass golden tests; engine + API tests green; web production build passes | **Done (session 1)** |
+| 2 | Sequential engine: flip-flops, registers, counters, FSM, waveforms | Clock/state semantics documented + tested; waveform trace from engine | **Done (session 2)** — engine, API, waveform viewer; FSM state-graph SVG viz and editor placement of sequential components are follow-ups |
 | 3 | Verification engine v1 + counterexamples | Faulty traffic-light FSM yields a reproducible counterexample | Planned |
 | 4 | Fault injection + repair search + re-verification | Seeded fault detected; repair candidate re-verifies against original suite | Planned |
 | 5 | Optimization with equivalence checking | Metric improves while behavior stays equivalent | Planned |

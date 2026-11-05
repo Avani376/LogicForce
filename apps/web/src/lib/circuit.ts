@@ -279,6 +279,9 @@ export function toDoc(state: EditorState): CircuitDoc {
     if (isMultiInput(c.type) && gateWidth(c.type, c) !== 2) {
       doc.params = { ...(doc.params ?? {}), width: gateWidth(c.type, c) }
     }
+    if (isSequential(c.type) && (c.type === 'REGISTER' || c.type === 'COUNTER')) {
+      doc.params = { ...(doc.params ?? {}), width: stateWidth(c.type, c) }
+    }
     if (c.label !== undefined) doc.label = c.label
     return doc
   })
@@ -287,8 +290,10 @@ export function toDoc(state: EditorState): CircuitDoc {
     driver: { component: n.driver.component, pin: n.driver.pin },
     sinks: n.sinks.map((s) => ({ component: s.component, pin: s.pin })),
   }))
+  // circuits containing state components are schema v2 documents (sequential engine)
+  const hasState = state.components.some((c) => isSequential(c.type))
   return {
-    schema_version: 1,
+    schema_version: hasState ? 2 : 1,
     name: state.name,
     components,
     nets,

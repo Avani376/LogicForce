@@ -378,6 +378,10 @@ export function App(): JSX.Element {
   }, [undo, redo])
 
   const netValues = useMemo(() => computeNetValues(sim), [sim])
+  const probeOutputs = useMemo(
+    () => sim?.outputs ?? seqResult?.cycles[seqResult.cycles.length - 1]?.outputs ?? {},
+    [sim, seqResult],
+  )
   const inputComponents = present.components.filter((c) => c.type === 'INPUT')
 
   return (
@@ -459,11 +463,7 @@ export function App(): JSX.Element {
           <Canvas
             state={present}
             netValues={netValues}
-            outputs={
-              sim?.outputs ??
-              seqResult?.cycles[seqResult.cycles.length - 1]?.outputs ??
-              {}
-            }
+            outputs={probeOutputs}
             selectedId={selectedId}
             pendingPin={pendingPin}
             onSelect={setSelectedId}
@@ -483,14 +483,14 @@ export function App(): JSX.Element {
         </section>
 
         <aside className="side-panel" aria-label="Simulation status and validation">
-          <ValidationPanel report={validation} sim={sim} />
+          <ValidationPanel report={validation} sim={sim} seq={seqResult} />
           <section className="panel" aria-label="Primary outputs">
             <h2>Outputs</h2>
-            {sim === null || Object.keys(sim.outputs).length === 0 ? (
+            {Object.keys(probeOutputs).length === 0 ? (
               <p className="muted">No OUTPUT components yet.</p>
             ) : (
               <ul className="probe-list">
-                {Object.entries(sim.outputs).map(([name, value]) => (
+                {Object.entries(probeOutputs).map(([name, value]) => (
                   <li key={name}>
                     <span className="probe-name">{name}</span>
                     <span className={`probe-value value-${value}`} aria-label={`${name} is ${value}`}>
