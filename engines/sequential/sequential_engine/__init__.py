@@ -13,6 +13,16 @@ from sequential_engine.flipflops import (
     srff_next,
     tff_next,
 )
+from sequential_engine.fsm import (
+    FSM,
+    FSMCycle,
+    FSMResult,
+    FSMTransition,
+    fsm_reachable,
+    fsm_result_to_dict,
+    fsm_simulate,
+    parse_fsm,
+)
 from sequential_engine.graph import (
     MULTI_BIT_TYPES,
     SUPPORTED_SEQUENTIAL_TYPES,
@@ -55,4 +65,12 @@ __all__ = [
     "SequentialResult",
     "CycleRecord",
     "SeqEvent",
+    "FSM",
+    "FSMCycle",
+    "FSMResult",
+    "FSMTransition",
+    "parse_fsm",
+    "fsm_simulate",
+    "fsm_result_to_dict",
+    "fsm_reachable",
 ]

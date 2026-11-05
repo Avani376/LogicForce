@@ -1,0 +1,212 @@
+{
+  "fsm": {
+    "fsm_schema_version": 1,
+    "name": "traffic_light",
+    "inputs": [
+      "ped_button"
+    ],
+    "outputs": [
+      "north_green",
+      "east_green"
+    ],
+    "states": [
+      "north_green",
+      "north_yellow",
+      "east_green",
+      "east_yellow"
+    ],
+    "initial": "north_green",
+    "transitions": [
+      {
+        "from": "north_green",
+        "when": {
+          "ped_button": "0"
+        },
+        "to": "north_green",
+        "outputs": {
+          "north_green": "1",
+          "east_green": "0"
+        }
+      },
+      {
+        "from": "north_green",
+        "when": {
+          "ped_button": "1"
+        },
+        "to": "north_yellow",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "0"
+        }
+      },
+      {
+        "from": "north_yellow",
+        "when": {},
+        "to": "east_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "1"
+        }
+      },
+      {
+        "from": "east_green",
+        "when": {
+          "ped_button": "0"
+        },
+        "to": "east_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "1"
+        }
+      },
+      {
+        "from": "east_green",
+        "when": {
+          "ped_button": "1"
+        },
+        "to": "east_yellow",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "0"
+        }
+      },
+      {
+        "from": "east_yellow",
+        "when": {},
+        "to": "north_green",
+        "outputs": {
+          "north_green": "1",
+          "east_green": "0"
+        }
+      }
+    ]
+  },
+  "input_sequence": [
+    {
+      "ped_button": "0"
+    },
+    {
+      "ped_button": "1"
+    },
+    {
+      "ped_button": "0"
+    },
+    {
+      "ped_button": "0"
+    },
+    {
+      "ped_button": "0"
+    },
+    {
+      "ped_button": "1"
+    },
+    {
+      "ped_button": "0"
+    },
+    {
+      "ped_button": "0"
+    }
+  ],
+  "expected": {
+    "cycles": [
+      {
+        "cycle": 0,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "north_green",
+        "outputs": {
+          "north_green": "1",
+          "east_green": "0"
+        }
+      },
+      {
+        "cycle": 1,
+        "inputs": {
+          "ped_button": "1"
+        },
+        "state": "north_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "0"
+        }
+      },
+      {
+        "cycle": 2,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "north_yellow",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "1"
+        }
+      },
+      {
+        "cycle": 3,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "east_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "1"
+        }
+      },
+      {
+        "cycle": 4,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "east_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "1"
+        }
+      },
+      {
+        "cycle": 5,
+        "inputs": {
+          "ped_button": "1"
+        },
+        "state": "east_green",
+        "outputs": {
+          "north_green": "0",
+          "east_green": "0"
+        }
+      },
+      {
+        "cycle": 6,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "east_yellow",
+        "outputs": {
+          "north_green": "1",
+          "east_green": "0"
+        }
+      },
+      {
+        "cycle": 7,
+        "inputs": {
+          "ped_button": "0"
+        },
+        "state": "north_green",
+        "outputs": {
+          "north_green": "1",
+          "east_green": "0"
+        }
+      }
+    ],
+    "final_state": "north_green",
+    "reachable_states": [
+      "east_green",
+      "east_yellow",
+      "north_green",
+      "north_yellow"
+    ],
+    "scope": "BOUNDED(8 cycles)",
+    "reachable_scope": "EXHAUSTIVE(4 of 4 states)",
+    "safety_no_double_green": true
+  }
+}
