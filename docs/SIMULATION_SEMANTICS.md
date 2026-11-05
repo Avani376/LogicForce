@@ -8,6 +8,9 @@ This file summarizes the normative contracts. The detailed, binding documents li
 | Logic values {0,1,X,Z} + gate truth tables | [`semantics/logic-values.md`](semantics/logic-values.md) | **Implemented & tested** |
 | Propagation, evaluation order, trace events, determinism | [`semantics/propagation.md`](semantics/propagation.md) | **Implemented & tested** |
 | Circuit graph JSON schema v1 + validation codes | [`semantics/circuit-graph-schema.md`](semantics/circuit-graph-schema.md) | **Implemented & tested** |
+| Clock-edge rules, flip-flop tables, tick order (v2) | [`semantics/clock-edge-rules.md`](semantics/clock-edge-rules.md) | **Implemented & tested (Phase 2)** |
+| Circuit graph JSON schema v2 (sequential types) | [`semantics/circuit-graph-schema-v2.md`](semantics/circuit-graph-schema-v2.md) | **Implemented & tested (Phase 2)** |
+| Abstract FSM model | [`semantics/fsm-model.md`](semantics/fsm-model.md) | **Implemented & tested (Phase 2)** |
 | Report schemas + scope labels | [`semantics/report-and-scope-labels.md`](semantics/report-and-scope-labels.md) | Simulation/validation/truth-table **implemented**; verification schema defined for Phase 3 |
 
 ## One-paragraph model
