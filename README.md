@@ -26,6 +26,10 @@ of truth and every result traceable.
   (combinational + FSM firing space) with `EXHAUSTIVE`/`INCOMPLETE` scope labels and
   **replayable counterexamples** — the faulty traffic-light controller is an automated
   acceptance test.
+- **Fault & repair engines** (`engines/faults`, `engines/repair`, v0.4.0): seeded
+  document-transformation faults (stuck-at, gate swap, transition edits), bounded
+  behavior probes, property-suite detection, and delta-guided repair candidates where
+  **every candidate is re-verified against the full suite** before "repaired" is claimed.
 - **Operator workspace** (`apps/web`): accessible gate editor — palette, drag placement,
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
   sequential waveform viewer, undo/redo, save/load.

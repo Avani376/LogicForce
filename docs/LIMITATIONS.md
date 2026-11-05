@@ -28,7 +28,11 @@ list of what the platform cannot do today.
 
 - **No verification engine yet** (Phase 3): no property checks, no counterexamples. The
   FSM reachability module computes EXHAUSTIVE(states) over the declared table only.
-- **No fault injection, repair, or optimization** (Phases 4–5).
+- **Fault model v1 scope**: document-transformation operators only (FSM transition
+  edits/output flips; combinational gate swaps and stuck-at rewire-to-constant).
+  Missing clock events, peripheral failures, and bridging faults are not modeled.
+  Repair is delta-guided toward a passing reference — it does not claim equivalence
+  beyond the checked property suite. Optimization (Phase 5) is not started.
 - **No 8086 emulator, interrupts, or co-simulation** (Phases 6–8).
 - **No AI assistance** (Phase 9). When it arrives it will be advisory and labeled; it will
   not compute results.
