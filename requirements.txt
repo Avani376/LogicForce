@@ -1,0 +1,10 @@
+# LogicForge — pinned toolchain (dev + runtime)
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx==0.28.1
+pytest==9.2.0
+pytest-cov==7.1.0
+hypothesis==6.170.14
+ruff==0.17.3
+mypy==2.4.1
