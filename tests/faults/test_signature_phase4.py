@@ -14,8 +14,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from fault_engine import run_fault_experiment
-from fault_engine import apply_fault
+from fault_engine import apply_fault, run_fault_experiment
 from repair_engine import search_repairs
 from sequential_engine import fsm_simulate, parse_fsm
 from verify_engine import verify_fsm_invariant
@@ -83,9 +82,7 @@ def test_phase4_signature_full_pipeline() -> None:
     assert [row.state for row in repaired_trace.cycles] == [
         row.state for row in nominal_trace.cycles
     ]
-    for repaired_row, nominal_row in zip(
-        repaired_trace.cycles, nominal_trace.cycles, strict=True
-    ):
+    for repaired_row, nominal_row in zip(repaired_trace.cycles, nominal_trace.cycles, strict=True):
         # safety observation on both traces: never two greens
         assert not (
             repaired_row.outputs.get("north_green") == "1"
