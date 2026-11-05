@@ -7,6 +7,12 @@ out of scope (see docs/semantics/cpu8086.md).
 
 from cpu8086.assembler import AssembledProgram, Instruction, assemble
 from cpu8086.errors import AsmError, CpuRuntimeError, UnsupportedInstructionError
+from cpu8086.interrupts import (
+    MAX_NESTING,
+    InterruptController,
+    ScheduledInterrupt,
+)
+from cpu8086.machine import Cpu, assemble_and_load
 from cpu8086.memory import ADDRESS_SPACE, Memory, physical
 from cpu8086.registers import (
     BYTE_HALVES,
@@ -29,6 +35,13 @@ __all__ = [
     "AssembledProgram",
     "Instruction",
     "assemble",
+    "AssembledProgram",
+    "Instruction",
+    "Cpu",
+    "assemble_and_load",
+    "InterruptController",
+    "ScheduledInterrupt",
+    "MAX_NESTING",
     "CpuRuntimeError",
     "UnsupportedInstructionError",
     "Memory",

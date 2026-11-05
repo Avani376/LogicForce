@@ -8,7 +8,7 @@ compared against the engine. The assembler/executor cannot rewrite its oracle.
 from __future__ import annotations
 
 from cpu8086 import assemble
-from cpu8086.executor import Cpu
+from cpu8086.machine import Cpu
 
 SUM_1_TO_5_SOURCE = """
     MOV CX, 5
@@ -124,6 +124,7 @@ def test_golden_determinism_byte_identical_traces() -> None:
                         "step": record.step,
                         "ip": record.ip,
                         "instruction": record.instruction,
+                        "kind": record.kind,
                         "registers": record.register_changes,
                         "flags": record.flag_changes,
                         "memory": [list(pair) for pair in record.memory_changes],

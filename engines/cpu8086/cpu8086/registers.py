@@ -20,7 +20,7 @@ BYTE_HALVES = {
     "DL": ("DX", "L"),
     "DH": ("DX", "H"),
 }
-FLAG_NAMES = ("CF", "PF", "AF", "ZF", "SF", "OF")
+FLAG_NAMES = ("CF", "PF", "AF", "ZF", "SF", "OF", "IF")
 
 
 def parity_of_low_byte(value: int) -> int:

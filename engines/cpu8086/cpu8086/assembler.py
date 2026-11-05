@@ -30,6 +30,7 @@ MNEMONICS_WITH_DEST_SRC = {
     "TEST",
 }
 MNEMONICS_UNARY = {"INC", "DEC", "NEG", "NOT", "PUSH", "POP"}
+MNEMONICS_INTERRUPT = {"INT", "IRET", "STI", "CLI"}
 MNEMONICS_JUMP = {
     "JMP",
     "JZ",
@@ -49,7 +50,13 @@ MNEMONICS_JUMP = {
     "CALL",
 }
 MNEMONICS_NONE = {"RET", "NOP", "HLT"}
-ALL_MNEMONICS = MNEMONICS_WITH_DEST_SRC | MNEMONICS_UNARY | MNEMONICS_JUMP | MNEMONICS_NONE
+ALL_MNEMONICS = (
+    MNEMONICS_WITH_DEST_SRC
+    | MNEMONICS_UNARY
+    | MNEMONICS_JUMP
+    | MNEMONICS_NONE
+    | MNEMONICS_INTERRUPT
+)
 
 _BASE_COMBOS = {
     frozenset({"BX"}): "DS",
@@ -289,6 +296,17 @@ def _validate_signature(
         if len(operands) != 1 or operands[0].kind != "imm":
             raise AsmError(line, "SYNTAX", f"{mnemonic} requires a label operand")
         return operands[0], None
+    if mnemonic in MNEMONICS_INTERRUPT:
+        if mnemonic == "INT":
+            if len(operands) != 1 or operands[0].kind != "imm":
+                raise AsmError(line, "SYNTAX", "INT requires a numeric operand (0-255)")
+            value = int(operands[0].value)
+            if not 0 <= value <= 255:
+                raise AsmError(line, "SYNTAX", f"INT number must be in [0, 255], got {value}")
+            return operands[0], None
+        if operands:
+            raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} takes no operands")
+        return None, None
     if mnemonic in MNEMONICS_NONE:
         if operands:
             raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} takes no operands")

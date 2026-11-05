@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cpu8086.executor import assemble_and_load
+from cpu8086.machine import assemble_and_load
 from cpu8086.memory import physical
 
 
