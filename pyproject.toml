@@ -32,6 +32,7 @@ packages = [
   "fault_engine",
   "repair_engine",
   "optimize_engine",
+  "cpu8086",
   "logicforge_api",
   "logicforge_api.routers",
 ]
@@ -43,6 +44,7 @@ verify_engine = "engines/verify/verify_engine"
 fault_engine = "engines/faults/fault_engine"
 repair_engine = "engines/repair/repair_engine"
 optimize_engine = "engines/optimize/optimize_engine"
+cpu8086 = "engines/cpu8086/cpu8086"
 logicforge_api = "apps/api/logicforge_api"
 "logicforge_api.routers" = "apps/api/logicforge_api/routers"
 
@@ -66,5 +68,5 @@ extend-exclude = [".venv", "apps/web"]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
 
 [tool.coverage.run]
-source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "logicforge_api"]
+source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "cpu8086", "logicforge_api"]
 branch = true
