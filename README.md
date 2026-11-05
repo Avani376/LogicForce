@@ -30,6 +30,10 @@ of truth and every result traceable.
   document-transformation faults (stuck-at, gate swap, transition edits), bounded
   behavior probes, property-suite detection, and delta-guided repair candidates where
   **every candidate is re-verified against the full suite** before "repaired" is claimed.
+- **Optimization engine** (`engines/optimize`, v0.5.0): behavior-preserving combinational
+  rewrites (double negation, buffers, constant folding, duplicate merge, dead gates) with
+  **per-transformation exhaustive equivalence evidence** — objective improves, truth
+  table provably unchanged.
 - **Operator workspace** (`apps/web`): accessible gate editor — palette, drag placement,
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
   sequential waveform viewer, undo/redo, save/load.

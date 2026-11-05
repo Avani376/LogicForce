@@ -32,7 +32,13 @@ list of what the platform cannot do today.
   edits/output flips; combinational gate swaps and stuck-at rewire-to-constant).
   Missing clock events, peripheral failures, and bridging faults are not modeled.
   Repair is delta-guided toward a passing reference — it does not claim equivalence
-  beyond the checked property suite. Optimization (Phase 5) is not started.
+  beyond the checked property suite.
+- **Optimization v1 scope**: combinational only; transformation classes are local
+  rewrites (double negation, buffers, constant folding, duplicate merge, dead gates).
+  No K-map resynthesis, mux restructuring, FSM minimization, or technology mapping.
+  `logic_depth` is an abstract gate-level count — **no delay model exists and no
+  delay/hardware timing is claimed**. Optimization beyond 12 inputs is refused
+  (equivalence cannot be verified exhaustively).
 - **No 8086 emulator, interrupts, or co-simulation** (Phases 6–8).
 - **No AI assistance** (Phase 9). When it arrives it will be advisory and labeled; it will
   not compute results.
