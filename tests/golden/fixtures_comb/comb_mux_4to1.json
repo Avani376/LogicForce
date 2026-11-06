@@ -55,19 +55,31 @@
       },
       {
         "id": "A0",
-        "type": "AND"
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
       },
       {
         "id": "A1",
-        "type": "AND"
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
       },
       {
         "id": "A2",
-        "type": "AND"
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
       },
       {
         "id": "A3",
-        "type": "AND"
+        "type": "AND",
+        "params": {
+          "width": 3
+        }
       },
       {
         "id": "O",
