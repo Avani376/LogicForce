@@ -165,6 +165,17 @@ def resolve_pic_flow(config: PicConfig, events: list[PicEvent]) -> PicFlowResult
                 pic.acknowledge(at_step=boundary)
                 deliveries.append(PicDelivery(at_step=boundary, line=vector - config.base_vector, vector=vector))
 
+    # Flush held vectors past the last event boundary: a nested request held at
+    # boundary k gets its INTA at k+1. Bounded — each ack clears one IRR bit and
+    # no new requests arrive after the last event.
+    boundary = last_boundary + 1
+    while pic.int_vector() is not None:
+        vector = pic.int_vector()
+        assert vector is not None  # narrows for mypy; re-checked by the loop condition
+        pic.acknowledge(at_step=boundary)
+        deliveries.append(PicDelivery(at_step=boundary, line=vector - config.base_vector, vector=vector))
+        boundary += 1
+
     return PicFlowResult(
         deliveries=tuple(deliveries),
         trace=tuple(pic.trace),
