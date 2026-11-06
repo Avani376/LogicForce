@@ -85,11 +85,30 @@ class Cpu:
     registers: Registers = field(default_factory=Registers)
     memory: Memory = field(default_factory=Memory)
     halted: bool = False
+    port_reader: object | None = None  # Callable[[int], int] | None — unconnected ports read 0xFF
+    port_writer: object | None = (
+        None  # Callable[[int, int], None] | None — writes to unconnected ports are ignored
+    )
     _steps_taken: int = 0
     _last_run: tuple[TraceRecord, ...] = ()
 
     def __post_init__(self) -> None:
         self.registers.set("SP", POWER_ON_SP)
+
+    def _read_port(self, port: int) -> int:
+        import typing
+
+        if typing.cast("typing.Callable[[int], int] | None", self.port_reader) is not None:
+            return typing.cast("typing.Callable[[int], int]", self.port_reader)(port) & 0xFF
+        return 0xFF  # documented: unconnected port reads as all-ones
+
+    def _write_port(self, port: int, value: int) -> None:
+        import typing
+
+        writer = typing.cast("typing.Callable[[int, int], None] | None", self.port_writer)
+        if writer is not None:
+            writer(port, value & 0xFF)
+        # writes to unconnected ports are recorded in the trace and ignored
 
     def reset(self) -> None:
         self.registers = Registers()
@@ -314,6 +333,22 @@ class Cpu:
             self._steps_taken += 1
             iret_record = self._fire_iret()
             return iret_record
+        elif mnemonic == "IN":
+            assert instruction.src is not None and instruction.dest is not None
+            port = (
+                instruction.src.value if instruction.src.kind == "imm" else self.registers.get("DX")
+            )
+            value = self._read_port(port & 0xFFFF)
+            self._resolve_write(instruction.dest, value)
+        elif mnemonic == "OUT":
+            assert instruction.src is not None and instruction.dest is not None
+            port = (
+                instruction.dest.value
+                if instruction.dest.kind == "imm"
+                else self.registers.get("DX")
+            )
+            value = self._resolve_read(instruction.src) & 0xFF
+            self._write_port(port & 0xFFFF, value)
         elif mnemonic == "STI":
             self.registers.set_flags({"IF": 1})
         elif mnemonic == "CLI":

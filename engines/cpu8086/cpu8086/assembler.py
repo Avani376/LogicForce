@@ -31,6 +31,7 @@ MNEMONICS_WITH_DEST_SRC = {
 }
 MNEMONICS_UNARY = {"INC", "DEC", "NEG", "NOT", "PUSH", "POP"}
 MNEMONICS_INTERRUPT = {"INT", "IRET", "STI", "CLI"}
+MNEMONICS_IO = {"IN", "OUT"}
 MNEMONICS_JUMP = {
     "JMP",
     "JZ",
@@ -56,6 +57,7 @@ ALL_MNEMONICS = (
     | MNEMONICS_JUMP
     | MNEMONICS_NONE
     | MNEMONICS_INTERRUPT
+    | MNEMONICS_IO
 )
 
 _BASE_COMBOS = {
@@ -296,6 +298,36 @@ def _validate_signature(
         if len(operands) != 1 or operands[0].kind != "imm":
             raise AsmError(line, "SYNTAX", f"{mnemonic} requires a label operand")
         return operands[0], None
+    if mnemonic in MNEMONICS_IO:
+        # IN AL, p(imm|DX) / OUT p(imm|DX), AL — accumulator port forms only
+        if len(operands) != 2:
+            raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} requires exactly 2 operands")
+        if mnemonic == "IN":
+            dest, src = operands[0], operands[1]
+            accumulator = dest
+            port_operand = src
+        else:
+            dest, src = operands[0], operands[1]
+            accumulator = src
+            port_operand = dest
+        if accumulator.kind != "reg" or accumulator.name != "AL":
+            raise AsmError(
+                line,
+                "SYNTAX",
+                f"{mnemonic} byte form requires AL as accumulator (IN AL, p / OUT p, AL)",
+            )
+        if port_operand.kind == "reg" and port_operand.name == "DX":
+            resolved_port = Operand(kind="reg", name="DX", width=16)
+        elif port_operand.kind == "imm" and 0 <= port_operand.value <= 0xFFFF:
+            resolved_port = Operand(kind="imm", value=port_operand.value, width=16)
+        else:
+            raise AsmError(
+                line, "SYNTAX", f"{mnemonic} port must be an immediate 0-0xFFFF or DX"
+            )
+        if mnemonic == "IN":
+            return dest, resolved_port
+        return resolved_port, accumulator
+        raise AsmError(line, "SYNTAX", f"{mnemonic} port must be an immediate 0-0xFFFF or DX")
     if mnemonic in MNEMONICS_INTERRUPT:
         if mnemonic == "INT":
             if len(operands) != 1 or operands[0].kind != "imm":
