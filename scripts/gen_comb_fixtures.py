@@ -11,14 +11,24 @@ from typing import Any
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "tests" / "golden" / "fixtures_comb"
 
-_input = lambda name: {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}}
-_output = lambda name: {"id": f"OUT_{name}", "type": "OUTPUT", "params": {"name": name}}
-_const0 = {"id": "C0", "type": "CONST0"}
-_NET = lambda nid, drv, sinks: {
-    "id": nid,
-    "driver": {"component": drv, "pin": "out"},
-    "sinks": [{"component": c, "pin": p} for c, p in sinks],
-}
+
+def _input(name):
+    return {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}}
+
+
+def _output(name):
+    return {"id": f"OUT_{name}", "type": "OUTPUT", "params": {"name": name}}
+
+
+_CONST0 = {"id": "C0", "type": "CONST0"}
+
+
+def _NET(nid, drv, sinks):
+    return {
+        "id": nid,
+        "driver": {"component": drv, "pin": "out"},
+        "sinks": [{"component": c, "pin": p} for c, p in sinks],
+    }
 
 
 def full_adder() -> tuple[dict, list[str], list[str], Any]:
