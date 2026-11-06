@@ -1,0 +1,406 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "binary_to_gray",
+    "components": [
+      {
+        "id": "IN_b0",
+        "type": "INPUT",
+        "params": {
+          "name": "b0"
+        }
+      },
+      {
+        "id": "IN_b1",
+        "type": "INPUT",
+        "params": {
+          "name": "b1"
+        }
+      },
+      {
+        "id": "IN_b2",
+        "type": "INPUT",
+        "params": {
+          "name": "b2"
+        }
+      },
+      {
+        "id": "IN_b3",
+        "type": "INPUT",
+        "params": {
+          "name": "b3"
+        }
+      },
+      {
+        "id": "OUT_g0",
+        "type": "OUTPUT",
+        "params": {
+          "name": "g0"
+        }
+      },
+      {
+        "id": "OUT_g1",
+        "type": "OUTPUT",
+        "params": {
+          "name": "g1"
+        }
+      },
+      {
+        "id": "OUT_g2",
+        "type": "OUTPUT",
+        "params": {
+          "name": "g2"
+        }
+      },
+      {
+        "id": "OUT_g3",
+        "type": "OUTPUT",
+        "params": {
+          "name": "g3"
+        }
+      },
+      {
+        "id": "X01",
+        "type": "XOR"
+      },
+      {
+        "id": "X12",
+        "type": "XOR"
+      },
+      {
+        "id": "X23",
+        "type": "XOR"
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_b0",
+        "driver": {
+          "component": "IN_b0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X01",
+            "pin": "a"
+          },
+          {
+            "component": "OUT_g3",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_b1",
+        "driver": {
+          "component": "IN_b1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X01",
+            "pin": "b"
+          },
+          {
+            "component": "X12",
+            "pin": "a"
+          },
+          {
+            "component": "OUT_g2",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_b2",
+        "driver": {
+          "component": "IN_b2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X12",
+            "pin": "b"
+          },
+          {
+            "component": "X23",
+            "pin": "a"
+          },
+          {
+            "component": "OUT_g1",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_b3",
+        "driver": {
+          "component": "IN_b3",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X23",
+            "pin": "b"
+          },
+          {
+            "component": "OUT_g0",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_x01",
+        "driver": {
+          "component": "X01",
+          "pin": "out"
+        },
+        "sinks": []
+      },
+      {
+        "id": "n_x12",
+        "driver": {
+          "component": "X12",
+          "pin": "out"
+        },
+        "sinks": []
+      },
+      {
+        "id": "n_x23",
+        "driver": {
+          "component": "X23",
+          "pin": "out"
+        },
+        "sinks": []
+      }
+    ]
+  },
+  "expected": {
+    "rows": [
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "0",
+          "b2": "0",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "0",
+          "g2": "0",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "0",
+          "b2": "0",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "0",
+          "g2": "1",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "0",
+          "b2": "1",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "1",
+          "g2": "1",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "0",
+          "b2": "1",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "1",
+          "g2": "0",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "1",
+          "b2": "0",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "1",
+          "g2": "0",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "1",
+          "b2": "0",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "1",
+          "g2": "1",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "1",
+          "b2": "1",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "0",
+          "g2": "1",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "0",
+          "b1": "1",
+          "b2": "1",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "0",
+          "g2": "0",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "0",
+          "b2": "0",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "0",
+          "g2": "0",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "0",
+          "b2": "0",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "0",
+          "g2": "1",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "0",
+          "b2": "1",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "1",
+          "g2": "1",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "0",
+          "b2": "1",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "1",
+          "g1": "1",
+          "g2": "0",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "1",
+          "b2": "0",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "1",
+          "g2": "0",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "1",
+          "b2": "0",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "1",
+          "g2": "1",
+          "g3": "1"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "1",
+          "b2": "1",
+          "b3": "0"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "0",
+          "g2": "1",
+          "g3": "0"
+        }
+      },
+      {
+        "inputs": {
+          "b0": "1",
+          "b1": "1",
+          "b2": "1",
+          "b3": "1"
+        },
+        "outputs": {
+          "g0": "0",
+          "g1": "0",
+          "g2": "0",
+          "g3": "1"
+        }
+      }
+    ]
+  }
+}

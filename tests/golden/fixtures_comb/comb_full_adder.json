@@ -1,0 +1,277 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "full_adder",
+    "components": [
+      {
+        "id": "IN_a",
+        "type": "INPUT",
+        "params": {
+          "name": "a"
+        }
+      },
+      {
+        "id": "IN_b",
+        "type": "INPUT",
+        "params": {
+          "name": "b"
+        }
+      },
+      {
+        "id": "IN_cin",
+        "type": "INPUT",
+        "params": {
+          "name": "cin"
+        }
+      },
+      {
+        "id": "X1",
+        "type": "XOR"
+      },
+      {
+        "id": "X2",
+        "type": "XOR"
+      },
+      {
+        "id": "A1",
+        "type": "AND"
+      },
+      {
+        "id": "A2",
+        "type": "AND"
+      },
+      {
+        "id": "O1",
+        "type": "OR"
+      },
+      {
+        "id": "OUT_sum",
+        "type": "OUTPUT",
+        "params": {
+          "name": "sum"
+        }
+      },
+      {
+        "id": "OUT_carry",
+        "type": "OUTPUT",
+        "params": {
+          "name": "carry"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_a1",
+        "driver": {
+          "component": "IN_a",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X1",
+            "pin": "a"
+          },
+          {
+            "component": "A1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_b1",
+        "driver": {
+          "component": "IN_b",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X1",
+            "pin": "b"
+          },
+          {
+            "component": "A1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_x1",
+        "driver": {
+          "component": "X1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X2",
+            "pin": "a"
+          },
+          {
+            "component": "A2",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_cin",
+        "driver": {
+          "component": "IN_cin",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X2",
+            "pin": "b"
+          },
+          {
+            "component": "A2",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_a2",
+        "driver": {
+          "component": "A1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "O1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_a3",
+        "driver": {
+          "component": "A2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "O1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_sum",
+        "driver": {
+          "component": "X2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_sum",
+            "pin": "in"
+          }
+        ]
+      },
+      {
+        "id": "n_cout",
+        "driver": {
+          "component": "O1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_carry",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "rows": [
+      {
+        "inputs": {
+          "a": "0",
+          "b": "0",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry": "0",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "0",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "1",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "0",
+          "b": "1",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "0",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry": "0",
+          "sum": "1"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "0",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "1",
+          "cin": "0"
+        },
+        "outputs": {
+          "carry": "1",
+          "sum": "0"
+        }
+      },
+      {
+        "inputs": {
+          "a": "1",
+          "b": "1",
+          "cin": "1"
+        },
+        "outputs": {
+          "carry": "1",
+          "sum": "1"
+        }
+      }
+    ]
+  }
+}

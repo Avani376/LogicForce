@@ -1,0 +1,328 @@
+{
+  "circuit": {
+    "schema_version": 1,
+    "name": "parity_gen",
+    "components": [
+      {
+        "id": "IN_d0",
+        "type": "INPUT",
+        "params": {
+          "name": "d0"
+        }
+      },
+      {
+        "id": "IN_d1",
+        "type": "INPUT",
+        "params": {
+          "name": "d1"
+        }
+      },
+      {
+        "id": "IN_d2",
+        "type": "INPUT",
+        "params": {
+          "name": "d2"
+        }
+      },
+      {
+        "id": "IN_d3",
+        "type": "INPUT",
+        "params": {
+          "name": "d3"
+        }
+      },
+      {
+        "id": "X0",
+        "type": "XOR"
+      },
+      {
+        "id": "X1",
+        "type": "XOR"
+      },
+      {
+        "id": "X2",
+        "type": "XOR"
+      },
+      {
+        "id": "OUT_parity",
+        "type": "OUTPUT",
+        "params": {
+          "name": "parity"
+        }
+      }
+    ],
+    "nets": [
+      {
+        "id": "n_d0",
+        "driver": {
+          "component": "IN_d0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X0",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_d1",
+        "driver": {
+          "component": "IN_d1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X0",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_x1",
+        "driver": {
+          "component": "X0",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X1",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_d2",
+        "driver": {
+          "component": "IN_d2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X1",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_x2",
+        "driver": {
+          "component": "X1",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X2",
+            "pin": "a"
+          }
+        ]
+      },
+      {
+        "id": "n_d3",
+        "driver": {
+          "component": "IN_d3",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "X2",
+            "pin": "b"
+          }
+        ]
+      },
+      {
+        "id": "n_par",
+        "driver": {
+          "component": "X2",
+          "pin": "out"
+        },
+        "sinks": [
+          {
+            "component": "OUT_parity",
+            "pin": "in"
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "rows": [
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "0",
+          "d2": "0",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "0",
+          "d2": "0",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "0",
+          "d2": "1",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "0",
+          "d2": "1",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "1",
+          "d2": "0",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "1",
+          "d2": "0",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "1",
+          "d2": "1",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "0",
+          "d1": "1",
+          "d2": "1",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "0",
+          "d2": "0",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "0",
+          "d2": "0",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "0",
+          "d2": "1",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "0",
+          "d2": "1",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "1",
+          "d2": "0",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "1",
+          "d2": "0",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "1",
+          "d2": "1",
+          "d3": "0"
+        },
+        "outputs": {
+          "parity": "1"
+        }
+      },
+      {
+        "inputs": {
+          "d0": "1",
+          "d1": "1",
+          "d2": "1",
+          "d3": "1"
+        },
+        "outputs": {
+          "parity": "0"
+        }
+      }
+    ]
+  }
+}
