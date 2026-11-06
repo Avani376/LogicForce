@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from logic_engine import parse_circuit, truth_table
 from logic_engine.validation import validate
 
