@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from itertools import product
 
+import pytest
+
 from boolean_engine import kmap_simplify, quine_mccluskey
 
 
