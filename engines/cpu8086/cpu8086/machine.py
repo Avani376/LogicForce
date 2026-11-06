@@ -329,6 +329,31 @@ class Cpu:
             self._steps_taken += 1
             iret_record = self._fire_iret()
             return iret_record
+        elif mnemonic == "XCHG":
+            assert instruction.dest is not None and instruction.src is not None
+            tmp = self._resolve_read(instruction.dest)
+            src_val = self._resolve_read(instruction.src)
+            self._resolve_write(instruction.dest, src_val)
+            self._resolve_write(instruction.src, tmp)
+        elif mnemonic in ("SHL", "SHR", "SAR"):
+            assert instruction.dest is not None
+            width = _operand_width_bits(instruction.dest)
+            mask = (1 << width) - 1
+            old = self._read_dest(instruction.dest, width)
+            count = self._resolve_read(instruction.src) & 0xFF if instruction.src else 1
+            if mnemonic == "SHL":
+                result = (old << count) & mask
+            elif mnemonic == "SHR":
+                result = old >> count
+            else:
+                sign_bit = 1 << (width - 1)
+                sign_fill = mask & ~(mask >> count) if old & sign_bit else 0
+                result = (old >> count) | sign_fill
+            from cpu8086.registers import logic_flags
+
+            deltas = logic_flags(result, width)
+            self.registers.set_flags(deltas)
+            memory_changes.extend(self._resolve_write(instruction.dest, result) or [])
         elif mnemonic == "IN":
             assert instruction.src is not None and instruction.dest is not None
             port = instruction.src.value if instruction.src.kind == "imm" else self.registers.get("DX")
