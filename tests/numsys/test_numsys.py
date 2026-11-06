@@ -123,7 +123,7 @@ class TestGray:
         prev = gray_encode(format(0, "04b")).result
         for i in range(1, 16):
             current = gray_encode(format(i, "04b")).result
-            diff_count = sum(a != b for a, b in zip(prev, current))
+            diff_count = sum(a != b for a, b in zip(prev, current, strict=False))
             assert diff_count == 1
             prev = current
 

@@ -117,7 +117,7 @@ def twos_complement(value: str, width: int) -> NumSysResult:
     steps = list(ones.steps) + [
         Step("2's complement: add 1 to 1's complement", flipped, result, f"{flipped} + 1 = {result}")
     ]
-    decimal = int(value, 2) if not value.startswith("1") or int(value, 2) == 0 else int(value, 2) - (1 << width)
+    int(value, 2) if not value.startswith("1") or int(value, 2) == 0 else int(value, 2) - (1 << width)
     return NumSysResult(
         result=result,
         steps=tuple(steps),
@@ -129,11 +129,11 @@ def twos_complement(value: str, width: int) -> NumSysResult:
 def complement_add(a: str, b: str, width: int, use_twos: bool = True) -> NumSysResult:
     """Add two binary numbers using complement arithmetic with carry/overflow."""
     if use_twos:
-        comp_a = twos_complement(a, width)
-        comp_b = twos_complement(b, width)
+        twos_complement(a, width)
+        twos_complement(b, width)
     else:
-        comp_a = ones_complement(a, width)
-        comp_b = ones_complement(b, width)
+        ones_complement(a, width)
+        ones_complement(b, width)
     int_a = int(a, 2) if not a.startswith("1") or int(a, 2) == 0 else int(a, 2) - (1 << width)
     int_b = int(b, 2) if not b.startswith("1") or int(b, 2) == 0 else int(b, 2) - (1 << width)
     total = int_a + int_b
@@ -175,7 +175,7 @@ def bcd_encode(decimal: str) -> NumSysResult:
     result = " ".join(nibbles)
     return NumSysResult(
         result=result,
-        steps=tuple(Step(f"BCD: digit {ch} → {nib}", ch, nib) for ch, nib in zip(decimal, nibbles)),
+        steps=tuple(Step(f"BCD: digit {ch} → {nib}", ch, nib) for ch, nib in zip(decimal, nibbles, strict=False)),
         method="BCD 8421 encoding",
     )
 
@@ -201,7 +201,7 @@ def excess3_encode(decimal: str) -> NumSysResult:
     result = " ".join(nibbles)
     return NumSysResult(
         result=result,
-        steps=tuple(Step(f"Excess-3: {ch} + 3 = {int(ch) + 3} → {nib}", ch, nib) for ch, nib in zip(decimal, nibbles)),
+        steps=tuple(Step(f"Excess-3: {ch} + 3 = {int(ch) + 3} → {nib}", ch, nib) for ch, nib in zip(decimal, nibbles, strict=False)),
         method="Excess-3 (BCD + 3)",
     )
 
