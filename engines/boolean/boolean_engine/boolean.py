@@ -63,6 +63,8 @@ class _Parser:
         return self.tokens[self.pos] if self.pos < len(self.tokens) else None
 
     def advance(self) -> tuple[str, str]:
+        if self.pos >= len(self.tokens):
+            raise SchemaError("BOOLEAN_SYNTAX_ERROR", "unexpected end of expression")
         t = self.tokens[self.pos]
         self.pos += 1
         return t
@@ -96,6 +98,8 @@ class _Parser:
         return self.parse_atom()
 
     def parse_atom(self) -> BoolExpr:
+        if self.pos >= len(self.tokens):
+            raise SchemaError("BOOLEAN_SYNTAX_ERROR", "unexpected end of expression")
         t = self.advance()
         if t[0] == "lit":
             return BoolExpr("lit", value=t[1])
@@ -123,6 +127,10 @@ def evaluate(expr: BoolExpr, env: dict[str, bool]) -> bool:
         return left and right
     if expr.kind == "or":
         return left or right
+    if expr.kind == "nand":
+        return not (left and right)
+    if expr.kind == "nor":
+        return not (left or right)
     return left != right  # xor
 
 
@@ -190,64 +198,59 @@ def to_pos(expr: BoolExpr) -> dict[str, object]:
     }
 
 
-def _check_property(name: str, expr: BoolExpr, expected: bool) -> dict[str, object]:
-    """Exhaustively verify a boolean property; raises if it doesn't hold."""
-    table = truth_table(expr)
-    for env, result in table:
-        if result != expected:
+def _check_property(name: str, lhs: BoolExpr, rhs: BoolExpr) -> dict[str, object]:
+    """Exhaustively verify that lhs and rhs are equivalent over their union of variables."""
+    lhs_vars = variables(lhs)
+    rhs_vars = variables(rhs)
+    all_vars = sorted(set(lhs_vars) | set(rhs_vars))
+    n = len(all_vars)
+    for i in range(1 << n):
+        env = {name_: bool((i >> (n - 1 - pos)) & 1) for pos, name_ in enumerate(all_vars)}
+        if evaluate(lhs, env) != evaluate(rhs, env):
             raise SchemaError(
                 "THEOREM_VIOLATION",
-                f"Theorem {name} violated at {env}: got {result}, expected {expected}",
+                f"Theorem {name} violated at {env}",
             )
-    return {"theorem": name, "cases": len(table), "verified": True, "scope": f"EXHAUSTIVE({len(table)})"}
+    return {"theorem": name, "cases": 1 << n, "verified": True, "scope": f"EXHAUSTIVE({1 << n})"}
 
 
 def verify_theorems() -> list[dict[str, object]]:
-    """Verify all 12 boolean theorems exhaustively."""
-    a, b, c = BoolExpr("var", value="A"), BoolExpr("var", value="B"), BoolExpr("var", value="C")
+    """Verify all boolean theorems exhaustively using truth-table equivalence."""
+    a = BoolExpr("var", value="A")
+    b = BoolExpr("var", value="B")
+    c = BoolExpr("var", value="C")
     not_a = BoolExpr("not", left=a)
     not_b = BoolExpr("not", left=b)
+
+    def conj(x: BoolExpr, y: BoolExpr) -> BoolExpr:
+        return BoolExpr("and", left=x, right=y)
+
+    def disj(x: BoolExpr, y: BoolExpr) -> BoolExpr:
+        return BoolExpr("or", left=x, right=y)
+
     zero = BoolExpr("lit", value="0")
     one = BoolExpr("lit", value="1")
 
-    def conj(*nodes: BoolExpr) -> BoolExpr:
-        result = nodes[0]
-        for n in nodes[1:]:
-            result = BoolExpr("and", left=result, right=n)
-        return result
-
-    def disj(*nodes: BoolExpr) -> BoolExpr:
-        result = nodes[0]
-        for n in nodes[1:]:
-            result = BoolExpr("or", left=result, right=n)
-        return result
-
     results = []
-    results.append(_check_property("Identity (AND)", conj(a, one), True) | {"lhs": "A & 1", "rhs": "A"})
-    results.append(_check_property("Identity (OR)", disj(a, zero), True) | {"lhs": "A | 0", "rhs": "A"})
-    results.append(_check_property("Null (AND)", conj(a, zero), False) | {"lhs": "A & 0", "rhs": "0"})
-    results.append(_check_property("Null (OR)", disj(a, one), True) | {"lhs": "A | 1", "rhs": "1"})
-    results.append(_check_property("Idempotent (AND)", conj(a, a), True) | {"lhs": "A & A", "rhs": "A"})
-    results.append(_check_property("Idempotent (OR)", disj(a, a), True) | {"lhs": "A | A", "rhs": "A"})
-    results.append(_check_property("Complement (AND)", conj(a, not_a), False) | {"lhs": "A & !A", "rhs": "0"})
-    results.append(_check_property("Complement (OR)", disj(a, not_a), True) | {"lhs": "A | !A", "rhs": "1"})
-    results.append(_check_property("Involution", BoolExpr("not", left=not_a), True) | {"lhs": "!!A", "rhs": "A"})
-    results.append(
-        _check_property("Commutative (AND)", BoolExpr("and", left=a, right=b), True) | {"lhs": "A & B", "rhs": "B & A"}
-    )
-    results.append(
-        _check_property("De Morgan (AND)", BoolExpr("not", left=conj(a, b)), True)
-        | {"lhs": "!(A & B)", "rhs": "!A | !B"}
-    )
-    results.append(
-        _check_property("De Morgan (OR)", BoolExpr("not", left=disj(a, b)), True)
-        | {"lhs": "!(A | B)", "rhs": "!A & !B"}
-    )
-    results.append(_check_property("Absorption", disj(conj(a, b), a), True) | {"lhs": "(A & B) | A", "rhs": "A"})
-    results.append(
-        _check_property("Distributive (AND over OR)", conj(a, disj(b, c)), True)
-        | {"lhs": "A & (B | C)", "rhs": "(A & B) | (A & C)"}
-    )
+
+    def check(name: str, lhs: BoolExpr, rhs: BoolExpr) -> None:
+        results.append(_check_property(name, lhs, rhs) | {"lhs": _expr_to_string(lhs), "rhs": _expr_to_string(rhs)})
+
+    check("Identity (AND)", conj(a, one), a)
+    check("Identity (OR)", disj(a, zero), a)
+    check("Null (AND)", conj(a, zero), zero)
+    check("Null (OR)", disj(a, one), one)
+    check("Idempotent (AND)", conj(a, a), a)
+    check("Idempotent (OR)", disj(a, a), a)
+    check("Complement (AND)", conj(a, not_a), zero)
+    check("Complement (OR)", disj(a, not_a), one)
+    check("Involution", BoolExpr("not", left=not_a), a)
+    check("Commutative (AND)", conj(a, b), conj(b, a))
+    check("Commutative (OR)", disj(a, b), disj(b, a))
+    check("De Morgan (AND)", BoolExpr("not", left=conj(a, b)), disj(not_a, not_b))
+    check("De Morgan (OR)", BoolExpr("not", left=disj(a, b)), conj(not_a, not_b))
+    check("Absorption", disj(conj(a, b), a), a)
+    check("Distributive (AND over OR)", conj(a, disj(b, c)), disj(conj(a, b), conj(a, c)))
     return results
 
 
