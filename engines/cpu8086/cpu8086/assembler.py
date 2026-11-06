@@ -321,9 +321,7 @@ def _validate_signature(
         elif port_operand.kind == "imm" and 0 <= port_operand.value <= 0xFFFF:
             resolved_port = Operand(kind="imm", value=port_operand.value, width=16)
         else:
-            raise AsmError(
-                line, "SYNTAX", f"{mnemonic} port must be an immediate 0-0xFFFF or DX"
-            )
+            raise AsmError(line, "SYNTAX", f"{mnemonic} port must be an immediate 0-0xFFFF or DX")
         if mnemonic == "IN":
             return dest, resolved_port
         return resolved_port, accumulator

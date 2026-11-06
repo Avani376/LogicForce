@@ -6,8 +6,7 @@ import json
 from typing import Any
 
 import pytest
-
-from cosim_engine import run_cosim, cosim_report_to_dict
+from cosim_engine import cosim_report_to_dict, run_cosim
 from logic_engine import SchemaError
 
 AND_CIRCUIT: dict[str, Any] = {

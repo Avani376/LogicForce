@@ -19,7 +19,7 @@ from logic_engine.graph import parse_circuit as parse_circuit_v1
 from logic_engine.hashing import canonical_json
 from logic_engine.simulator import simulate as v1_simulate
 from logic_engine.validation import require_valid as v1_require_valid
-from logic_engine.values import LogicValue, normalize_value
+from logic_engine.values import LogicValue
 
 COSIM_ENGINE_VERSION = "0.8.0"
 COSIM_SCHEMA_VERSION = 1
@@ -229,9 +229,7 @@ def run_cosim(document: Mapping[str, object]) -> CoSimReport:
         applied: list[dict[str, object]] = []
         for port, value in sorted(pending_writes.items()):
             signal = port_to_input[port]
-            current_inputs[signal] = (
-                LogicValue.ONE if (value & 1) else LogicValue.ZERO
-            )
+            current_inputs[signal] = LogicValue.ONE if (value & 1) else LogicValue.ZERO
             applied.append({"port": port, "value": value, "signal": signal})
             port_writes_total += 1
         pending_writes = {}
