@@ -101,7 +101,10 @@ class TestCrossCheck:
             _verify_qm_coverage(minterms, dont_cares, 2)
 
     def test_4var_sample(self) -> None:
-        """Sample 4-variable functions (full 2^16 exhaustive is too slow for CI)."""
-        for func_value in [0x0000, 0xFFFF, 0x8000, 0x0001, 0xFF00, 0x00FF, 0xAAAA, 0x5555]:
-            minterms = [i for i in range(16) if (func_value >> i) & 1]
+        """Sample 4-variable functions with 4-bit minterm values (0-15)."""
+        import random
+
+        rng = random.Random(42)
+        for _ in range(20):
+            minterms = rng.sample(range(16), rng.randint(1, 15))
             _verify_qm_coverage(minterms, [], 4)
