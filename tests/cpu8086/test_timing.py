@@ -50,16 +50,13 @@ class TestAddressingModes:
         assert machine.registers.get("AX") == 0xAB
 
     def test_based_addressing_bx(self) -> None:
-        machine = assemble_and_load(
-            "MOV BX, 0x100\nMOV WORD [BX], 0xCD\nMOV AX, WORD [BX]\nHLT"
-        )
+        machine = assemble_and_load("MOV BX, 0x100\nMOV WORD [BX], 0xCD\nMOV AX, WORD [BX]\nHLT")
         machine.run()
         assert machine.registers.get("AX") == 0xCD
 
     def test_based_indexed_disp(self) -> None:
         machine = assemble_and_load(
-            "MOV BX, 0x100\nMOV SI, 0x10\n"
-            "MOV WORD [BX+SI+4], 0xEF\nMOV AX, WORD [BX+SI+4]\nHLT"
+            "MOV BX, 0x100\nMOV SI, 0x10\nMOV WORD [BX+SI+4], 0xEF\nMOV AX, WORD [BX+SI+4]\nHLT"
         )
         machine.run()
         assert machine.registers.get("AX") == 0xEF
