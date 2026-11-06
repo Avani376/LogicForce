@@ -12,7 +12,7 @@ from boolean_engine.boolean import (
     variables,
     verify_theorems,
 )
-from boolean_engine.kmap import kmap_simplify, quine_mccluskey
+from boolean_engine.kmap import kmap_simplify as kmap_simplify, quine_mccluskey as quine_mccluskey
 from boolean_engine.version import BOOLEAN_ENGINE_VERSION
 
 __all__ = [
