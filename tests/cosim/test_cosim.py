@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 
 from cosim_engine import run_cosim, cosim_report_to_dict
+from logic_engine import SchemaError
 
 AND_CIRCUIT: dict[str, Any] = {
     "schema_version": 1,
@@ -158,11 +159,13 @@ def test_duplicate_port_rejected() -> None:
 
 
 def test_invalid_circuit_rejected() -> None:
+    """An invalid circuit (dangling pins) is rejected before the run starts."""
+    from logic_engine import CircuitNotValidError
+
     doc = json.loads(json.dumps(DOCUMENT))
     doc["circuit"]["nets"] = []
-    with pytest.raises(SchemaError) as excinfo:
+    with pytest.raises(CircuitNotValidError):
         run_cosim(doc)
-    assert excinfo.value.code == "COSIM_SCHEMA_ERROR"
 
 
 def test_x_input_excluded_from_equivalence() -> None:
