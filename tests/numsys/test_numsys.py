@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from numsys import (
     ascii_lookup,
     bcd_decode,

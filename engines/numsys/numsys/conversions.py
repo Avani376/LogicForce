@@ -6,7 +6,7 @@ and ``scope_label`` per the addendum's shared result shape. Pure, deterministic.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -112,9 +112,8 @@ def twos_complement(value: str, width: int) -> NumSysResult:
             else:
                 result_list[i] = "1"
                 carry = 0
-    if carry:
-        result_list.insert(0, "1")
-    result = "".join(result_list)
+    # truncate to width bits (2's complement of 0 wraps to 0, not 1000...0)
+    result = "".join(result_list[-width:])
     steps = list(ones.steps) + [
         Step("2's complement: add 1 to 1's complement", flipped, result, f"{flipped} + 1 = {result}")
     ]
@@ -225,7 +224,7 @@ def gray_encode(binary: str) -> NumSysResult:
     value = int(binary, 2)
     gray = value ^ (value >> 1)
     result = format(gray, f"0{len(binary)}b")
-    steps = [Step(f"Gray encode: G = B ^ (B >> 1)", binary, result, f"{binary} XOR ({binary} >> 1) = {result}")]
+    steps = [Step("Gray encode: G = B ^ (B >> 1)", binary, result, f"{binary} XOR ({binary} >> 1) = {result}")]
     return NumSysResult(result=result, steps=tuple(steps), method="Gray encode: G = B ^ (B >> 1)")
 
 
