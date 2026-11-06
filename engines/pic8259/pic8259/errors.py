@@ -10,6 +10,7 @@ PIC_CATEGORIES = (
     "BAD_VECTOR_BASE",
     "BAD_LINE",
     "BAD_OCW",
+    "BAD_EVENT",
 )
 
 

@@ -89,7 +89,9 @@ class Pic8259:
         self._base = value
         if self._expect_icw3:
             return  # ICW3 comes next (SNGL=0)
-        self._finish_init(at_step)
+        if self._expect_icw4:
+            return  # ICW4 comes next (IC4=1)
+        self._finish_init()
 
     def write_icw3(self, value: int, at_step: int = 0) -> None:
         """ICW3 — required when SNGL=0; recorded, cascade routing not simulated."""
@@ -104,7 +106,7 @@ class Pic8259:
         self._icw3 = value
         self._expect_icw3 = False
         if not self._expect_icw4:
-            self._finish_init(at_step)
+            self._finish_init()
 
     def write_icw4(self, value: int, at_step: int = 0) -> None:
         """ICW4 — required when IC4=1; AEOI (bit 1) and SFNM (bit 4) recorded."""
@@ -119,9 +121,9 @@ class Pic8259:
         self._aeoi = (value & 0x02) != 0
         self._sfnm = (value & 0x10) != 0
         self._expect_icw4 = False
-        self._finish_init(at_step)
+        self._finish_init()
 
-    def _finish_init(self, at_step: int) -> None:
+    def _finish_init(self) -> None:
         self._in_init = False
         self._initialized = True
 
