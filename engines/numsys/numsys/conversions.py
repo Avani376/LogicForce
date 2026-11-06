@@ -252,13 +252,13 @@ def ascii_lookup(char: str) -> NumSysResult:
     code = ord(char)
     return NumSysResult(
         result=f"0x{code:02X} ({code})",
-        steps=[
+        steps=(
             Step(
                 f"ASCII: {char!r} → {code}",
                 char,
                 f"0x{code:02X}",
                 f"decimal={code}, hex=0x{code:02X}, binary={code:08b}",
-            )
-        ],
+            ),
+        ),
         method="ASCII (7-bit)",
     )
