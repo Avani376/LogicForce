@@ -85,11 +85,6 @@ def _make_shift_register(width: int, mode: str) -> str:
 class TestShiftRegisters:
     def test_sipo_4bit_shift(self) -> None:
         """Serial-in parallel-out: shift 1 through 4 DFFs and check propagation."""
-        doc = {
-            "schema_version": 2,
-            "components": ([{"id": f"F{i}", "type": "DFF"} for i in range(4)]),
-            "nets": [],
-        }
         # DFF chain: F0.d = 1 (const), F[i].d = F[i-1].q
         # This is tested via simulate_sequential with per-cycle inputs
         # For simplicity, test the engine directly with a shift register program
