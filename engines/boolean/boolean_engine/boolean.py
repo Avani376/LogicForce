@@ -3,19 +3,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from itertools import product
 from typing import cast
 
 from logic_engine import SchemaError
-from typing import cast
 
 
 @dataclass(frozen=True)
 class BoolExpr:
     kind: str  # "var" | "not" | "and" | "or" | "xor" | "lit"
     value: str = ""
-    left: "BoolExpr | None" = None
-    right: "BoolExpr | None" = None
+    left: BoolExpr | None = None
+    right: BoolExpr | None = None
 
 
 def parse(text: str) -> BoolExpr:

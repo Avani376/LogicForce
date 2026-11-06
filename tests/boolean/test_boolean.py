@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from boolean_engine import (
     evaluate,
     parse,
@@ -11,7 +10,6 @@ from boolean_engine import (
     to_nor_only,
     to_pos,
     to_sop,
-    truth_table,
     variables,
     verify_theorems,
 )
