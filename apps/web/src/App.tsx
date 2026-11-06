@@ -36,6 +36,7 @@ import { TruthTablePanel } from './components/TruthTablePanel'
 import { TracePanel } from './components/TracePanel'
 import { ValidationPanel } from './components/ValidationPanel'
 import { WaveformPanel } from './components/WaveformPanel'
+import { Cpu8086Panel } from './components/Cpu8086Panel'
 
 const STORAGE_KEY = 'logicforge.circuit.v1'
 const SEQ_CYCLES = 8
@@ -66,6 +67,7 @@ export function App(): JSX.Element {
   const [tt, setTt] = useState<TruthTableResult | null>(null)
   const [ttError, setTtError] = useState<string | null>(null)
   const [showTt, setShowTt] = useState(false)
+  const [show8086, setShow8086] = useState(false)
 
   const docJson = useMemo(() => JSON.stringify(toDoc(present)), [present])
   const inputsJson = useMemo(() => JSON.stringify(present.inputValues), [present])
@@ -446,6 +448,7 @@ export function App(): JSX.Element {
           />
         </label>
         <button type="button" onClick={handleTruthTable}>Truth table</button>
+        <button type="button" onClick={() => setShow8086(!show8086)}>8086</button>
         <button type="button" onClick={() => commit(johnsonExample())}>
           Johnson counter
         </button>
@@ -533,6 +536,7 @@ export function App(): JSX.Element {
 
       <TracePanel trace={sim?.trace ?? []} eventCount={sim?.event_count ?? 0} scope={sim?.scope ?? ''} hash={sim?.input_hash ?? ''} />
       <WaveformPanel result={seqResult} />
+      {show8086 && <Cpu8086Panel />}
 
       {showTt && (
         <TruthTablePanel

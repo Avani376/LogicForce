@@ -607,3 +607,26 @@ button:disabled {
   stroke: var(--accent);
   stroke-width: 1.8;
 }
+
+/* --- 8086 panel --- */
+.cpu8086-panel {
+  background: var(--panel);
+  border-top: 1px solid var(--panel-edge);
+  padding: 12px 18px;
+}
+.cpu8086-panel h2 { margin: 0 0 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-dim); }
+.cpu8086-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.asm-editor { width: 100%; min-height: 280px; background: var(--bg); color: var(--ink); border: 1px solid var(--panel-edge); border-radius: 8px; font-family: Consolas, monospace; font-size: 13px; padding: 10px; resize: vertical; }
+.cpu8086-controls { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.cpu8086-controls input[type=number] { width: 80px; background: var(--bg); color: var(--ink); border: 1px solid var(--panel-edge); border-radius: 4px; padding: 4px; }
+.reg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px; }
+.reg-item { display: flex; justify-content: space-between; padding: 3px 8px; background: var(--bg); border-radius: 4px; border: 1px solid var(--panel-edge); }
+.reg-name { font-family: Consolas, monospace; font-size: 11px; color: var(--ink-dim); }
+.reg-value { font-family: Consolas, monospace; font-size: 12px; font-weight: bold; color: var(--accent); }
+.flag-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.flag-chip { font-family: Consolas, monospace; font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--panel-edge); }
+.flag-set { color: var(--accent); border-color: var(--accent); }
+.flag-clear { color: var(--ink-dim); }
+.trace-scroll { overflow: auto; max-height: 200px; border: 1px solid var(--panel-edge); border-radius: 6px; }
+.trace-int { background: rgba(76, 155, 232, 0.1); }
+.int-chip { font-family: Consolas, monospace; font-size: 10px; color: var(--warn); background: rgba(230, 159, 0, 0.15); padding: 1px 5px; border-radius: 3px; }
