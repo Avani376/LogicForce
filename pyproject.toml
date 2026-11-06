@@ -36,6 +36,7 @@ packages = [
   "cosim_engine",
   "numsys",
   "boolean_engine",
+  "pic8259",
   "logicforge_api",
   "logicforge_api.routers",
 ]
@@ -51,6 +52,7 @@ cpu8086 = "engines/cpu8086/cpu8086"
 cosim_engine = "engines/cosim/cosim_engine"
 numsys = "engines/numsys/numsys"
 boolean_engine = "engines/boolean/boolean_engine"
+pic8259 = "engines/pic8259/pic8259"
 logicforge_api = "apps/api/logicforge_api"
 "logicforge_api.routers" = "apps/api/logicforge_api/routers"
 
@@ -74,5 +76,5 @@ extend-exclude = [".venv", "apps/web", "scripts"]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
 
 [tool.coverage.run]
-source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "cpu8086", "cosim_engine", "numsys", "boolean_engine", "logicforge_api"]
+source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "cpu8086", "cosim_engine", "numsys", "boolean_engine", "pic8259", "logicforge_api"]
 branch = true
