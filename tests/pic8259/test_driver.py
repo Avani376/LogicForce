@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import pytest
-
-from pic8259 import EVENT_OPS, PicConfig, PicEvent, PicError, resolve_pic_flow
+from pic8259 import EVENT_OPS, PicConfig, PicError, PicEvent, resolve_pic_flow
 
 
 def _vectors(result: object) -> list[tuple[int, int, int]]:

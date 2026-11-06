@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from pic8259 import Pic8259, PicError
 
 
