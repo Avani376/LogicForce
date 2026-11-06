@@ -6,9 +6,6 @@ sets with optional don't-care terms, producing minimal SOP expressions.
 
 from __future__ import annotations
 
-from itertools import combinations
-from typing import cast
-
 
 def _count_ones(term: int) -> int:
     return bin(term).count("1")
@@ -79,9 +76,9 @@ def quine_mccluskey(minterms: list[int], dont_cares: list[int], num_vars: int) -
     covered_by_essential: set[int] = set()
 
     for minterm in sorted(minterm_set):
-        covering = [pi for pi, cov in unique_pis if minterm in cov]
-        if len(covering) == 1:
-            pi, cov = covering[0]
+        covering_pis = [(pi, cov) for pi, cov in unique_pis if minterm in cov]
+        if len(covering_pis) == 1:
+            pi, cov = covering_pis[0]
             if pi not in [e[0] for e in essential]:
                 essential.append((pi, cov))
                 covered_by_essential |= cov & minterm_set

@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from itertools import product
 
-import pytest
-
 from boolean_engine import kmap_simplify, quine_mccluskey
-from logic_engine import SchemaError
 
 
 def _evaluate_expression(expression: str, variables: list[str], values: dict[str, bool]) -> bool:
@@ -66,7 +63,7 @@ class TestQM:
         """Σm(0,2) + d(1,3) should simplify to just !A (all of A=0 covers everything)."""
         result = quine_mccluskey([0, 2], [1, 3], 2)
         expression = str(result["expression"])
-        assert expression == "!A" or expression == "(!A)"
+        assert expression == "1"  # all inputs covered by minterms+dc -> constant 1
 
 
 class TestKMap:
