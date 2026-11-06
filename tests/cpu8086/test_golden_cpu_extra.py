@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from cpu8086 import assemble
 import pytest
-
+from cpu8086 import assemble
 from cpu8086.machine import Cpu
 
 
