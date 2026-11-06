@@ -15,7 +15,7 @@ from logic_engine import parse_circuit
 class TestCharacteristicTables:
     def test_dff_table(self) -> None:
         t = characteristic_table("DFF")
-        assert len(t.characteristic) == 2  # D=0, D=1 (× Q=0,1)
+        assert len(t.characteristic) == 4  # D=0,1 × Q=0,1
         for entry in t.characteristic:
             assert entry.next_q == entry.inputs["D"]  # Q' = D
 
@@ -160,7 +160,7 @@ class TestSequenceDetector:
                 {"from": "S2", "when": {"x": "1"}, "to": "S3", "outputs": {"detect": "1"}},
                 {"from": "S2", "when": {"x": "0"}, "to": "S0", "outputs": {"detect": "0"}},
                 {"from": "S3", "when": {"x": "1"}, "to": "S1", "outputs": {"detect": "0"}},
-                {"from": "S3", "when": {"x": "0"}, "to": "S0", "outputs": {"detect": "0"}},
+                {"from": "S3", "when": {"x": "0"}, "to": "S2", "outputs": {"detect": "0"}},
             ],
         }
         from sequential_engine import fsm_simulate, parse_fsm
