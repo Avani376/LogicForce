@@ -231,15 +231,18 @@ def gray_encode(binary: str) -> NumSysResult:
 
 def gray_decode(gray: str) -> NumSysResult:
     _validate_digits(gray, 2)
-    binary_value = int(gray, 2)
-    binary_value ^= binary_value >> 1
-    result = format(binary_value, f"0{len(gray)}b")
-    steps = []
-    accumulator = 0
-    for i in range(len(gray)):
-        bit = int(gray[0]) if i == 0 else accumulator ^ int(gray[i])
-        accumulator = (accumulator << 1) | bit
-        steps.append(Step(f"Gray decode bit {i}: {gray[: i + 1]} → {result[: i + 1]}", gray[i], result[: i + 1]))
+    binary_chars: list[str] = []
+    prev_bit = 0
+    for i, bit in enumerate(gray):
+        g = int(bit)
+        b = g if i == 0 else prev_bit ^ g
+        binary_chars.append(str(b))
+        prev_bit = b
+    result = "".join(binary_chars)
+    steps = [
+        Step(f"Gray decode bit {i}: {gray[: i + 1]} → {result[: i + 1]}", gray[i], result[: i + 1])
+        for i in range(len(gray))
+    ]
     return NumSysResult(result=result, steps=tuple(steps), method="Gray decode: B[i] = B[i-1] ^ G[i]")
 
 
