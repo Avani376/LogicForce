@@ -37,6 +37,7 @@ from sequential_engine.simulator import (
     simulate_sequential,
 )
 from sequential_engine.validation import validate_sequential
+from sequential_engine.tables import FlipFlopTables, characteristic_table, excitation_table
 from sequential_engine.version import (
     MAX_CYCLES,
     MAX_STATE_WIDTH,
@@ -49,6 +50,9 @@ __all__ = [
     "SCHEMA_VERSION_V2",
     "MAX_CYCLES",
     "MAX_STATE_WIDTH",
+    "characteristic_table",
+    "excitation_table",
+    "FlipFlopTables",
     "SUPPORTED_SEQUENTIAL_TYPES",
     "MULTI_BIT_TYPES",
     "dff_next",
