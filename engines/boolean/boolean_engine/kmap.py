@@ -19,7 +19,7 @@ def _terms_differ_by_one_bit(a: int, b: int) -> bool:
 def _merge_terms(a: str, b: str) -> str:
     """Merge two binary strings that differ in exactly one position (replace with '-')."""
     result = list(a)
-    for i, (ca, cb) in enumerate(zip(a, b)):
+    for i, (ca, cb) in enumerate(zip(a, b, strict=False)):
         if ca != cb:
             result[i] = "-"
     return "".join(result)
@@ -27,10 +27,7 @@ def _merge_terms(a: str, b: str) -> str:
 
 def _term_covers(term: str, minterm: int) -> bool:
     """Check if a pattern (with '-' wildcards) covers a minterm."""
-    for i, ch in enumerate(term):
-        if ch != "-" and int(ch) != ((minterm >> (len(term) - 1 - i)) & 1):
-            return False
-    return True
+    return all(not (ch != "-" and int(ch) != minterm >> len(term) - 1 - i & 1) for i, ch in enumerate(term))
 
 
 def quine_mccluskey(minterms: list[int], dont_cares: list[int], num_vars: int) -> dict[str, object]:

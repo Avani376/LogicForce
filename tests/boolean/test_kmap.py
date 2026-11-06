@@ -25,7 +25,7 @@ def _verify_qm_coverage(minterms: list[int], dont_cares: list[int], num_vars: in
     expression = str(result["expression"])
     names = [chr(65 + i) for i in range(num_vars)]
     for values in product([False, True], repeat=num_vars):
-        env = dict(zip(names, values))
+        env = dict(zip(names, values, strict=False))
         minterm_value = sum((1 << (num_vars - 1 - i)) for i, v in enumerate(values) if v)
         expected = minterm_value in minterms
         actual = _evaluate_expression(expression, names, env)
