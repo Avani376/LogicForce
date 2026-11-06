@@ -38,8 +38,15 @@ npm run build      # production build (tsc + vite) — output apps/web/dist
    `pytest --cov --cov-fail-under=90`.
 2. Web job (added with Phase 1c): `npm ci` → `npm run build`.
 
-## Docker (planned, Phase 10)
+## Docker (implemented, Phase 10)
 
-Multi-stage images for API and static web, behind a reverse proxy; PostgreSQL only when
-persistence lands (D5). The compose file will be added when there is something real to
-orchestrate (D6).
+```bash
+docker compose up --build
+# API: http://localhost:8000/api/health
+# Web: http://localhost:80 (nginx proxies /api to the api service)
+```
+
+- `Dockerfile.api`: Python 3.12 slim, uvicorn, health check
+- `Dockerfile.web`: Node 20 build stage (npm ci + tsc + vite) + nginx
+- `nginx.conf`: static frontend + /api reverse proxy to the api service
+- `docker-compose.yml`: api + web with health-check dependency

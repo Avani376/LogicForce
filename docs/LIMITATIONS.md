@@ -53,7 +53,9 @@ list of what the platform cannot do today.
   the deterministic engines. No AI provider key or LLM integration is used.
 - **No persistence, users, auth, or multi-tenancy** (D5): the API is a stateless compute
   service. Anyone with network access to the dev server can submit circuits.
-- **No Docker/deployment artifacts** (D6): local development only.
+- **Docker deployment is local-build only**: Dockerfiles + docker-compose.yml exist
+  and are functional, but no images are published to a registry. No Kubernetes,
+  no TLS, no CDN. Users deploy via `docker compose up --build`.
 - **Workspace**: sequential circuits are simulable in the UI (example loader + waveform
   viewer) but sequential components cannot yet be placed from the palette, and FSM
   state-transition visualization is not rendered as a graph yet (transition data is

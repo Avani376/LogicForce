@@ -46,6 +46,13 @@ of truth and every result traceable.
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
   sequential waveform viewer, undo/redo, save/load.
 
+## Deployment (Docker)
+
+```bash
+docker compose up --build
+# API: http://localhost:8000  |  Web: http://localhost:80
+```
+
 ## Quickstart
 
 ```bash
