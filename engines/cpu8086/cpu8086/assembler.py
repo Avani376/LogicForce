@@ -18,7 +18,7 @@ BYTE_REG_NAMES = set(BYTE_HALVES)
 ALL_REG_NAMES = WORD_REG_NAMES | SEG_REG_NAMES | BYTE_REG_NAMES
 
 MNEMONICS_WITH_DEST_SRC = {
-    "MOV",
+    "MOV", "XCHG",
     "ADD",
     "ADC",
     "SUB",
@@ -27,7 +27,7 @@ MNEMONICS_WITH_DEST_SRC = {
     "AND",
     "OR",
     "XOR",
-    "TEST",
+    "TEST", "SHL", "SHR", "SAR",
 }
 MNEMONICS_UNARY = {"INC", "DEC", "NEG", "NOT", "PUSH", "POP"}
 MNEMONICS_INTERRUPT = {"INT", "IRET", "STI", "CLI"}
