@@ -83,6 +83,10 @@
           {
             "component": "X01",
             "pin": "a"
+          },
+          {
+            "component": "OUT_g3",
+            "pin": "in"
           }
         ]
       },
@@ -100,6 +104,10 @@
           {
             "component": "X12",
             "pin": "a"
+          },
+          {
+            "component": "OUT_g2",
+            "pin": "in"
           }
         ]
       },
@@ -117,6 +125,10 @@
           {
             "component": "X23",
             "pin": "a"
+          },
+          {
+            "component": "OUT_g1",
+            "pin": "in"
           }
         ]
       },
@@ -132,7 +144,7 @@
             "pin": "b"
           },
           {
-            "component": "OUT_g3",
+            "component": "OUT_g0",
             "pin": "in"
           }
         ]
@@ -143,12 +155,7 @@
           "component": "X01",
           "pin": "out"
         },
-        "sinks": [
-          {
-            "component": "OUT_g0",
-            "pin": "in"
-          }
-        ]
+        "sinks": []
       },
       {
         "id": "n_x12",
@@ -156,12 +163,7 @@
           "component": "X12",
           "pin": "out"
         },
-        "sinks": [
-          {
-            "component": "OUT_g1",
-            "pin": "in"
-          }
-        ]
+        "sinks": []
       },
       {
         "id": "n_x23",
@@ -169,12 +171,7 @@
           "component": "X23",
           "pin": "out"
         },
-        "sinks": [
-          {
-            "component": "OUT_g2",
-            "pin": "in"
-          }
-        ]
+        "sinks": []
       }
     ]
   },
