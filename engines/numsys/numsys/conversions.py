@@ -201,7 +201,10 @@ def excess3_encode(decimal: str) -> NumSysResult:
     result = " ".join(nibbles)
     return NumSysResult(
         result=result,
-        steps=tuple(Step(f"Excess-3: {ch} + 3 = {int(ch) + 3} → {nib}", ch, nib) for ch, nib in zip(decimal, nibbles, strict=False)),
+        steps=tuple(
+            Step(f"Excess-3: {ch} + 3 = {int(ch) + 3} → {nib}", ch, nib)
+            for ch, nib in zip(decimal, nibbles, strict=False)
+        ),
         method="Excess-3 (BCD + 3)",
     )
 
