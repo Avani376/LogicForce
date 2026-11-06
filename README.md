@@ -34,6 +34,9 @@ of truth and every result traceable.
   rewrites (double negation, buffers, constant folding, duplicate merge, dead gates) with
   **per-transformation exhaustive equivalence evidence** — objective improves, truth
   table provably unchanged.
+- **Explanation engine** (`engines/verify` explain, v0.9.0): evidence-grounded
+  explanations generated from real engine output — every finding cites trace steps
+  or report verdicts; deterministic, rule-based, no LLM dependency.
 - **8086 educational core** (`engines/cpu8086`, v0.7.0): IR-based assembler + executor
   for a declared instruction subset with exact Intel-documented flag semantics, 1MiB
   segmented memory with mod-2^20 wraparound, debugger controls (step, bounded run,

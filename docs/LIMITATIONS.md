@@ -47,8 +47,10 @@ list of what the platform cannot do today.
   scheduled NMI/INTR at instruction boundaries — no async edge timing, no 8259 PIC
   model, no interrupt priorities). Co-simulation is Phase 8. Not an 8086
   compatibility claim.
-- **No AI assistance** (Phase 9). When it arrives it will be advisory and labeled; it will
-  not compute results.
+- **Explanation engine (Phase 9) is rule-based, not an LLM**: it generates
+  structured, evidence-cited explanations from real engine output. It does not
+  answer free-form questions, speculate beyond the provided evidence, or replace
+  the deterministic engines. No AI provider key or LLM integration is used.
 - **No persistence, users, auth, or multi-tenancy** (D5): the API is a stateless compute
   service. Anyone with network access to the dev server can submit circuits.
 - **No Docker/deployment artifacts** (D6): local development only.
