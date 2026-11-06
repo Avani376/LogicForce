@@ -295,11 +295,11 @@ export function App(): JSX.Element {
       </nav>
 
       <div className="toolbar" role="toolbar" aria-label="Circuit actions">
-        {GATE_TYPES.map((type) => (
+        {tab === 'circuit' && GATE_TYPES.map((type) => (
           <button key={type} type="button" onClick={() => handleAdd(type)}>+ {type}</button>
         ))}
-        <button type="button" onClick={() => handleAddPrimary('INPUT')}>+ Input</button>
-        <button type="button" onClick={() => handleAddPrimary('OUTPUT')}>+ Output</button>
+        {tab === 'circuit' && <button type="button" onClick={() => handleAddPrimary('INPUT')}>+ Input</button>}
+        {tab === 'circuit' && <button type="button" onClick={() => handleAddPrimary('OUTPUT')}>+ Output</button>}
         <span className="toolbar-sep" aria-hidden="true" />
         <button type="button" onClick={undo} disabled={history.current.past.length === 0}>Undo</button>
         <button type="button" onClick={redo} disabled={history.current.future.length === 0}>Redo</button>
@@ -382,8 +382,14 @@ export function App(): JSX.Element {
       )}
 
       {tab === '8086' && <Cpu8086Panel />}
-      {tab === 'verify' && <VerifyPanel circuitDoc={docJson} />}
-      {tab === 'explain' && <ExplainPanel />}
+      {tab === 'verify' && (
+        <VerifyPanel circuitDoc={docJson}
+          outputSignals={present.components.filter(c => c.type === 'OUTPUT').map(c => c.ioName ?? '')}
+          inputSignals={present.components.filter(c => c.type === 'INPUT').map(c => c.ioName ?? '')} />
+      )}
+      {tab === 'explain' && (
+        <ExplainPanel autoEvidence={null} />
+      )}
 
       {showTt && <TruthTablePanel result={tt} error={ttError} onClose={() => setShowTt(false)} />}
     </div>

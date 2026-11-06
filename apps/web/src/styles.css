@@ -643,3 +643,7 @@ button:disabled {
 .verify-form, .explain-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .verify-input { flex: 1; min-width: 200px; background: var(--bg); color: var(--ink); border: 1px solid var(--panel-edge); border-radius: 4px; padding: 6px; font-family: Consolas, monospace; }
 .counterexample { background: var(--danger-soft); color: #ffb27a; padding: 10px; border-radius: 6px; font-family: Consolas, monospace; font-size: 12px; overflow: auto; }
+
+/* fill vertical space on Verify/Explain tabs */
+.verify-panel, .explain-panel { min-height: 60vh; }
+.verify-panel .verify-input { width: 100%; max-width: 500px; }
