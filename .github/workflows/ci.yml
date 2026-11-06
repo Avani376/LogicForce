@@ -23,7 +23,7 @@ jobs:
           ruff check .
           ruff format --check .
       - name: Type check (mypy strict)
-        run: mypy engines/logic/logic_engine engines/sequential/sequential_engine engines/verify/verify_engine engines/faults/fault_engine engines/repair/repair_engine engines/optimize/optimize_engine engines/cpu8086/cpu8086 engines/cosim/cosim_engine apps/api/logicforge_api
+        run: mypy engines/logic/logic_engine engines/sequential/sequential_engine engines/verify/verify_engine engines/faults/fault_engine engines/repair/repair_engine engines/optimize/optimize_engine engines/cpu8086/cpu8086 engines/cosim/cosim_engine engines/numsys/numsys apps/api/logicforge_api
       - name: Tests + coverage gate
         run: pytest --cov --cov-report=term-missing --cov-fail-under=90
 
