@@ -36,8 +36,8 @@ from sequential_engine.simulator import (
     sequential_result_to_dict,
     simulate_sequential,
 )
-from sequential_engine.validation import validate_sequential
 from sequential_engine.tables import FlipFlopTables, characteristic_table, excitation_table
+from sequential_engine.validation import validate_sequential
 from sequential_engine.version import (
     MAX_CYCLES,
     MAX_STATE_WIDTH,

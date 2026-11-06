@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from cpu8086.timing import get_timing
 from cpu8086.machine import assemble_and_load
+from cpu8086.timing import get_timing
 
 
 class TestTimingModel:

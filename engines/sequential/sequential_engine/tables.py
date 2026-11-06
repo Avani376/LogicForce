@@ -9,8 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from logic_engine import SchemaError
-from sequential_engine.flipflops import dff_next, jkff_next, srff_next, tff_next
 from logic_engine.values import LogicValue
+
+from sequential_engine.flipflops import dff_next, jkff_next, srff_next, tff_next
 
 _0 = LogicValue.ZERO
 _1 = LogicValue.ONE

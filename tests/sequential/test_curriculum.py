@@ -2,14 +2,10 @@
 
 from __future__ import annotations
 
-import pytest
-
 from sequential_engine import (
     characteristic_table,
     excitation_table,
-    simulate_sequential,
 )
-from logic_engine import parse_circuit
 
 
 class TestCharacteristicTables:
@@ -75,7 +71,7 @@ def _make_shift_register(width: int, mode: str) -> str:
     lines = []
     for i in range(width):
         lines.append(f"MOV WORD [0x{i * 2}], 0")
-    lines.append(f"MOV AL, 1")
+    lines.append("MOV AL, 1")
     # Serial-in: shift data through D flip-flops
     for i in range(width):
         if i == 0:
