@@ -630,3 +630,16 @@ button:disabled {
 .trace-scroll { overflow: auto; max-height: 200px; border: 1px solid var(--panel-edge); border-radius: 6px; }
 .trace-int { background: rgba(76, 155, 232, 0.1); }
 .int-chip { font-family: Consolas, monospace; font-size: 10px; color: var(--warn); background: rgba(230, 159, 0, 0.15); padding: 1px 5px; border-radius: 3px; }
+
+/* --- tab bar --- */
+.tab-bar { display: flex; gap: 0; padding: 0 18px; background: var(--panel); border-bottom: 1px solid var(--panel-edge); }
+.tab-btn { border-radius: 0; border: none; border-bottom: 2px solid transparent; padding: 8px 20px; font-size: 0.9rem; background: transparent; color: var(--ink-dim); cursor: pointer; }
+.tab-btn:hover, .tab-active { color: var(--ink); border-bottom-color: var(--accent); }
+.verdict-chip { font-family: Consolas, monospace; font-weight: bold; padding: 3px 10px; border-radius: 4px; margin: 0 8px; }
+.verdict-PASS { color: var(--ok); background: rgba(0, 158, 115, 0.15); }
+.verdict-FAIL { color: var(--danger); background: rgba(213, 94, 0, 0.15); }
+.verdict-INCOMPLETE { color: var(--warn); background: rgba(230, 159, 0, 0.15); }
+.verify-panel, .explain-panel { padding: 14px 18px; }
+.verify-form, .explain-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.verify-input { flex: 1; min-width: 200px; background: var(--bg); color: var(--ink); border: 1px solid var(--panel-edge); border-radius: 4px; padding: 6px; font-family: Consolas, monospace; }
+.counterexample { background: var(--danger-soft); color: #ffb27a; padding: 10px; border-radius: 6px; font-family: Consolas, monospace; font-size: 12px; overflow: auto; }
