@@ -34,10 +34,7 @@ def test_run_endpoint_nmi_fires_and_returns_interrupt_trace() -> None:
 
 def test_run_endpoint_masked_intr_waits_for_sti() -> None:
     body = {
-        "source": (
-            "MOV WORD [0x200], 0\nCLI\nMOV BX, 7\nSTI\nwait:\nJMP wait\n"
-            "tick:\nINC WORD [0x200]\nIRET"
-        ),
+        "source": ("MOV WORD [0x200], 0\nCLI\nMOV BX, 7\nSTI\nwait:\nJMP wait\ntick:\nINC WORD [0x200]\nIRET"),
         "max_steps": 200,
         "interrupts": {4: "tick"},
         "schedule": [{"source": "intr", "at_step": 2, "number": 4}],
@@ -63,12 +60,10 @@ def test_run_endpoint_schedule_is_deterministic_over_http() -> None:
     a = client.post("/api/8086/run", json=body).json()
     b = client.post("/api/8086/run", json=body).json()
     keys_a = [
-        (r["kind"], r["step"], r["number"], json.dumps(r["register_changes"], sort_keys=True))
-        for r in a["trace"]
+        (r["kind"], r["step"], r["number"], json.dumps(r["register_changes"], sort_keys=True)) for r in a["trace"]
     ]
     keys_b = [
-        (r["kind"], r["step"], r["number"], json.dumps(r["register_changes"], sort_keys=True))
-        for r in b["trace"]
+        (r["kind"], r["step"], r["number"], json.dumps(r["register_changes"], sort_keys=True)) for r in b["trace"]
     ]
     assert keys_a == keys_b
 

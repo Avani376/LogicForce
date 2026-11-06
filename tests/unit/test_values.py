@@ -218,9 +218,7 @@ def test_normalize_accepts_contract_values(raw: object, expected: LogicValue) ->
     assert normalize_value(raw) == expected
 
 
-@pytest.mark.parametrize(
-    "raw", ["2", "x", "high", "", "00", True, False, None, 2, 1.5, ["0"], {"v": 1}]
-)
+@pytest.mark.parametrize("raw", ["2", "x", "high", "", "00", True, False, None, 2, 1.5, ["0"], {"v": 1}])
 def test_normalize_rejects_everything_else(raw: object) -> None:
     with pytest.raises(ValueError, match="invalid logic value"):
         normalize_value(raw)

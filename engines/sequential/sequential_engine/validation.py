@@ -37,9 +37,7 @@ V2_PARAM_ALLOWANCE: dict[str, frozenset[str]] = {
 }
 
 
-def validate_sequential(
-    components: list[Component], nets: list[Net], name: str | None
-) -> ValidationReport:
+def validate_sequential(components: list[Component], nets: list[Net], name: str | None) -> ValidationReport:
     """Validate a parsed v2 circuit; returns the complete report."""
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
@@ -65,9 +63,7 @@ def validate_sequential(
                 errors.append(
                     ValidationIssue(
                         code="RESERVED_IO_NAME",
-                        message=(
-                            f"component id {comp.id!r} uses the reserved {prefix!r} namespace"
-                        ),
+                        message=(f"component id {comp.id!r} uses the reserved {prefix!r} namespace"),
                         component_id=comp.id,
                     )
                 )
@@ -146,10 +142,7 @@ def validate_sequential(
                         errors.append(
                             ValidationIssue(
                                 code="RESERVED_IO_NAME",
-                                message=(
-                                    f"{kind} name {raw_name!r} uses the reserved "
-                                    f"{prefix!r} namespace"
-                                ),
+                                message=(f"{kind} name {raw_name!r} uses the reserved {prefix!r} namespace"),
                                 component_id=cid,
                             )
                         )
@@ -212,10 +205,7 @@ def validate_sequential(
             errors.append(
                 ValidationIssue(
                     code="MULTI_DRIVER_NET",
-                    message=(
-                        f"net {net.id!r} has no driver; every net needs exactly one "
-                        "output-pin driver"
-                    ),
+                    message=(f"net {net.id!r} has no driver; every net needs exactly one output-pin driver"),
                     net_id=net.id,
                 )
             )
@@ -235,9 +225,7 @@ def validate_sequential(
             if not known_input_pin(sink):
                 errors.append(
                     ValidationIssue(
-                        code="UNKNOWN_STATE_PIN"
-                        if sink.component in state_specs
-                        else "UNKNOWN_PIN_REFERENCE",
+                        code="UNKNOWN_STATE_PIN" if sink.component in state_specs else "UNKNOWN_PIN_REFERENCE",
                         message=(
                             f"net {net.id!r} sink {sink.component}.{sink.pin} is not "
                             "an input pin of an existing component"

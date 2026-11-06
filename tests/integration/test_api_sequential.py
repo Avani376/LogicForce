@@ -11,12 +11,8 @@ from logicforge_api.main import app
 
 client = TestClient(app)
 
-SEQ_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_seq" / "seq_divide_by_2.json"
-)
-FSM_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+SEQ_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_seq" / "seq_divide_by_2.json"
+FSM_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -52,9 +48,7 @@ def test_sequential_invalid_circuit_is_400() -> None:
     fixture = load(SEQ_FIXTURE)
     doc = fixture["circuit"]
     doc["nets"] = [n for n in doc["nets"] if n["id"] != "n_d"]  # FF1.d dangling
-    response = client.post(
-        "/api/sequential/simulate", json={"circuit": doc, "cycles": 2, "inputs_per_cycle": []}
-    )
+    response = client.post("/api/sequential/simulate", json={"circuit": doc, "cycles": 2, "inputs_per_cycle": []})
     assert response.status_code == 400
     detail = response.json()["detail"]
     assert detail["code"] == "VALIDATION_FAILED"
@@ -144,17 +138,13 @@ def test_fsm_simulate_matches_golden() -> None:
     body = response.json()
     assert body["final_state"] == fixture["expected"]["final_state"]
     assert body["scope"] == fixture["expected"]["scope"]
-    assert [row["state"] for row in body["cycles"]] == [
-        row["state"] for row in fixture["expected"]["cycles"]
-    ]
+    assert [row["state"] for row in body["cycles"]] == [row["state"] for row in fixture["expected"]["cycles"]]
 
 
 def test_fsm_ambiguity_is_400() -> None:
     fixture = load(FSM_FIXTURE)
     doc = fixture["fsm"]
-    doc["transitions"].append(
-        {"from": "north_green", "when": {"ped_button": "0"}, "to": "east_green", "outputs": {}}
-    )
+    doc["transitions"].append({"from": "north_green", "when": {"ped_button": "0"}, "to": "east_green", "outputs": {}})
     response = client.post("/api/fsm/simulate", json={"fsm": doc, "input_sequence": []})
     assert response.status_code == 400
     assert response.json()["detail"]["code"] == "AMBIGUOUS_TRANSITION"

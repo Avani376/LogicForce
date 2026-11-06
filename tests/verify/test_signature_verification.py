@@ -15,9 +15,7 @@ from typing import Any
 from sequential_engine import fsm_simulate, parse_fsm
 from verify_engine import verification_report_to_dict, verify_fsm_invariant
 
-FSM_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+FSM_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 SAFETY_PROPERTY = {
     "property_schema_version": 1,

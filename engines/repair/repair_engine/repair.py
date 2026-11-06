@@ -86,9 +86,7 @@ def _set_to(nominal: Mapping[str, object], faulty: Mapping[str, object]) -> list
         if not isinstance(nominal_entry, Mapping) or not isinstance(faulty_entry, Mapping):
             continue
         if nominal_entry.get("to") != faulty_entry.get("to"):
-            deltas.append(
-                {"op": "set_to", "transition_index": index, "value": nominal_entry.get("to")}
-            )
+            deltas.append({"op": "set_to", "transition_index": index, "value": nominal_entry.get("to")})
         if nominal_entry.get("outputs") != faulty_entry.get("outputs"):
             deltas.append(
                 {
@@ -100,9 +98,7 @@ def _set_to(nominal: Mapping[str, object], faulty: Mapping[str, object]) -> list
     return deltas
 
 
-def _comb_deltas(
-    nominal: Mapping[str, object], faulty: Mapping[str, object]
-) -> list[dict[str, object]]:
+def _comb_deltas(nominal: Mapping[str, object], faulty: Mapping[str, object]) -> list[dict[str, object]]:
     deltas: list[dict[str, object]] = []
     nominal_components = _by_id(nominal, "components")
     faulty_components = _by_id(faulty, "components")
@@ -173,9 +169,7 @@ def compute_deltas(
     )
 
 
-def apply_patch(
-    model_kind: str, model: Mapping[str, object], patch: Mapping[str, object]
-) -> dict[str, object]:
+def apply_patch(model_kind: str, model: Mapping[str, object], patch: Mapping[str, object]) -> dict[str, object]:
     """Apply a repair patch to a copy of the model (never mutates the input)."""
     patched = copy.deepcopy(dict(model))
     if patch.get("op") == "restore_nominal":
@@ -224,9 +218,7 @@ def apply_patch(
         if op == "remove_component":
             component_id = str(patch.get("component_id"))
             patched["components"] = [
-                c
-                for c in components
-                if not (isinstance(c, Mapping) and c.get("id") == component_id)
+                c for c in components if not (isinstance(c, Mapping) and c.get("id") == component_id)
             ]
             return patched
         if op == "add_component":
@@ -241,18 +233,14 @@ def apply_patch(
             raise SchemaError("FAULT_APPLICATION_ERROR", f"net {net_id!r} vanished")
         if op == "remove_net":
             net_id = str(patch.get("net_id"))
-            patched["nets"] = [
-                n for n in nets if not (isinstance(n, Mapping) and n.get("id") == net_id)
-            ]
+            patched["nets"] = [n for n in nets if not (isinstance(n, Mapping) and n.get("id") == net_id)]
             return patched
         if op == "add_net":
             nets.append(copy.deepcopy(patch.get("value", {})))
             return patched
         raise SchemaError("FAULT_APPLICATION_ERROR", f"unsupported repair op {op!r} for circuits")
 
-    raise SchemaError(
-        "FAULT_SCHEMA_ERROR", f"model_kind must be 'fsm' or 'combinational', got {model_kind!r}"
-    )
+    raise SchemaError("FAULT_SCHEMA_ERROR", f"model_kind must be 'fsm' or 'combinational', got {model_kind!r}")
 
 
 def _index(patch: Mapping[str, object]) -> int:
@@ -300,9 +288,7 @@ def search_repairs(
                     report = verify_fsm_invariant(patched, property_raw)
                 else:
                     report = verify_combinational_invariant(patched, property_raw)
-                verdicts.append(
-                    {"id": str(property_raw.get("id", "unnamed")), "verdict": report.verdict}
-                )
+                verdicts.append({"id": str(property_raw.get("id", "unnamed")), "verdict": report.verdict})
                 if report.verdict != "PASS":
                     valid = False
         except (CircuitNotValidError, SchemaError) as exc:

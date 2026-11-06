@@ -60,8 +60,7 @@ def _input_hash(
     max_transformations: int,
 ) -> str:
     payload = (
-        f"opt1|{canonical_json(dict(circuit))}|"
-        f"{canonical_json([dict(p) for p in properties])}|{max_transformations}"
+        f"opt1|{canonical_json(dict(circuit))}|{canonical_json([dict(p) for p in properties])}|{max_transformations}"
     )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -70,10 +69,7 @@ def _truth_table_signature(
     graph: CircuitGraph,
 ) -> list[tuple[tuple[tuple[str, str], ...], tuple[tuple[str, str], ...]]]:
     result = truth_table(graph)
-    return [
-        (tuple(sorted(row.inputs.items())), tuple(sorted(row.outputs.items())))
-        for row in result.rows
-    ]
+    return [(tuple(sorted(row.inputs.items())), tuple(sorted(row.outputs.items()))) for row in result.rows]
 
 
 def optimize(
@@ -102,15 +98,12 @@ def optimize(
         if property_raw.get("kind") != "combinational_invariant":
             raise SchemaError(
                 "PROPERTY_SCHEMA_ERROR",
-                "optimization properties must be combinational_invariant "
-                f"(got {property_raw.get('kind')!r})",
+                f"optimization properties must be combinational_invariant (got {property_raw.get('kind')!r})",
             )
 
     graph = parse_circuit_v1(dict(circuit))
     v1_require_valid(graph)
-    input_count = sum(
-        1 for c in graph.components if c.type == "INPUT" and isinstance(c.params.get("name"), str)
-    )
+    input_count = sum(1 for c in graph.components if c.type == "INPUT" and isinstance(c.params.get("name"), str))
     assumptions = (
         "logic_depth is an abstract gate-level metric, not hardware delay",
         "equivalence checked exhaustively over all input vectors per transformation",
@@ -155,9 +148,7 @@ def optimize(
         rejected = False
         for property_raw in properties_list:
             report = verify_combinational_invariant(candidate_doc, property_raw)
-            suite_verdicts.append(
-                {"id": str(property_raw.get("id", "unnamed")), "verdict": report.verdict}
-            )
+            suite_verdicts.append({"id": str(property_raw.get("id", "unnamed")), "verdict": report.verdict})
             if report.verdict != "PASS":
                 rejected = True
         if rejected:

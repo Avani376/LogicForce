@@ -64,9 +64,7 @@ def apply_fault_endpoint(request: ApplyFaultRequest) -> dict[str, Any]:
 @router.post("/fault-experiments")
 def fault_experiment_endpoint(request: FaultExperimentRequest) -> dict[str, Any]:
     try:
-        report = run_fault_experiment(
-            request.model_kind, request.model, request.fault, request.properties
-        )
+        report = run_fault_experiment(request.model_kind, request.model, request.fault, request.properties)
     except CircuitNotValidError as exc:
         raise HTTPException(
             status_code=400,

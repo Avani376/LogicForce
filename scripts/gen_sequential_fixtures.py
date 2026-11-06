@@ -28,9 +28,7 @@ def _output(name: str) -> dict[str, object]:
     return {"id": f"OUT_{name}", "type": "OUTPUT", "params": {"name": name}}
 
 
-def _net(
-    net_id: str, driver: str, driver_pin: str, sinks: list[tuple[str, str]]
-) -> dict[str, object]:
+def _net(net_id: str, driver: str, driver_pin: str, sinks: list[tuple[str, str]]) -> dict[str, object]:
     return {
         "id": net_id,
         "driver": {"component": driver, "pin": driver_pin},
@@ -38,9 +36,7 @@ def _net(
     }
 
 
-def _doc(
-    name: str, components: list[dict[str, object]], nets: list[dict[str, object]]
-) -> dict[str, object]:
+def _doc(name: str, components: list[dict[str, object]], nets: list[dict[str, object]]) -> dict[str, object]:
     return {"schema_version": 2, "name": name, "components": components, "nets": nets}
 
 
@@ -48,9 +44,7 @@ def _str_bits(bits: list[int]) -> str:
     return "".join(str(b) for b in bits)
 
 
-def divide_by_2() -> tuple[
-    dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]
-]:
+def divide_by_2() -> tuple[dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]]:
     """DFF with qn -> d feedback toggles every edge (divide-by-two)."""
     components = [
         _const0("C0"),
@@ -98,9 +92,7 @@ def divide_by_2() -> tuple[
     )
 
 
-def johnson_counter() -> tuple[
-    dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]
-]:
+def johnson_counter() -> tuple[dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]]:
     """4-bit Johnson (twisted-ring) counter: d0=~q3, d1=q0, d2=q1, d3=q2."""
     width = 4
     components: list[dict[str, object]] = [_const0("C0")]
@@ -169,9 +161,7 @@ def johnson_counter() -> tuple[
     )
 
 
-def mod8_counter() -> tuple[
-    dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]
-]:
+def mod8_counter() -> tuple[dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]]:
     """3-bit COUNTER with en tied high: counts 0..7 and wraps."""
     width = 3
     components: list[dict[str, object]] = [
@@ -231,9 +221,7 @@ FIXTURES: dict[
     str,
     Callable[
         [],
-        tuple[
-            dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]
-        ],
+        tuple[dict[str, object], int, list[dict[str, str]], list[dict[str, object]], dict[str, str]],
     ],
 ] = {
     "seq_divide_by_2": divide_by_2,

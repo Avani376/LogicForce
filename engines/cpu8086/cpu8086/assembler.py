@@ -52,12 +52,7 @@ MNEMONICS_JUMP = {
 }
 MNEMONICS_NONE = {"RET", "NOP", "HLT"}
 ALL_MNEMONICS = (
-    MNEMONICS_WITH_DEST_SRC
-    | MNEMONICS_UNARY
-    | MNEMONICS_JUMP
-    | MNEMONICS_NONE
-    | MNEMONICS_INTERRUPT
-    | MNEMONICS_IO
+    MNEMONICS_WITH_DEST_SRC | MNEMONICS_UNARY | MNEMONICS_JUMP | MNEMONICS_NONE | MNEMONICS_INTERRUPT | MNEMONICS_IO
 )
 
 _BASE_COMBOS = {
@@ -226,9 +221,7 @@ def _operand_width(operand: Operand) -> int:
     return operand.width
 
 
-def _check_operand_compat(
-    mnemonic: str, line: int, dest: Operand | None, src: Operand | None
-) -> None:
+def _check_operand_compat(mnemonic: str, line: int, dest: Operand | None, src: Operand | None) -> None:
     if dest is not None and dest.kind == "mem" and src is not None and src.kind == "mem":
         raise AsmError(line, "SYNTAX", "memory-to-memory operations are not supported")
     if dest is not None and dest.kind == "mem" and dest.width == 0:
@@ -252,12 +245,7 @@ def _check_operand_compat(
         and not (-128 <= src.value <= 255)
     ):
         raise AsmError(line, "SIZE_MISMATCH", f"immediate {src.value} does not fit a byte operand")
-    if (
-        dest is not None
-        and src is not None
-        and dest.kind in ("reg", "mem")
-        and src.kind in ("reg", "mem")
-    ):
+    if dest is not None and src is not None and dest.kind in ("reg", "mem") and src.kind in ("reg", "mem"):
         dest_width = _operand_width(dest)
         src_width = _operand_width(src)
         if dest_width != src_width:
@@ -268,9 +256,7 @@ def _check_operand_compat(
             )
 
 
-def _validate_signature(
-    mnemonic: str, line: int, operands: list[Operand]
-) -> tuple[Operand | None, Operand | None]:
+def _validate_signature(mnemonic: str, line: int, operands: list[Operand]) -> tuple[Operand | None, Operand | None]:
     if mnemonic in MNEMONICS_WITH_DEST_SRC:
         if len(operands) != 2:
             raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} requires exactly 2 operands")
@@ -386,17 +372,13 @@ def assemble(source: str) -> AssembledProgram:
             # jump-family operands are LABELS (identifiers), resolved in pass 2;
             # numeric operands are absolute instruction indices (documented)
             if len(raw_operands) != 1:
-                raise AsmError(
-                    line_number, "BAD_OPERAND_COUNT", f"{mnemonic} requires exactly 1 label operand"
-                )
+                raise AsmError(line_number, "BAD_OPERAND_COUNT", f"{mnemonic} requires exactly 1 label operand")
             target_text = raw_operands[0]
             try:
                 numeric = _parse_number(target_text, line_number)
             except AsmError:
                 numeric = None
-            if numeric is not None and not re.fullmatch(
-                r"[A-Za-z_][A-Za-z0-9_]*", target_text.strip()
-            ):
+            if numeric is not None and not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", target_text.strip()):
                 operands = [Operand(kind="imm", value=numeric, width=16)]
             else:
                 label_name = target_text.strip().upper()
@@ -426,18 +408,12 @@ def assemble(source: str) -> AssembledProgram:
 
     if pending_labels:
         label, line_number = pending_labels[-1]
-        raise AsmError(
-            line_number, "UNKNOWN_LABEL", f"label {label!r} points past the last instruction"
-        )
+        raise AsmError(line_number, "UNKNOWN_LABEL", f"label {label!r} points past the last instruction")
 
     # second pass: resolve symbolic label targets to instruction indices
     resolved: list[Instruction] = []
     for instruction in instructions:
-        if (
-            instruction.mnemonic in MNEMONICS_JUMP
-            and instruction.dest is not None
-            and instruction.dest.label
-        ):
+        if instruction.mnemonic in MNEMONICS_JUMP and instruction.dest is not None and instruction.dest.label:
             label = instruction.dest.label
             if label not in labels:
                 raise AsmError(instruction.line, "UNKNOWN_LABEL", f"label {label!r} is not defined")

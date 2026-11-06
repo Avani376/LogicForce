@@ -227,8 +227,7 @@ def expected_rows(
     rows: list[dict[str, object]] = []
     for index in range(1 << len(inputs_sorted)):
         bits: Bits = {
-            name: (index >> (len(inputs_sorted) - 1 - position)) & 1
-            for position, name in enumerate(inputs_sorted)
+            name: (index >> (len(inputs_sorted) - 1 - position)) & 1 for position, name in enumerate(inputs_sorted)
         }
         out_bits = definition(bits)
         rows.append(

@@ -61,9 +61,7 @@ def test_dff_captures_one_then_holds() -> None:
 
 def test_async_clear_overrides_during_cycle() -> None:
     """clr=1 forces q to 0 the cycle it is asserted, overriding d=CONST1."""
-    result = simulate_sequential(
-        dff_with_clr(), 4, [{"clr": "0"}, {"clr": "1"}, {"clr": "1"}, {"clr": "0"}]
-    )
+    result = simulate_sequential(dff_with_clr(), 4, [{"clr": "0"}, {"clr": "1"}, {"clr": "1"}, {"clr": "0"}])
     assert [row.state["FF1.q"] for row in result.cycles] == ["0", "0", "0", "1"]
     async_events = [e for e in result.events if e.cause == "async"]
     assert any(e.cycle == 1 and e.new == "0" for e in async_events)
@@ -284,9 +282,7 @@ def test_unknown_input_propagates_to_state() -> None:
         "driver": {"component": "IN_d", "pin": "out"},
         "sinks": [{"component": "FF1", "pin": "d"}],
     }
-    result = simulate_sequential(
-        doc, 3, [{"clr": "0", "d": "1"}, {"clr": "0", "d": "X"}, {"clr": "0", "d": "1"}]
-    )
+    result = simulate_sequential(doc, 3, [{"clr": "0", "d": "1"}, {"clr": "0", "d": "X"}, {"clr": "0", "d": "1"}])
     # observed: 0 (power-on), then 1 captured, then X captured, then 1 recovers
     assert [row.state["FF1.q"] for row in result.cycles] == ["0", "1", "X"]
     assert result.final_state == {"FF1.q": "1"}

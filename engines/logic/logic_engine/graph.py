@@ -85,16 +85,12 @@ def _parse_components(raw: object) -> tuple[Component, ...]:
         if not isinstance(comp_id, str) or not comp_id:
             raise SchemaError("INVALID_DOCUMENT", "every component needs a non-empty string 'id'")
         if not isinstance(comp_type, str) or not comp_type:
-            raise SchemaError(
-                "INVALID_DOCUMENT", f"component {comp_id!r} needs a non-empty string 'type'"
-            )
+            raise SchemaError("INVALID_DOCUMENT", f"component {comp_id!r} needs a non-empty string 'type'")
         raw_params = entry.get("params", {})
         if raw_params is None:
             raw_params = {}
         if not isinstance(raw_params, Mapping):
-            raise SchemaError(
-                "INVALID_DOCUMENT", f"component {comp_id!r}: 'params' must be an object"
-            )
+            raise SchemaError("INVALID_DOCUMENT", f"component {comp_id!r}: 'params' must be an object")
         params = {str(k): v for k, v in raw_params.items()}
 
         label = entry.get("label")
@@ -108,9 +104,7 @@ def _parse_components(raw: object) -> tuple[Component, ...]:
             except (KeyError, TypeError, ValueError):
                 position = None
 
-        out.append(
-            Component(id=comp_id, type=comp_type, params=params, label=label, position=position)
-        )
+        out.append(Component(id=comp_id, type=comp_type, params=params, label=label, position=position))
     return tuple(out)
 
 
@@ -180,9 +174,7 @@ def circuit_to_dict(graph: CircuitGraph) -> dict[str, object]:
     for net in graph.nets:
         net_entry: dict[str, object] = {
             "id": net.id,
-            "driver": (
-                {"component": net.driver.component, "pin": net.driver.pin} if net.driver else None
-            ),
+            "driver": ({"component": net.driver.component, "pin": net.driver.pin} if net.driver else None),
             "sinks": [{"component": s.component, "pin": s.pin} for s in net.sinks],
         }
         nets.append(net_entry)

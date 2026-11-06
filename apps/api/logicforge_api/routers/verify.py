@@ -54,8 +54,7 @@ def verify_endpoint(request: VerifyRequest) -> dict[str, Any]:
         else:
             raise SchemaError(
                 "PROPERTY_SCHEMA_ERROR",
-                f"model kind must be 'combinational_invariant' or 'fsm_invariant', "
-                f"got {request.kind!r}",
+                f"model kind must be 'combinational_invariant' or 'fsm_invariant', got {request.kind!r}",
             )
     except CircuitNotValidError as exc:
         raise HTTPException(
@@ -84,7 +83,5 @@ def verify_endpoint(request: VerifyRequest) -> dict[str, Any]:
             },
         ) from exc
     except SchemaError as exc:
-        raise HTTPException(
-            status_code=400, detail={"code": exc.code, "message": exc.message}
-        ) from exc
+        raise HTTPException(status_code=400, detail={"code": exc.code, "message": exc.message}) from exc
     return verification_report_to_dict(report)

@@ -40,9 +40,5 @@ def canonical_inputs(inputs: Mapping[str, object]) -> dict[str, str]:
 
 def input_hash(circuit: Mapping[str, object], inputs: Mapping[str, object]) -> str:
     """SHA-256 reproducibility hash of a circuit document plus input vector."""
-    payload = (
-        f"{SCHEMA_VERSION}|"
-        f"{canonical_json(dict(circuit))}|"
-        f"{canonical_json(canonical_inputs(inputs))}"
-    )
+    payload = f"{SCHEMA_VERSION}|{canonical_json(dict(circuit))}|{canonical_json(canonical_inputs(inputs))}"
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()

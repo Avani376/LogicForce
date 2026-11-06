@@ -68,9 +68,7 @@ def compute_metrics(graph: CircuitGraph) -> dict[str, int]:
             gate_count += 1
         component_depth(comp.id)
 
-    output_depths = [
-        depths.get(comp.id, 0) for comp in graph.components if comp.type == TYPE_OUTPUT
-    ]
+    output_depths = [depths.get(comp.id, 0) for comp in graph.components if comp.type == TYPE_OUTPUT]
     logic_depth = max(output_depths, default=0)
     return {
         "gate_count": gate_count,

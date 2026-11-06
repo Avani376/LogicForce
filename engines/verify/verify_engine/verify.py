@@ -108,9 +108,7 @@ def _check_signals(property_obj: Property, universe: tuple[str, ...]) -> None:
         )
 
 
-def verify_combinational_invariant(
-    circuit: Mapping[str, object], property_raw: object
-) -> VerificationReport:
+def verify_combinational_invariant(circuit: Mapping[str, object], property_raw: object) -> VerificationReport:
     """Check a property over every input vector of a schema-v1 circuit.
 
     Exhaustive for n ≤ 12 primary inputs; beyond that the verdict is INCOMPLETE
@@ -121,8 +119,7 @@ def verify_combinational_invariant(
     if property_obj.kind != "combinational_invariant":
         raise SchemaError(
             "PROPERTY_SCHEMA_ERROR",
-            "kind must be 'combinational_invariant' for a circuit model, "
-            f"got {property_obj.kind!r}",
+            f"kind must be 'combinational_invariant' for a circuit model, got {property_obj.kind!r}",
         )
     graph = parse_circuit_v1(dict(circuit))
     v1_require_valid(graph)
@@ -158,9 +155,7 @@ def verify_combinational_invariant(
     explored = 0
     for index in range(1 << len(input_names)):
         vector = {
-            name: LogicValue.ONE
-            if (index >> (len(input_names) - 1 - position)) & 1
-            else LogicValue.ZERO
+            name: LogicValue.ONE if (index >> (len(input_names) - 1 - position)) & 1 else LogicValue.ZERO
             for position, name in enumerate(input_names)
         }
         result = v1_simulate(graph, vector)
@@ -240,10 +235,7 @@ def verify_fsm_invariant(fsm_raw: object, property_raw: object) -> VerificationR
     width = len(fsm.inputs)
     for index in range(1 << width):
         alphabet.append(
-            {
-                name: ("1" if (index >> (width - 1 - position)) & 1 else "0")
-                for position, name in enumerate(fsm.inputs)
-            }
+            {name: ("1" if (index >> (width - 1 - position)) & 1 else "0") for position, name in enumerate(fsm.inputs)}
         )
 
     def transition_for(state: str, vector: Mapping[str, str]) -> FSMTransition | None:

@@ -4,6 +4,16 @@ Invariant verification over bounded models. Pure, deterministic, typed errors,
 scope labels mandatory. Verdicts are produced only by this package.
 """
 
+from verify_engine.explain import (
+    EXPLANATION_ENGINE_VERSION,
+    EXPLANATION_KINDS,
+    Explanation,
+    Finding,
+    Suggestion,
+    explain,
+    explanation_to_dict,
+    parse_explanation_request,
+)
 from verify_engine.expressions import (
     ExprNode,
     evaluate_expression,
@@ -28,6 +38,14 @@ from verify_engine.version import (
 
 __all__ = [
     "VERIFY_ENGINE_VERSION",
+    "EXPLANATION_ENGINE_VERSION",
+    "EXPLANATION_KINDS",
+    "Explanation",
+    "Finding",
+    "Suggestion",
+    "explain",
+    "explanation_to_dict",
+    "parse_explanation_request",
     "PROPERTY_SCHEMA_VERSION",
     "MAX_COMBINATIONAL_INPUTS",
     "MAX_FSM_INPUTS",

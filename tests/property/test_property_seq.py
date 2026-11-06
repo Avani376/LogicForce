@@ -47,26 +47,15 @@ def _pin_value(
 
     net_of_pin = doc["_net_of_pin"]
     if ctype == "NOT":
-        return not_(
-            _pin_value(
-                doc, comp_by_id, net_of_pin[(ref["component"], "a")]["driver"], state, vector
-            )
-        )
+        return not_(_pin_value(doc, comp_by_id, net_of_pin[(ref["component"], "a")]["driver"], state, vector))
     if ctype == "BUFFER":
-        return buffer_(
-            _pin_value(
-                doc, comp_by_id, net_of_pin[(ref["component"], "a")]["driver"], state, vector
-            )
-        )
+        return buffer_(_pin_value(doc, comp_by_id, net_of_pin[(ref["component"], "a")]["driver"], state, vector))
     params = comp.get("params", {}) or {}
     width = params.get("width", 2)
     if not isinstance(width, int) or isinstance(width, bool):
         width = 2
     pins = list(string.ascii_lowercase[:width])
-    values = [
-        _pin_value(doc, comp_by_id, net_of_pin[(comp["id"], pin)]["driver"], state, vector)
-        for pin in pins
-    ]
+    values = [_pin_value(doc, comp_by_id, net_of_pin[(comp["id"], pin)]["driver"], state, vector) for pin in pins]
     func = BINARY_FUNCS[ctype]
     acc = values[0]
     for v in values[1:]:
@@ -86,9 +75,7 @@ def _ff_next(ctype: str, capture: dict[str, LogicValue], q: LogicValue) -> Logic
     return srff_next(capture["s"], capture["r"], q)
 
 
-def _naive_sequential(
-    doc: dict[str, Any], cycles: int, inputs_per_cycle: list[dict[str, str]]
-) -> list[dict[str, str]]:
+def _naive_sequential(doc: dict[str, Any], cycles: int, inputs_per_cycle: list[dict[str, str]]) -> list[dict[str, str]]:
     comp_by_id = {c["id"]: c for c in doc["components"]}
     net_of_pin: dict[tuple[str, str], dict[str, Any]] = {}
     for net in doc["nets"]:
@@ -112,12 +99,8 @@ def _naive_sequential(
 
         # async: evaluate async pins by recursive eval, override before capture
         for fid in ff_ids:
-            pre = _pin_value(
-                doc, comp_by_id, net_of_pin[(fid, "pre")]["driver"], state, full_vector
-            )
-            clr = _pin_value(
-                doc, comp_by_id, net_of_pin[(fid, "clr")]["driver"], state, full_vector
-            )
+            pre = _pin_value(doc, comp_by_id, net_of_pin[(fid, "pre")]["driver"], state, full_vector)
+            clr = _pin_value(doc, comp_by_id, net_of_pin[(fid, "clr")]["driver"], state, full_vector)
             from sequential_engine.flipflops import async_apply
 
             override = async_apply(pre, clr)
@@ -129,12 +112,8 @@ def _naive_sequential(
         for fid in ff_ids:
             ctype = comp_by_id[fid]["type"]
             capture: dict[str, LogicValue] = {}
-            for pin in {"DFF": ("d",), "TFF": ("t",), "JKFF": ("j", "k"), "SRFF": ("s", "r")}[
-                ctype
-            ]:
-                capture[pin] = _pin_value(
-                    doc, comp_by_id, net_of_pin[(fid, pin)]["driver"], state, full_vector
-                )
+            for pin in {"DFF": ("d",), "TFF": ("t",), "JKFF": ("j", "k"), "SRFF": ("s", "r")}[ctype]:
+                capture[pin] = _pin_value(doc, comp_by_id, net_of_pin[(fid, pin)]["driver"], state, full_vector)
             nxt[f"{fid}.q"] = _ff_next(ctype, capture, LogicValue(state[f"{fid}.q"])).value
 
         observed.append(dict(state))
@@ -214,6 +193,4 @@ def test_sequential_matches_naive_evaluator(
     result = simulate_sequential(doc, cycles, inputs_per_cycle)
     expected_observed = _naive_sequential(doc, cycles, inputs_per_cycle)
     actual_observed = [row.state for row in result.cycles]
-    assert actual_observed == expected_observed, canonical_json(
-        {"cycles": cycles, "inputs": inputs_per_cycle}
-    )
+    assert actual_observed == expected_observed, canonical_json({"cycles": cycles, "inputs": inputs_per_cycle})

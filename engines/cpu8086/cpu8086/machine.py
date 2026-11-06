@@ -86,9 +86,7 @@ class Cpu:
     memory: Memory = field(default_factory=Memory)
     halted: bool = False
     port_reader: object | None = None  # Callable[[int], int] | None — unconnected ports read 0xFF
-    port_writer: object | None = (
-        None  # Callable[[int, int], None] | None — writes to unconnected ports are ignored
-    )
+    port_writer: object | None = None  # Callable[[int, int], None] | None — writes to unconnected ports are ignored
     _steps_taken: int = 0
     _last_run: tuple[TraceRecord, ...] = ()
 
@@ -269,9 +267,7 @@ class Cpu:
         ip = self.registers.get("IP")
         instructions = self.program.instructions
         if not 0 <= ip < len(instructions):
-            raise CpuRuntimeError(
-                self._steps_taken, f"IP {ip} outside program (0..{len(instructions) - 1})"
-            )
+            raise CpuRuntimeError(self._steps_taken, f"IP {ip} outside program (0..{len(instructions) - 1})")
         instruction = instructions[ip]
         before = self.registers.snapshot()
         before_flags = dict(self.registers.flags)
@@ -335,18 +331,12 @@ class Cpu:
             return iret_record
         elif mnemonic == "IN":
             assert instruction.src is not None and instruction.dest is not None
-            port = (
-                instruction.src.value if instruction.src.kind == "imm" else self.registers.get("DX")
-            )
+            port = instruction.src.value if instruction.src.kind == "imm" else self.registers.get("DX")
             value = self._read_port(port & 0xFFFF)
             self._resolve_write(instruction.dest, value)
         elif mnemonic == "OUT":
             assert instruction.src is not None and instruction.dest is not None
-            port = (
-                instruction.dest.value
-                if instruction.dest.kind == "imm"
-                else self.registers.get("DX")
-            )
+            port = instruction.dest.value if instruction.dest.kind == "imm" else self.registers.get("DX")
             value = self._resolve_read(instruction.src) & 0xFF
             self._write_port(port & 0xFFFF, value)
         elif mnemonic == "STI":

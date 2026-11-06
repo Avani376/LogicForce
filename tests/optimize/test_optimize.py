@@ -294,8 +294,7 @@ def test_too_many_inputs_is_incomplete() -> None:
     import string
 
     components: list[dict[str, Any]] = [
-        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}}
-        for name in [f"i{i:02d}" for i in range(13)]
+        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}} for name in [f"i{i:02d}" for i in range(13)]
     ]
     components.append({"id": "G", "type": "AND", "params": {"width": 13}})
     components.append({"id": "OUT_y", "type": "OUTPUT", "params": {"name": "y"}})

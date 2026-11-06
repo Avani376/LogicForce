@@ -65,9 +65,7 @@ def test_sequential_determinism_100_replays(path: Path) -> None:
     fixture = load_fixture(path)
     digests = set()
     for _ in range(100):
-        result = simulate_sequential(
-            fixture["circuit"], fixture["cycles"], fixture["inputs_per_cycle"]
-        )
+        result = simulate_sequential(fixture["circuit"], fixture["cycles"], fixture["inputs_per_cycle"])
         digests.add(canonical_json(sequential_result_to_dict(result)))
     assert len(digests) == 1, f"{path.name}: sequential simulation is not deterministic"
 

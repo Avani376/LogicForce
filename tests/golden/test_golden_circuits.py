@@ -63,9 +63,7 @@ def test_truth_table_matches_committed_expected(path: Path) -> None:
     fixture = load_fixture(path)
     graph = parse_circuit(fixture["circuit"])
     result = truth_table(graph)
-    actual_rows = [
-        {"inputs": dict(row.inputs), "outputs": dict(row.outputs)} for row in result.rows
-    ]
+    actual_rows = [{"inputs": dict(row.inputs), "outputs": dict(row.outputs)} for row in result.rows]
     assert actual_rows == fixture["expected"]["rows"], path.name
 
 

@@ -15,9 +15,7 @@ from verify_engine import (
     verify_fsm_invariant,
 )
 
-FSM_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+FSM_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -121,8 +119,7 @@ def test_too_many_inputs_is_incomplete_not_bounded() -> None:
     import string
 
     components: list[dict[str, Any]] = [
-        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}}
-        for name in [f"i{i:02d}" for i in range(13)]
+        {"id": f"IN_{name}", "type": "INPUT", "params": {"name": name}} for name in [f"i{i:02d}" for i in range(13)]
     ]
     components.append({"id": "G", "type": "AND", "params": {"width": 13}})
     components.append({"id": "OUT_y", "type": "OUTPUT", "params": {"name": "y"}})
@@ -240,12 +237,8 @@ def test_report_serialization_contract() -> None:
 
 def test_property_parse_errors_are_typed() -> None:
     with pytest.raises(SchemaError) as excinfo:
-        parse_property(
-            {"property_schema_version": 9, "id": "x", "kind": "fsm_invariant", "expression": "a"}
-        )
+        parse_property({"property_schema_version": 9, "id": "x", "kind": "fsm_invariant", "expression": "a"})
     assert excinfo.value.code == "PROPERTY_SCHEMA_ERROR"
     with pytest.raises(SchemaError) as excinfo:
-        parse_property(
-            {"property_schema_version": 1, "id": "", "kind": "fsm_invariant", "expression": "a"}
-        )
+        parse_property({"property_schema_version": 1, "id": "", "kind": "fsm_invariant", "expression": "a"})
     assert excinfo.value.code == "PROPERTY_SCHEMA_ERROR"

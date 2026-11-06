@@ -11,9 +11,7 @@ from logicforge_api.main import app
 
 client = TestClient(app)
 
-FSM_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+FSM_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 
 def load(path: Path) -> dict[str, Any]:

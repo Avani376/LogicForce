@@ -54,8 +54,7 @@ def main() -> None:
         "states": ["north_green", "north_yellow", "east_green", "east_yellow"],
         "initial": "north_green",
         "transitions": [
-            {"from": src, "when": dict(when), "to": tgt, "outputs": dict(outs)}
-            for src, when, tgt, outs in TRANSITIONS
+            {"from": src, "when": dict(when), "to": tgt, "outputs": dict(outs)} for src, when, tgt, outs in TRANSITIONS
         ],
     }
     expected_cycles: list[dict[str, object]] = []

@@ -143,8 +143,5 @@ def present_truth_table(result: TruthTableResult, input_hash_hex: str) -> TruthT
         scope=result.scope,
         input_names=list(result.input_names),
         output_names=list(result.output_names),
-        rows=[
-            TruthTableRowOut(inputs=dict(row.inputs), outputs=dict(row.outputs))
-            for row in result.rows
-        ],
+        rows=[TruthTableRowOut(inputs=dict(row.inputs), outputs=dict(row.outputs)) for row in result.rows],
     )

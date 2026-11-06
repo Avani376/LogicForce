@@ -141,18 +141,11 @@ def _probe_fsm(nominal: Mapping[str, object], faulty: Mapping[str, object]) -> d
             "kind": "fsm",
             "scope": "INCOMPLETE",
             "first_divergence": None,
-            "reason": (
-                f"MODEL_TOO_LARGE: {width} inputs exceed the "
-                f"{MAX_FSM_SWEEP_INPUTS}-input sweep bound"
-            ),
+            "reason": (f"MODEL_TOO_LARGE: {width} inputs exceed the {MAX_FSM_SWEEP_INPUTS}-input sweep bound"),
         }
     cycles = 1 << width
-    nominal_trace = fsm_simulate(
-        nominal_fsm, [dict(v) for v in _sweep_vectors(nominal_fsm.inputs, cycles)]
-    )
-    faulty_trace = fsm_simulate(
-        faulty_fsm, [dict(v) for v in _sweep_vectors(faulty_fsm.inputs, cycles)]
-    )
+    nominal_trace = fsm_simulate(nominal_fsm, [dict(v) for v in _sweep_vectors(nominal_fsm.inputs, cycles)])
+    faulty_trace = fsm_simulate(faulty_fsm, [dict(v) for v in _sweep_vectors(faulty_fsm.inputs, cycles)])
     for nominal_row, faulty_row in zip(nominal_trace.cycles, faulty_trace.cycles, strict=False):
         if nominal_row.state != faulty_row.state or nominal_row.outputs != faulty_row.outputs:
             return {
@@ -183,10 +176,7 @@ def _sweep_vectors(inputs: tuple[str, ...], cycles: int) -> list[dict[str, str]]
     for cycle in range(cycles):
         index = cycle % total
         vectors.append(
-            {
-                name: ("1" if (index >> (width - 1 - position)) & 1 else "0")
-                for position, name in enumerate(inputs)
-            }
+            {name: ("1" if (index >> (width - 1 - position)) & 1 else "0") for position, name in enumerate(inputs)}
         )
     return vectors
 

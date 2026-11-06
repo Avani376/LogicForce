@@ -151,9 +151,7 @@ def _build_prepared(components: list[Component], nets: list[Net], name: str | No
             if synth_id is None:
                 synth_id = synth_name.replace(":", "::")
                 sq_ids[synth_name] = synth_id
-                settle_components.append(
-                    Component(id=synth_id, type=TYPE_INPUT, params={"name": synth_name})
-                )
+                settle_components.append(Component(id=synth_id, type=TYPE_INPUT, params={"name": synth_name}))
             new_driver = {"component": synth_id, "pin": "out"}
         else:
             new_driver = {"component": driver.component, "pin": driver.pin}
@@ -164,9 +162,7 @@ def _build_prepared(components: list[Component], nets: list[Net], name: str | No
                 # observed through a synthetic SP output instead of the raw sink.
                 sp_name = f"SP:{sink.component}:{sink.pin}"
                 sp_id = sp_name.replace(":", "::")
-                settle_components.append(
-                    Component(id=sp_id, type=TYPE_OUTPUT, params={"name": sp_name})
-                )
+                settle_components.append(Component(id=sp_id, type=TYPE_OUTPUT, params={"name": sp_name}))
                 sinks.append(PinRef(component=sp_id, pin="in"))
                 stspec = next(s for s in state_specs if s.id == sink.component)
                 if sink.pin in stspec.capture_pins:
@@ -177,9 +173,7 @@ def _build_prepared(components: list[Component], nets: list[Net], name: str | No
                 sinks.append(sink)
         settle_nets.append(Net(id=net.id, driver=_pin_ref_of(new_driver), sinks=tuple(sinks)))
 
-    v1_graph = CircuitGraph(
-        schema_version=1, name=name, components=tuple(settle_components), nets=tuple(settle_nets)
-    )
+    v1_graph = CircuitGraph(schema_version=1, name=name, components=tuple(settle_components), nets=tuple(settle_nets))
     primary_input_names = tuple(
         sorted(
             str(comp.params["name"])
@@ -202,9 +196,7 @@ def _pin_ref_of(entry: dict[str, str]) -> PinRef:
     return PinRef(component=entry["component"], pin=entry["pin"])
 
 
-def _normalize_cycle_inputs(
-    raw: Mapping[str, object], names: Sequence[str]
-) -> dict[str, LogicValue]:
+def _normalize_cycle_inputs(raw: Mapping[str, object], names: Sequence[str]) -> dict[str, LogicValue]:
     normalized: dict[str, LogicValue] = {}
     for key, value in raw.items():
         if not isinstance(key, str):
@@ -229,9 +221,7 @@ def simulate_sequential(
     misuse. Deterministic: same inputs ⇒ byte-identical result.
     """
     if not isinstance(cycles, int) or isinstance(cycles, bool) or cycles < 1:
-        raise SchemaError(
-            "INVALID_INPUT_SEQUENCE", f"cycles must be an integer in [1, {MAX_CYCLES}]"
-        )
+        raise SchemaError("INVALID_INPUT_SEQUENCE", f"cycles must be an integer in [1, {MAX_CYCLES}]")
     if cycles > MAX_CYCLES:
         raise SchemaError(
             "CYCLES_LIMIT_EXCEEDED",
@@ -321,13 +311,9 @@ def simulate_sequential(
                 elif spec.type == "TFF":
                     value = tff_next(settled[f"SP:{spec.id}:t"], current)
                 elif spec.type == "JKFF":
-                    value = jkff_next(
-                        settled[f"SP:{spec.id}:j"], settled[f"SP:{spec.id}:k"], current
-                    )
+                    value = jkff_next(settled[f"SP:{spec.id}:j"], settled[f"SP:{spec.id}:k"], current)
                 elif spec.type == "SRFF":
-                    value = srff_next(
-                        settled[f"SP:{spec.id}:s"], settled[f"SP:{spec.id}:r"], current
-                    )
+                    value = srff_next(settled[f"SP:{spec.id}:s"], settled[f"SP:{spec.id}:r"], current)
                 elif spec.type == "REGISTER":
                     value = dff_next(settled[f"SP:{spec.id}:d{bit_index}"])
                 else:  # COUNTER
@@ -432,16 +418,9 @@ def _sequential_input_hash(
     normalized_sequence = []
     for entry in inputs_per_cycle:
         normalized_sequence.append(
-            {
-                name: normalize_value(value).value
-                for name, value in sorted(entry.items())
-                if isinstance(name, str)
-            }
+            {name: normalize_value(value).value for name, value in sorted(entry.items()) if isinstance(name, str)}
         )
-    payload = (
-        f"2|{canonical_json(dict(circuit))}|"
-        f"{canonical_json({'cycles': cycles, 'inputs': normalized_sequence})}"
-    )
+    payload = f"2|{canonical_json(dict(circuit))}|{canonical_json({'cycles': cycles, 'inputs': normalized_sequence})}"
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 

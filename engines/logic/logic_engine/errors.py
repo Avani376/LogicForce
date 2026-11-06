@@ -66,6 +66,4 @@ class TruthTableLimitExceededError(LogicEngineError):
     def __init__(self, input_count: int, limit: int) -> None:
         self.input_count = input_count
         self.limit = limit
-        super().__init__(
-            f"truth table needs 2^{input_count} rows; exhaustive limit is {limit} inputs"
-        )
+        super().__init__(f"truth table needs 2^{input_count} rows; exhaustive limit is {limit} inputs")

@@ -92,9 +92,7 @@ HALF_ADDER: dict[str, Any] = {
 }
 
 
-def fault(
-    operator: str, target: dict[str, Any], params: dict[str, Any] | None = None
-) -> dict[str, Any]:
+def fault(operator: str, target: dict[str, Any], params: dict[str, Any] | None = None) -> dict[str, Any]:
     doc: dict[str, Any] = {
         "fault_schema_version": 1,
         "id": "F-test",
@@ -146,9 +144,7 @@ def test_transition_remove_creates_unmatched_hold() -> None:
 
 
 def test_gate_swap_xor_to_or_changes_behavior() -> None:
-    faulty = apply_fault(
-        "combinational", HALF_ADDER, fault("gate_swap", {"component_id": "G_xor"}, {"to": "OR"})
-    )
+    faulty = apply_fault("combinational", HALF_ADDER, fault("gate_swap", {"component_id": "G_xor"}, {"to": "OR"}))
     types = {c["id"]: c["type"] for c in faulty["components"]}
     assert types["G_xor"] == "OR"
     # nominal untouched
@@ -167,11 +163,7 @@ def test_stuck_at_rewires_pin_to_constant() -> None:
     feeds = [
         net
         for net in faulty["nets"]
-        if any(
-            s["component"] == "G_and" and s["pin"] == "a"
-            for s in net["sinks"]
-            if isinstance(s, dict)
-        )
+        if any(s["component"] == "G_and" and s["pin"] == "a" for s in net["sinks"] if isinstance(s, dict))
     ]
     assert len(feeds) == 1
     assert feeds[0]["driver"]["component"].startswith("STUCK_")
@@ -198,9 +190,7 @@ def test_fault_target_not_found_cases() -> None:
         )
     assert excinfo.value.code == "FAULT_TARGET_NOT_FOUND"
     with pytest.raises(SchemaError) as excinfo:
-        apply_fault(
-            "combinational", HALF_ADDER, fault("gate_swap", {"component_id": "GHOST"}, {"to": "OR"})
-        )
+        apply_fault("combinational", HALF_ADDER, fault("gate_swap", {"component_id": "GHOST"}, {"to": "OR"}))
     assert excinfo.value.code == "FAULT_TARGET_NOT_FOUND"
 
 
@@ -213,9 +203,7 @@ def test_fault_application_error_cases() -> None:
         )
     assert excinfo.value.code == "FAULT_APPLICATION_ERROR"
     with pytest.raises(SchemaError) as excinfo:
-        apply_fault(
-            "fsm", TRAFFIC_LIGHT, fault("output_flip", {"transition_index": 0}, {"output": "mars"})
-        )
+        apply_fault("fsm", TRAFFIC_LIGHT, fault("output_flip", {"transition_index": 0}, {"output": "mars"}))
     assert excinfo.value.code == "FAULT_APPLICATION_ERROR"
     with pytest.raises(SchemaError) as excinfo:
         apply_fault(

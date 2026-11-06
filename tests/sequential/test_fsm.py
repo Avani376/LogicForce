@@ -11,9 +11,7 @@ from logic_engine import SchemaError
 from logic_engine.hashing import canonical_json
 from sequential_engine import fsm_reachable, fsm_result_to_dict, fsm_simulate, parse_fsm
 
-FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 
 def traffic_light_doc() -> dict[str, Any]:
@@ -61,9 +59,7 @@ def test_initial_must_be_declared() -> None:
 
 def test_ambiguous_transitions_rejected_at_load() -> None:
     doc = traffic_light_doc()
-    doc["transitions"].append(
-        {"from": "north_green", "when": {"ped_button": "0"}, "to": "east_green", "outputs": {}}
-    )
+    doc["transitions"].append({"from": "north_green", "when": {"ped_button": "0"}, "to": "east_green", "outputs": {}})
     with pytest.raises(SchemaError) as excinfo:
         parse_fsm(doc)
     assert excinfo.value.code == "AMBIGUOUS_TRANSITION"
@@ -72,9 +68,7 @@ def test_ambiguous_transitions_rejected_at_load() -> None:
 def test_partial_when_overlap_is_ambiguous_too() -> None:
     """{} matches everything; adding {} and {x:0} from one state is ambiguous."""
     doc = traffic_light_doc()
-    doc["transitions"].append(
-        {"from": "north_green", "when": {}, "to": "east_yellow", "outputs": {}}
-    )
+    doc["transitions"].append({"from": "north_green", "when": {}, "to": "east_yellow", "outputs": {}})
     with pytest.raises(SchemaError) as excinfo:
         parse_fsm(doc)
     assert excinfo.value.code == "AMBIGUOUS_TRANSITION"
@@ -113,8 +107,7 @@ def test_golden_traffic_light_trace() -> None:
     assert result.scope == fixture["expected"]["scope"]
     assert result.final_state == fixture["expected"]["final_state"]
     actual = [
-        {"cycle": row.cycle, "inputs": row.inputs, "state": row.state, "outputs": row.outputs}
-        for row in result.cycles
+        {"cycle": row.cycle, "inputs": row.inputs, "state": row.state, "outputs": row.outputs} for row in result.cycles
     ]
     assert actual == fixture["expected"]["cycles"]
     # the safety observation over THIS trace: never two greens
@@ -142,8 +135,5 @@ def test_result_serialization_shape() -> None:
 def test_determinism_100_replays() -> None:
     fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
     fsm = parse_fsm(fixture["fsm"])
-    digests = {
-        canonical_json(fsm_result_to_dict(fsm_simulate(fsm, fixture["input_sequence"])))
-        for _ in range(100)
-    }
+    digests = {canonical_json(fsm_result_to_dict(fsm_simulate(fsm, fixture["input_sequence"]))) for _ in range(100)}
     assert len(digests) == 1

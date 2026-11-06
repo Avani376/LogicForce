@@ -168,9 +168,7 @@ def test_repaired_comb_model_matches_nominal_exactly() -> None:
     faulty = apply_fault("combinational", HALF_ADDER, STUCK_AT_FAULT)
     report = search_repairs("combinational", HALF_ADDER, faulty, [MUTUAL_EXCLUSION])
     assert report.repaired_model is not None
-    assert json.dumps(report.repaired_model, sort_keys=True) == json.dumps(
-        HALF_ADDER, sort_keys=True
-    )
+    assert json.dumps(report.repaired_model, sort_keys=True) == json.dumps(HALF_ADDER, sort_keys=True)
 
 
 def test_cap_limits_candidates_and_is_reported() -> None:
@@ -216,9 +214,7 @@ def test_repaired_fsm_replay_matches_nominal_behavior() -> None:
     inputs = [{"ped_button": "1"}, {"ped_button": "0"}, {"ped_button": "1"}, {"ped_button": "0"}]
     repaired_trace = fsm_simulate(repaired, inputs)
     nominal_trace = fsm_simulate(nominal, inputs)
-    assert [row.state for row in repaired_trace.cycles] == [
-        row.state for row in nominal_trace.cycles
-    ]
+    assert [row.state for row in repaired_trace.cycles] == [row.state for row in nominal_trace.cycles]
 
 
 def test_compute_deltas_counts_redirect_fields() -> None:

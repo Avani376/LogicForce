@@ -121,9 +121,7 @@ def test_iret_without_frame_is_typed_error() -> None:
 
 def test_scheduled_interrupt_without_ivt_entry_rejected() -> None:
     with pytest.raises(AsmError) as excinfo:
-        assemble_and_load(
-            "HLT", interrupts={}, schedule=[ScheduledInterrupt(source="nmi", at_step=1, number=9)]
-        )
+        assemble_and_load("HLT", interrupts={}, schedule=[ScheduledInterrupt(source="nmi", at_step=1, number=9)])
     assert excinfo.value.category == "UNKNOWN_LABEL"
 
 

@@ -49,7 +49,5 @@ def optimize_endpoint(request: OptimizeRequest) -> dict[str, Any]:
             },
         ) from exc
     except SchemaError as exc:
-        raise HTTPException(
-            status_code=400, detail={"code": exc.code, "message": exc.message}
-        ) from exc
+        raise HTTPException(status_code=400, detail={"code": exc.code, "message": exc.message}) from exc
     return optimization_report_to_dict(report)

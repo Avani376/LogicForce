@@ -144,8 +144,7 @@ def _apply_fsm(model: Mapping[str, object], fault: Mapping[str, object]) -> dict
         if current not in ("0", "1"):
             raise SchemaError(
                 "FAULT_APPLICATION_ERROR",
-                f"output {output_name!r} on transition {index} is "
-                f"{current!r}; only binary values can be flipped",
+                f"output {output_name!r} on transition {index} is {current!r}; only binary values can be flipped",
             )
         outputs_map[output_name] = "1" if current == "0" else "0"
         return faulty
@@ -217,11 +216,7 @@ def _apply_comb(model: Mapping[str, object], fault: Mapping[str, object]) -> dic
                 net["sinks"] = [
                     s
                     for s in sinks
-                    if not (
-                        isinstance(s, Mapping)
-                        and s.get("component") == component_id
-                        and s.get("pin") == pin
-                    )
+                    if not (isinstance(s, Mapping) and s.get("component") == component_id and s.get("pin") == pin)
                 ]
 
     const_type = "CONST0" if value == "0" else "CONST1"
@@ -250,9 +245,7 @@ def _apply_comb(model: Mapping[str, object], fault: Mapping[str, object]) -> dic
     return faulty
 
 
-def apply_fault(
-    model_kind: str, model: Mapping[str, object], fault: Mapping[str, object]
-) -> dict[str, object]:
+def apply_fault(model_kind: str, model: Mapping[str, object], fault: Mapping[str, object]) -> dict[str, object]:
     """Apply a fault document to a model document, returning the faulty model.
 
     The nominal model is deep-copied, never mutated. ``model_kind`` is

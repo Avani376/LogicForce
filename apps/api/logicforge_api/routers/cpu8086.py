@@ -65,23 +65,16 @@ def assemble_endpoint(request: AssembleRequest) -> dict[str, Any]:
 def run_endpoint(request: RunRequest) -> dict[str, Any]:
     machine: Cpu
     try:
-        schedule = [
-            ScheduledInterrupt(source=s.source, at_step=s.at_step, number=s.number)
-            for s in request.schedule
-        ]
+        schedule = [ScheduledInterrupt(source=s.source, at_step=s.at_step, number=s.number) for s in request.schedule]
         machine = assemble_and_load(request.source, request.interrupts, schedule)
-        trace, stop_reason = machine.run(
-            max_steps=request.max_steps, breakpoints=tuple(request.breakpoints)
-        )
+        trace, stop_reason = machine.run(max_steps=request.max_steps, breakpoints=tuple(request.breakpoints))
     except UnsupportedInstructionError as exc:
         raise HTTPException(
             status_code=400,
             detail={"code": "UNSUPPORTED_INSTRUCTION", "message": str(exc), "line": exc.line},
         ) from exc
     except CpuRuntimeError as exc:
-        raise HTTPException(
-            status_code=400, detail={"code": "CPU_RUNTIME_ERROR", "message": str(exc)}
-        ) from exc
+        raise HTTPException(status_code=400, detail={"code": "CPU_RUNTIME_ERROR", "message": str(exc)}) from exc
     except AsmError as exc:
         raise _asm_http_error(exc) from exc
     return {
@@ -121,9 +114,7 @@ def step_endpoint(request: StepRequest) -> dict[str, Any]:
             detail={"code": "UNSUPPORTED_INSTRUCTION", "message": str(exc), "line": exc.line},
         ) from exc
     except CpuRuntimeError as exc:
-        raise HTTPException(
-            status_code=400, detail={"code": "CPU_RUNTIME_ERROR", "message": str(exc)}
-        ) from exc
+        raise HTTPException(status_code=400, detail={"code": "CPU_RUNTIME_ERROR", "message": str(exc)}) from exc
     except AsmError as exc:
         raise _asm_http_error(exc) from exc
     return {

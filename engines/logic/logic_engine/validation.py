@@ -109,9 +109,7 @@ def validate(graph: CircuitGraph) -> ValidationReport:
                 errors.append(
                     ValidationIssue(
                         code="INVALID_PARAM",
-                        message=(
-                            f"{kind} component {comp.id!r}: 'name' must be a non-empty string"
-                        ),
+                        message=(f"{kind} component {comp.id!r}: 'name' must be a non-empty string"),
                         component_id=comp.id,
                     )
                 )
@@ -119,11 +117,7 @@ def validate(graph: CircuitGraph) -> ValidationReport:
                 io_names[kind].append(raw_name)
         if comp.type in MULTI_INPUT_GATES and "width" in comp.params:
             raw_width = comp.params["width"]
-            if (
-                isinstance(raw_width, bool)
-                or not isinstance(raw_width, int)
-                or not 2 <= raw_width <= MAX_GATE_WIDTH
-            ):
+            if isinstance(raw_width, bool) or not isinstance(raw_width, int) or not 2 <= raw_width <= MAX_GATE_WIDTH:
                 errors.append(
                     ValidationIssue(
                         code="INVALID_PARAM",
@@ -191,10 +185,7 @@ def validate(graph: CircuitGraph) -> ValidationReport:
             errors.append(
                 ValidationIssue(
                     code="MULTI_DRIVER_NET",
-                    message=(
-                        f"net {net.id!r} has no driver; every net needs exactly one "
-                        "output-pin driver"
-                    ),
+                    message=(f"net {net.id!r} has no driver; every net needs exactly one output-pin driver"),
                     net_id=net.id,
                 )
             )

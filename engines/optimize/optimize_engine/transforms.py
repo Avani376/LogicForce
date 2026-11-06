@@ -61,9 +61,7 @@ class _View:
         self.components: list[dict[str, object]] = [
             cast("dict[str, object]", c) for c in component_list if isinstance(c, dict)
         ]
-        self.nets: list[dict[str, object]] = [
-            cast("dict[str, object]", n) for n in net_list if isinstance(n, dict)
-        ]
+        self.nets: list[dict[str, object]] = [cast("dict[str, object]", n) for n in net_list if isinstance(n, dict)]
         self.comp_by_id: dict[str, dict[str, object]] = {str(c["id"]): c for c in self.components}
         self.net_by_id: dict[str, dict[str, object]] = {str(n["id"]): n for n in self.nets}
         # (component, input pin) -> feeding net
@@ -190,9 +188,7 @@ def _out_net_id(view: _View, gate_id: str) -> str:
     return _net_id(view, out_net) if out_net is not None else ""
 
 
-def _fold_constant_gate(
-    view: _View, gate_id: str, gate_type: str, input_nets: list[dict[str, object]]
-) -> str | None:
+def _fold_constant_gate(view: _View, gate_id: str, gate_type: str, input_nets: list[dict[str, object]]) -> str | None:
     """Dominance folding for gates with constant inputs (per optimization.md)."""
     values = [view.is_const(view.driver_component_of(net) or "") for net in input_nets]
     out_net_id = _out_net_id(view, gate_id)
@@ -219,14 +215,12 @@ def _fold_constant_gate(
         ):
             signal_net = input_nets[non_constant[0]]
             if gate_type in ("AND", "OR"):
-                description = (
-                    f"constant_fold: {gate_type} {gate_id} neutral input removed — "
-                    + view.passthrough(gate_id, signal_net)
+                description = f"constant_fold: {gate_type} {gate_id} neutral input removed — " + view.passthrough(
+                    gate_id, signal_net
                 )
                 return description
-            description = (
-                f"constant_fold: {gate_type} {gate_id} became an inverter — "
-                + view.replace_gate_with_not(gate_id, _net_id(view, signal_net))
+            description = f"constant_fold: {gate_type} {gate_id} became an inverter — " + view.replace_gate_with_not(
+                gate_id, _net_id(view, signal_net)
             )
             return description
         return None
@@ -290,9 +284,7 @@ def _apply_one(doc: Mapping[str, object]) -> tuple[dict[str, object], str] | Non
         input_net = view.gate_input_nets(gate_id)
         if len(input_net) != 1:
             continue
-        description = f"buffer_elimination: buffer {gate_id} removed — " + view.passthrough(
-            gate_id, input_net[0]
-        )
+        description = f"buffer_elimination: buffer {gate_id} removed — " + view.passthrough(gate_id, input_net[0])
         return view.export(), description
 
     # constant_fold
@@ -344,9 +336,8 @@ def _apply_one(doc: Mapping[str, object]) -> tuple[dict[str, object], str] | Non
         keeper_out = view.out_net(keeper_id)
         if keeper_out is None:
             continue
-        description = (
-            f"duplicate_merge: {gate_type} {gate_id} merged into {keeper_id} — "
-            + view.passthrough(gate_id, keeper_out)
+        description = f"duplicate_merge: {gate_type} {gate_id} merged into {keeper_id} — " + view.passthrough(
+            gate_id, keeper_out
         )
         return view.export(), description
     return None

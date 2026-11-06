@@ -63,9 +63,7 @@ class SimulationResult:
     scope: str
 
 
-def _normalize_inputs(
-    raw_inputs: Mapping[str, object], input_names: list[str]
-) -> dict[str, LogicValue]:
+def _normalize_inputs(raw_inputs: Mapping[str, object], input_names: list[str]) -> dict[str, LogicValue]:
     """Normalize the vector; unknown names are ignored (they attach to no INPUT)."""
     normalized: dict[str, LogicValue] = {}
     for name, raw in raw_inputs.items():
@@ -160,9 +158,7 @@ def simulate(graph: CircuitGraph, inputs: Mapping[str, object]) -> SimulationRes
 
     # 1. Primary inputs (sorted by name) — assign at delta 0.
     input_comps = [
-        comp
-        for comp in graph.components
-        if comp.type == TYPE_INPUT and isinstance(comp.params.get("name"), str)
+        comp for comp in graph.components if comp.type == TYPE_INPUT and isinstance(comp.params.get("name"), str)
     ]
     input_comps = sorted(input_comps, key=lambda comp: str(comp.params["name"]))
     input_names = [str(comp.params["name"]) for comp in input_comps]
@@ -193,9 +189,7 @@ def simulate(graph: CircuitGraph, inputs: Mapping[str, object]) -> SimulationRes
     def nets_driven_by(comp_id: str, pin: str) -> list[str]:
         driven: list[str] = []
         for net in graph.nets:
-            if net.driver is not None and (
-                net.driver.component == comp_id and net.driver.pin == pin
-            ):
+            if net.driver is not None and (net.driver.component == comp_id and net.driver.pin == pin):
                 driven.append(net.id)
         return sorted(driven)
 

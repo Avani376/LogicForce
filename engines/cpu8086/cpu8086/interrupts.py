@@ -18,21 +18,11 @@ class ScheduledInterrupt:
 
     def __post_init__(self) -> None:
         if self.source not in ("nmi", "intr"):
-            raise AsmError(
-                0, "SYNTAX", f"interrupt source must be 'nmi' or 'intr', got {self.source!r}"
-            )
+            raise AsmError(0, "SYNTAX", f"interrupt source must be 'nmi' or 'intr', got {self.source!r}")
         if isinstance(self.at_step, bool) or not isinstance(self.at_step, int) or self.at_step < 0:
-            raise AsmError(
-                0, "SYNTAX", f"at_step must be a non-negative integer, got {self.at_step!r}"
-            )
-        if (
-            isinstance(self.number, bool)
-            or not isinstance(self.number, int)
-            or not 0 <= self.number <= 255
-        ):
-            raise AsmError(
-                0, "SYNTAX", f"interrupt number must be in [0, 255], got {self.number!r}"
-            )
+            raise AsmError(0, "SYNTAX", f"at_step must be a non-negative integer, got {self.at_step!r}")
+        if isinstance(self.number, bool) or not isinstance(self.number, int) or not 0 <= self.number <= 255:
+            raise AsmError(0, "SYNTAX", f"interrupt number must be in [0, 255], got {self.number!r}")
 
 
 @dataclass

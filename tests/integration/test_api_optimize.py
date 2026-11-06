@@ -58,9 +58,7 @@ def test_optimize_reduces_gate_count_over_http() -> None:
 
 
 def test_optimize_max_transformations_out_of_range_is_400() -> None:
-    response = client.post(
-        "/api/optimize", json={"model": WASTEFUL, "properties": [], "max_transformations": 99}
-    )
+    response = client.post("/api/optimize", json={"model": WASTEFUL, "properties": [], "max_transformations": 99})
     assert response.status_code == 400
     assert response.json()["detail"]["code"] == "OPTIMIZATION_SCHEMA_ERROR"
 

@@ -125,14 +125,10 @@ def _wiring(
     graph = parse_circuit_v1(dict(circuit_doc))
     v1_require_valid(graph)
     input_names = {
-        str(c.params["name"])
-        for c in graph.components
-        if c.type == "INPUT" and isinstance(c.params.get("name"), str)
+        str(c.params["name"]) for c in graph.components if c.type == "INPUT" and isinstance(c.params.get("name"), str)
     }
     output_names = {
-        str(c.params["name"])
-        for c in graph.components
-        if c.type == "OUTPUT" and isinstance(c.params.get("name"), str)
+        str(c.params["name"]) for c in graph.components if c.type == "OUTPUT" and isinstance(c.params.get("name"), str)
     }
     port_to_input: dict[int, str] = {}
     port_to_output: dict[int, str] = {}
@@ -157,9 +153,7 @@ def _wiring(
     return port_to_input, port_to_output, initial
 
 
-def _settle(
-    circuit_doc: Mapping[str, object], input_vector: Mapping[str, LogicValue]
-) -> dict[str, str]:
+def _settle(circuit_doc: Mapping[str, object], input_vector: Mapping[str, LogicValue]) -> dict[str, str]:
     graph = parse_circuit_v1(dict(circuit_doc))
     return dict(v1_simulate(graph, dict(input_vector)).outputs)
 

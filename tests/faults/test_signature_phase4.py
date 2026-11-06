@@ -19,9 +19,7 @@ from repair_engine import search_repairs
 from sequential_engine import fsm_simulate, parse_fsm
 from verify_engine import verify_fsm_invariant
 
-FSM_FIXTURE = (
-    Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
-)
+FSM_FIXTURE = Path(__file__).resolve().parent.parent / "golden" / "fixtures_fsm" / "fsm_traffic_light.json"
 
 SAFETY = {
     "property_schema_version": 1,
@@ -79,15 +77,10 @@ def test_phase4_signature_full_pipeline() -> None:
     ]
     repaired_trace = fsm_simulate(parse_fsm(repair.repaired_model), inputs)
     nominal_trace = fsm_simulate(parse_fsm(nominal_controller()), inputs)
-    assert [row.state for row in repaired_trace.cycles] == [
-        row.state for row in nominal_trace.cycles
-    ]
+    assert [row.state for row in repaired_trace.cycles] == [row.state for row in nominal_trace.cycles]
     for repaired_row, nominal_row in zip(repaired_trace.cycles, nominal_trace.cycles, strict=True):
         # safety observation on both traces: never two greens
-        assert not (
-            repaired_row.outputs.get("north_green") == "1"
-            and repaired_row.outputs.get("east_green") == "1"
-        )
+        assert not (repaired_row.outputs.get("north_green") == "1" and repaired_row.outputs.get("east_green") == "1")
         assert repaired_row.outputs == nominal_row.outputs
 
 

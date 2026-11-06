@@ -119,15 +119,11 @@ def parse_fsm(raw: object) -> FSM:
         if not isinstance(when, Mapping):
             raise SchemaError("FSM_SCHEMA_ERROR", f"transition #{index}: 'when' must be an object")
         if not isinstance(outs, Mapping):
-            raise SchemaError(
-                "FSM_SCHEMA_ERROR", f"transition #{index}: 'outputs' must be an object"
-            )
+            raise SchemaError("FSM_SCHEMA_ERROR", f"transition #{index}: 'outputs' must be an object")
         when_items: list[tuple[str, str]] = []
         for name, value in when.items():
             if not isinstance(name, str) or name not in input_set:
-                raise SchemaError(
-                    "FSM_SCHEMA_ERROR", f"transition #{index}: unknown input {name!r} in 'when'"
-                )
+                raise SchemaError("FSM_SCHEMA_ERROR", f"transition #{index}: unknown input {name!r} in 'when'")
             if value not in VALID:
                 raise SchemaError(
                     "FSM_SCHEMA_ERROR",
@@ -137,9 +133,7 @@ def parse_fsm(raw: object) -> FSM:
         out_items: list[tuple[str, str]] = []
         for name, value in outs.items():
             if not isinstance(name, str) or name not in output_set:
-                raise SchemaError(
-                    "FSM_SCHEMA_ERROR", f"transition #{index}: unknown output {name!r} in 'outputs'"
-                )
+                raise SchemaError("FSM_SCHEMA_ERROR", f"transition #{index}: unknown output {name!r} in 'outputs'")
             if value not in VALID:
                 raise SchemaError(
                     "FSM_SCHEMA_ERROR",
@@ -241,10 +235,7 @@ def fsm_simulate(fsm: FSM, input_sequence: Sequence[Mapping[str, str]]) -> FSMRe
         )
         state = next_state
 
-    payload = (
-        f"fsm1|{canonical_json(_fsm_to_dict(fsm))}|"
-        f"{canonical_json([dict(row) for row in normalized])}"
-    )
+    payload = f"fsm1|{canonical_json(_fsm_to_dict(fsm))}|{canonical_json([dict(row) for row in normalized])}"
     return FSMResult(
         engine_version=_engine_version(),
         scope=f"BOUNDED({len(normalized)} cycles)",
@@ -266,8 +257,7 @@ def fsm_reachable(fsm: FSM) -> tuple[tuple[str, ...], str]:
     width = len(fsm.inputs)
     for index in range(1 << width):
         vector = {
-            name: ("1" if (index >> (width - 1 - position)) & 1 else "0")
-            for position, name in enumerate(fsm.inputs)
+            name: ("1" if (index >> (width - 1 - position)) & 1 else "0") for position, name in enumerate(fsm.inputs)
         }
         alphabet.append(vector)
 
