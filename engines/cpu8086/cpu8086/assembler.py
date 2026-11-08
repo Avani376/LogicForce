@@ -54,9 +54,30 @@ MNEMONICS_JUMP = {
     "LOOP",
     "CALL",
 }
-MNEMONICS_NONE = {"RET", "NOP", "HLT"}
+MNEMONICS_NONE = {"RET", "NOP", "HLT", "STD", "CLD"}
+MNEMONICS_STRING = {
+    "MOVSB",
+    "MOVSW",
+    "STOSB",
+    "STOSW",
+    "LODSB",
+    "LODSW",
+    "SCASB",
+    "SCASW",
+    "CMPSB",
+    "CMPSW",
+}
+REP_PREFIXES = {"REP", "REPE", "REPNE"}
+#: REPE/REPNE test ZF, so they are only meaningful with the compare/scan family.
+CONDITIONAL_REP_OPS = {"SCASB", "SCASW", "CMPSB", "CMPSW"}
 ALL_MNEMONICS = (
-    MNEMONICS_WITH_DEST_SRC | MNEMONICS_UNARY | MNEMONICS_JUMP | MNEMONICS_NONE | MNEMONICS_INTERRUPT | MNEMONICS_IO
+    MNEMONICS_WITH_DEST_SRC
+    | MNEMONICS_UNARY
+    | MNEMONICS_JUMP
+    | MNEMONICS_NONE
+    | MNEMONICS_INTERRUPT
+    | MNEMONICS_IO
+    | MNEMONICS_STRING
 )
 
 _BASE_COMBOS = {
@@ -95,6 +116,7 @@ class Instruction:
     src: Operand | None
     line: int
     text: str
+    rep: str = ""  # "" | "REP" | "REPE" | "REPNE" (string ops only)
 
 
 @dataclass(frozen=True)
@@ -331,6 +353,10 @@ def _validate_signature(mnemonic: str, line: int, operands: list[Operand]) -> tu
         if operands:
             raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} takes no operands")
         return None, None
+    if mnemonic in MNEMONICS_STRING:
+        if operands:
+            raise AsmError(line, "BAD_OPERAND_COUNT", f"{mnemonic} takes no operands — SI/DI are implicit")
+        return None, None
     raise AsmError(line, "UNKNOWN_MNEMONIC", f"unknown mnemonic {mnemonic!r}")
 
 
@@ -364,13 +390,34 @@ def assemble(source: str) -> AssembledProgram:
 
         parts = text.split(maxsplit=1)
         mnemonic = parts[0].upper()
+        rep = ""
+        if mnemonic in REP_PREFIXES:
+            if len(parts) != 2:
+                raise AsmError(line_number, "SYNTAX", f"{mnemonic} must precede a string instruction (e.g. REP MOVSB)")
+            rep = mnemonic
+            tail = parts[1].split(maxsplit=1)
+            mnemonic = tail[0].upper()
+            if len(tail) != 1:
+                raise AsmError(line_number, "SYNTAX", f"{rep} takes no operands: {rep} {tail[0].upper()} only")
+            if mnemonic not in MNEMONICS_STRING:
+                raise AsmError(
+                    line_number,
+                    "UNSUPPORTED_INSTRUCTION",
+                    f"{rep} applies only to string instructions (MOVSB..CMPSW), not {mnemonic!r}",
+                )
+            if rep in ("REPE", "REPNE") and mnemonic not in CONDITIONAL_REP_OPS:
+                raise AsmError(
+                    line_number,
+                    "SYNTAX",
+                    f"{rep} tests ZF, so it requires SCAS/CMPS — use REP with {mnemonic}",
+                )
         if mnemonic not in ALL_MNEMONICS:
             raise AsmError(
                 line_number,
                 "UNKNOWN_MNEMONIC",
                 f"unknown mnemonic {mnemonic!r} — see the declared subset",
             )
-        operand_text = parts[1] if len(parts) == 2 else ""
+        operand_text = parts[1] if len(parts) == 2 and rep == "" else ""
         raw_operands = _split_operands(operand_text, line_number)
         if mnemonic in MNEMONICS_JUMP:
             # jump-family operands are LABELS (identifiers), resolved in pass 2;
@@ -407,6 +454,7 @@ def assemble(source: str) -> AssembledProgram:
                 src=src,
                 line=line_number,
                 text=text,
+                rep=rep,
             )
         )
 
@@ -428,6 +476,7 @@ def assemble(source: str) -> AssembledProgram:
                 src=None,
                 line=instruction.line,
                 text=instruction.text,
+                rep=instruction.rep,
             )
         resolved.append(instruction)
 

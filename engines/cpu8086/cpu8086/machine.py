@@ -45,6 +45,7 @@ _ARITHMETIC = {
 }
 
 _MULTIPLY_DIVIDE = {"MUL", "IMUL", "DIV", "IDIV"}
+_STRING_OPS = {"MOVSB", "MOVSW", "STOSB", "STOSW", "LODSB", "LODSW", "SCASB", "SCASW", "CMPSB", "CMPSW"}
 _JUMP_MNEMONICS = {
     "JMP",
     "JZ",
@@ -191,7 +192,7 @@ class Cpu:
         memory_changes: list[tuple[int, int]] = []
         flags_word = sum(
             (self.registers.flags[name] << position)
-            for position, name in enumerate(("CF", "PF", "AF", "ZF", "SF", "OF", "IF"))
+            for position, name in enumerate(("CF", "PF", "AF", "ZF", "SF", "OF", "IF", "DF"))
         )
         memory_changes.extend(self._stack_push_word(flags_word))
         memory_changes.extend(self._stack_push_word(self.registers.get("IP")))
@@ -219,7 +220,7 @@ class Cpu:
         before_flags = dict(self.registers.flags)
         return_ip = self._stack_pop_word()
         flags_word = self._stack_pop_word()
-        for position, name in enumerate(("CF", "PF", "AF", "ZF", "SF", "OF", "IF")):
+        for position, name in enumerate(("CF", "PF", "AF", "ZF", "SF", "OF", "IF", "DF")):
             self.registers.flags[name] = (flags_word >> position) & 1
         self.registers.set("IP", return_ip)
         self.interrupts.retire()
@@ -289,6 +290,8 @@ class Cpu:
             memory_changes.extend(self._execute_arithmetic(instruction))
         elif mnemonic in _MULTIPLY_DIVIDE:
             memory_changes.extend(self._execute_mul_div(instruction))
+        elif mnemonic in _STRING_OPS:
+            memory_changes.extend(self._execute_string(instruction))
         elif mnemonic == "PUSH":
             assert instruction.dest is not None
             value = self._resolve_read(instruction.dest) & 0xFFFF
@@ -373,6 +376,10 @@ class Cpu:
             self.registers.set_flags({"IF": 1})
         elif mnemonic == "CLI":
             self.registers.set_flags({"IF": 0})
+        elif mnemonic == "STD":
+            self.registers.set_flags({"DF": 1})
+        elif mnemonic == "CLD":
+            self.registers.set_flags({"DF": 0})
         elif mnemonic == "NOP":
             pass
         elif mnemonic == "HLT":
@@ -524,6 +531,83 @@ class Cpu:
             self.registers.set("AX", quotient & 0xFFFF)
             self.registers.set("DX", remainder & 0xFFFF)
         return []
+
+    def _execute_string(self, instruction: Instruction) -> list[tuple[int, int]]:
+        """String ops with implicit DS:SI / ES:DI operands and optional REP family (cpu8086.md).
+
+        A REP-prefixed op is ONE step that executes the whole repeat: while CX != 0
+        the operation runs and CX decrements; REPE/REPNE stop early on the ZF test
+        performed after each iteration. The trace records the net SI/DI/CX changes
+        and every net memory write of the repeat.
+        """
+        mnemonic = instruction.mnemonic
+        width = 8 if mnemonic.endswith("B") else 16
+        size = 1 if width == 8 else 2
+        delta = -size if self.registers.flags["DF"] == 1 else size
+        mask = (1 << width) - 1
+        memory_changes: list[tuple[int, int]] = []
+
+        def read_source(offset: int) -> int:
+            segment = self.registers.get("DS")
+            if width == 8:
+                return self.memory.read_byte(segment, offset & 0xFFFF)
+            return self.memory.read_word(segment, offset & 0xFFFF)
+
+        def read_dest(offset: int) -> int:
+            segment = self.registers.get("ES")
+            if width == 8:
+                return self.memory.read_byte(segment, offset & 0xFFFF)
+            return self.memory.read_word(segment, offset & 0xFFFF)
+
+        def write_dest(offset: int, value: int) -> None:
+            segment = self.registers.get("ES")
+            if width == 8:
+                self.memory.write_byte(segment, offset & 0xFFFF, value)
+                memory_changes.append((physical(segment, offset & 0xFFFF), value & 0xFF))
+            else:
+                self.memory.write_word(segment, offset & 0xFFFF, value)
+                memory_changes.append((physical(segment, offset & 0xFFFF), value & 0xFF))
+                memory_changes.append((physical(segment, (offset & 0xFFFF) + 1), (value >> 8) & 0xFF))
+
+        def once() -> None:
+            si = self.registers.get("SI")
+            di = self.registers.get("DI")
+            if mnemonic == "MOVSB" or mnemonic == "MOVSW":
+                write_dest(di, read_source(si))
+                self.registers.set("SI", (si + delta) & 0xFFFF)
+                self.registers.set("DI", (di + delta) & 0xFFFF)
+            elif mnemonic == "STOSB" or mnemonic == "STOSW":
+                write_dest(di, self.registers.get("AL" if width == 8 else "AX") & mask)
+                self.registers.set("DI", (di + delta) & 0xFFFF)
+            elif mnemonic == "LODSB" or mnemonic == "LODSW":
+                self.registers.set("AL" if width == 8 else "AX", read_source(si) & mask)
+                self.registers.set("SI", (si + delta) & 0xFFFF)
+            elif mnemonic == "SCASB" or mnemonic == "SCASW":
+                deltas = sub_flags(
+                    self.registers.get("AL" if width == 8 else "AX") & mask, read_dest(di) & mask, 0, width
+                )
+                self.registers.set_flags(deltas)
+                self.registers.set("DI", (di + delta) & 0xFFFF)
+            else:  # CMPSB / CMPSW: [DS:SI] - [ES:DI]
+                deltas = sub_flags(read_source(si) & mask, read_dest(di) & mask, 0, width)
+                self.registers.set_flags(deltas)
+                self.registers.set("SI", (si + delta) & 0xFFFF)
+                self.registers.set("DI", (di + delta) & 0xFFFF)
+
+        if instruction.rep == "":
+            once()
+            return memory_changes
+
+        count = self.registers.get("CX")
+        while count > 0:
+            once()
+            count = (count - 1) & 0xFFFF
+            if instruction.rep == "REPE" and self.registers.flags["ZF"] == 0:
+                break
+            if instruction.rep == "REPNE" and self.registers.flags["ZF"] == 1:
+                break
+        self.registers.set("CX", count)
+        return memory_changes
 
     def _execute_conditional_jump(self, instruction: Instruction) -> None:
         flags = self.registers.flags

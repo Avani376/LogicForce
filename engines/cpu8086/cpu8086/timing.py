@@ -49,6 +49,18 @@ TIMING: dict[str, int] = {
     "SAR": 2,
     "ROL": 2,
     "ROR": 2,
+    "STD": 2,
+    "CLD": 2,
+    "MOVSB": 18,
+    "MOVSW": 26,
+    "STOSB": 13,
+    "STOSW": 17,
+    "LODSB": 15,
+    "LODSW": 19,
+    "SCASB": 19,
+    "SCASW": 23,
+    "CMPSB": 30,
+    "CMPSW": 38,
 }
 
 #: EA calculation penalty cycles by addressing mode
