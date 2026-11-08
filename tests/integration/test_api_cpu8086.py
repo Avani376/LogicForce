@@ -54,7 +54,9 @@ def test_run_endpoint_max_steps_out_of_bounds_is_400() -> None:
 
 
 def test_run_endpoint_unsupported_instruction_is_400() -> None:
-    response = client.post("/api/8086/run", json={"source": "MUL AX, BX\nHLT"})
+    # LAHF is a real x86 mnemonic outside the declared educational subset
+    # (MUL/IMUL/DIV/IDIV were added in Phase C8).
+    response = client.post("/api/8086/run", json={"source": "LAHF\nHLT"})
     assert response.status_code == 400
     detail = response.json()["detail"]
     assert detail["code"] == "ASM_ERROR"
