@@ -52,3 +52,14 @@ Status: Phase 10 (hardening). Each item references the evidence that satisfies i
 4. FSM state-graph SVG visualization
 5. Sequential component palette in the editor
 6. Performance benchmarks (1000-gate circuit, per the master prompt budget)
+
+## Curriculum phases (C-series)
+
+- [x] C1 — numsys engine (bases, complements, BCD/Excess-3/Gray, step traces)
+- [x] C2 — boolean engine (parser, SOP/POS, theorems, NAND/NOR transform)
+- [x] C3 — K-map + Quine-McCluskey minimization with don't-cares
+- [x] C4 — combinational library (full adder, binary→Gray, parity, 4:1 mux)
+- [x] C5 — sequential curriculum (characteristic/excitation tables, detectors)
+- [x] C6 — 8086 timing model, expanded mnemonics, addressing modes
+- [x] C7 — 8259 PIC engine: ICW/OCW state machine, priority/rotation, EOI family,
+      scheduled delivery traces, PIC→8086 end-to-end integration, `POST /api/8086/pic`

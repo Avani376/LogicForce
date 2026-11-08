@@ -71,7 +71,7 @@ Status legend: Not started / In progress / Done / Partial (reason)
 |---|---|---|---|---|---|
 | IVT + interrupt response | cpu8086 | interrupt controller | interrupt trace | `tests/cpu8086/test_interrupts.py` | Done (Phase 7) |
 | INTR vs NMI | cpu8086 | interrupt controller | interrupt trace | `tests/cpu8086/test_interrupts.py` | Done (Phase 7) |
-| 8259 PIC | pic8259 | — | — | — | Not started |
+| 8259 PIC | pic8259 | `Pic8259`, `resolve_pic_flow` | `/api/8086/pic` | `tests/pic8259/` | Done (Phase C7) |
 
 ## Cross-cutting
 
