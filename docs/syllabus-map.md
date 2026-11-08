@@ -85,5 +85,5 @@ Status legend: Not started / In progress / Done / Partial (reason)
 | Co-simulation | cosim_engine | Done (Phase 8) |
 | Evidence-grounded explanations | verify_engine/explain | Done (Phase 9) |
 | Docker deployment | Dockerfiles + compose | Done (Phase 10) |
-| Curriculum layer (lessons/exercises) | curriculum | Not started |
+| Curriculum layer (lessons/exercises) | curriculum_engine | Done (Phase C10) |
 | AI in Digital Systems module | curriculum | Not started |

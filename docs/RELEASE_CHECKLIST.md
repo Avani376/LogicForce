@@ -63,3 +63,6 @@ Status: Phase 10 (hardening). Each item references the evidence that satisfies i
 - [x] C6 — 8086 timing model, expanded mnemonics, addressing modes
 - [x] C7 — 8259 PIC engine: ICW/OCW state machine, priority/rotation, EOI family,
       scheduled delivery traces, PIC→8086 end-to-end integration, `POST /api/8086/pic`
+- [x] C10 — curriculum layer: 6 lessons, 7 engine-graded exercises
+      (numsys/boolean/kmap/sequential/cpu8086/pic), deterministic grader with
+      evidence + scope labels, `/api/curriculum/*` endpoints
