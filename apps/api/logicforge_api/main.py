@@ -12,7 +12,7 @@ from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 
 from logicforge_api import API_VERSION
-from logicforge_api.routers import circuits, cpu8086, explain, faults, optimize, sequential, verify
+from logicforge_api.routers import circuits, cpu8086, curriculum, explain, faults, optimize, sequential, verify
 
 app = FastAPI(
     title="LogicForge API",
@@ -46,3 +46,4 @@ app.include_router(faults.router)
 app.include_router(optimize.router)
 app.include_router(cpu8086.router)
 app.include_router(explain.router)
+app.include_router(curriculum.router)
