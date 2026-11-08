@@ -23,6 +23,7 @@ from cpu8086.registers import (
     add_flags,
     inc_dec_flags,
     logic_flags,
+    mul_flags,
     neg_flags,
     sub_flags,
 )
@@ -42,6 +43,8 @@ _ARITHMETIC = {
     "DEC",
     "NEG",
 }
+
+_MULTIPLY_DIVIDE = {"MUL", "IMUL", "DIV", "IDIV"}
 _JUMP_MNEMONICS = {
     "JMP",
     "JZ",
@@ -284,6 +287,8 @@ class Cpu:
             memory_changes.extend(self._resolve_write(instruction.dest, value) or [])
         elif mnemonic in _ARITHMETIC:
             memory_changes.extend(self._execute_arithmetic(instruction))
+        elif mnemonic in _MULTIPLY_DIVIDE:
+            memory_changes.extend(self._execute_mul_div(instruction))
         elif mnemonic == "PUSH":
             assert instruction.dest is not None
             value = self._resolve_read(instruction.dest) & 0xFFFF
@@ -445,6 +450,81 @@ class Cpu:
         self.registers.set_flags(deltas)
         return memory_changes
 
+    def _execute_mul_div(self, instruction: Instruction) -> list[tuple[int, int]]:
+        """MUL/IMUL/DIV/IDIV — one explicit operand, implicit accumulator (cpu8086.md)."""
+        mnemonic = instruction.mnemonic
+        assert instruction.dest is not None
+        width = _operand_width_bits(instruction.dest)
+        operand = self._resolve_read(instruction.dest) & ((1 << width) - 1)
+
+        if mnemonic == "MUL":
+            if width == 8:
+                full = self.registers.get("AL") * operand
+                self.registers.set("AX", full & 0xFFFF)
+                self.registers.set_flags(mul_flags(full & 0xFF, (full >> 8) != 0, 8))
+            else:
+                full = self.registers.get("AX") * operand
+                self.registers.set("AX", full & 0xFFFF)
+                self.registers.set("DX", (full >> 16) & 0xFFFF)
+                self.registers.set_flags(mul_flags(full & 0xFFFF, (full >> 16) != 0, 16))
+            return []
+
+        if mnemonic == "IMUL":
+            if width == 8:
+                full = _to_signed(self.registers.get("AL"), 8) * _to_signed(operand, 8)
+                self.registers.set("AX", full & 0xFFFF)
+                self.registers.set_flags(mul_flags(full & 0xFF, not -128 <= full <= 127, 8))
+            else:
+                full = _to_signed(self.registers.get("AX"), 16) * _to_signed(operand, 16)
+                self.registers.set("AX", full & 0xFFFF)
+                self.registers.set("DX", (full >> 16) & 0xFFFF)
+                self.registers.set_flags(mul_flags(full & 0xFFFF, not -32768 <= full <= 32767, 16))
+            return []
+
+        # DIV / IDIV — all flags unchanged (cpu8086.md).
+        if width == 8:
+            dividend = self.registers.get("AX")
+            if operand == 0:
+                raise CpuRuntimeError(self._steps_taken, "integer divide by zero")
+            if mnemonic == "DIV":
+                quotient, remainder = dividend // operand, dividend % operand
+                if quotient > 0xFF:
+                    raise CpuRuntimeError(self._steps_taken, f"divide overflow: quotient {quotient} does not fit AL")
+                self.registers.set("AL", quotient)
+                self.registers.set("AH", remainder)
+            else:
+                divisor = _to_signed(operand, 8)
+                signed_dividend = _to_signed(dividend, 16)
+                quotient = _trunc_div(signed_dividend, divisor)
+                remainder = signed_dividend - quotient * divisor
+                if not -128 <= quotient <= 127:
+                    raise CpuRuntimeError(
+                        self._steps_taken, f"divide overflow: quotient {quotient} does not fit AL signed"
+                    )
+                self.registers.set("AL", quotient & 0xFF)
+                self.registers.set("AH", remainder & 0xFF)
+            return []
+
+        dividend = (self.registers.get("DX") << 16) | self.registers.get("AX")
+        if operand == 0:
+            raise CpuRuntimeError(self._steps_taken, "integer divide by zero")
+        if mnemonic == "DIV":
+            quotient, remainder = dividend // operand, dividend % operand
+            if quotient > 0xFFFF:
+                raise CpuRuntimeError(self._steps_taken, f"divide overflow: quotient {quotient} does not fit AX")
+            self.registers.set("AX", quotient)
+            self.registers.set("DX", remainder)
+        else:
+            divisor = _to_signed(operand, 16)
+            signed_dividend = _to_signed(dividend, 32)
+            quotient = _trunc_div(signed_dividend, divisor)
+            remainder = signed_dividend - quotient * divisor
+            if not -32768 <= quotient <= 32767:
+                raise CpuRuntimeError(self._steps_taken, f"divide overflow: quotient {quotient} does not fit AX signed")
+            self.registers.set("AX", quotient & 0xFFFF)
+            self.registers.set("DX", remainder & 0xFFFF)
+        return []
+
     def _execute_conditional_jump(self, instruction: Instruction) -> None:
         flags = self.registers.flags
         mnemonic = instruction.mnemonic
@@ -501,6 +581,19 @@ def _operand_width_bits(operand: Operand) -> int:
     if width == 0 and operand.kind == "reg":
         return 8 if operand.name in BYTE_HALVES else 16
     return width if width in (8, 16) else 16
+
+
+def _to_signed(value: int, width: int) -> int:
+    """Interpret the low `width` bits of `value` as a two's-complement signed integer."""
+    value &= (1 << width) - 1
+    sign = 1 << (width - 1)
+    return value - (1 << width) if value & sign else value
+
+
+def _trunc_div(dividend: int, divisor: int) -> int:
+    """x86 IDIV truncates toward zero (Python's // floors)."""
+    quotient = abs(dividend) // abs(divisor)
+    return -quotient if (dividend < 0) != (divisor < 0) else quotient
 
 
 def assemble_and_load(

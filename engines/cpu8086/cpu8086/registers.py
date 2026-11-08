@@ -112,6 +112,16 @@ def logic_flags(result: int, width: int) -> dict[str, int]:
     }
 
 
+def mul_flags(low: int, overflow: bool, width: int) -> dict[str, int]:
+    """MUL/IMUL: CF=OF per the overflow rule; ZF/SF/PF from the low half, AF
+    cleared — Intel marks these undefined, we define them (cpu8086.md)."""
+    flags = logic_flags(low, width)
+    carry = 1 if overflow else 0
+    flags["CF"] = carry
+    flags["OF"] = carry
+    return flags
+
+
 @dataclass
 class Registers:
     """All programmer-visible state except memory."""
