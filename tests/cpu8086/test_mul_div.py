@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from cpu8086.errors import CpuRuntimeError
 from cpu8086.machine import _to_signed, assemble_and_load
 
