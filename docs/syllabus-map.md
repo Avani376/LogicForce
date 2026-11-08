@@ -65,7 +65,7 @@ Status legend: Not started / In progress / Done / Partial (reason)
 | Subroutine (CALL/RET) | cpu8086 | executor | 8086 panel | `tests/cpu8086/` | Done |
 | MUL/IMUL/DIV/IDIV | cpu8086 | executor | 8086 panel | `tests/cpu8086/test_mul_div.py` | Done (Phase C8) |
 | Shifts/rotates | cpu8086 | executor | 8086 panel | `tests/cpu8086/test_timing.py` | Done (Phase C6) |
-| String ops | cpu8086 | — | — | — | Not started (declared subset exclusion) |
+| String ops (MOVS/STOS/LODS/SCAS/CMPS + REP) | cpu8086 | executor | 8086 panel | `tests/cpu8086/test_string_ops.py` | Done (Phase C9) |
 
 ## Unit 6: Interrupts and 8259 → `engines/cpu8086/`, `engines/pic8259/`
 
