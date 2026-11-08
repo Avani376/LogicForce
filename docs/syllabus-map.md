@@ -63,7 +63,9 @@ Status legend: Not started / In progress / Done / Partial (reason)
 | Logical (AND/OR/XOR/NOT/TEST) | cpu8086 | executor | 8086 panel | `tests/cpu8086/` | Done |
 | Branch (JMP/Jcc/LOOP) | cpu8086 | executor | 8086 panel | `tests/cpu8086/` | Done |
 | Subroutine (CALL/RET) | cpu8086 | executor | 8086 panel | `tests/cpu8086/` | Done |
-| MUL/DIV/shifts/rotates/string ops | cpu8086 | — | — | — | Not started (v1 subset exclusion) |
+| MUL/IMUL/DIV/IDIV | cpu8086 | executor | 8086 panel | `tests/cpu8086/test_mul_div.py` | Done (Phase C8) |
+| Shifts/rotates | cpu8086 | executor | 8086 panel | `tests/cpu8086/test_timing.py` | Done (Phase C6) |
+| String ops | cpu8086 | — | — | — | Not started (declared subset exclusion) |
 
 ## Unit 6: Interrupts and 8259 → `engines/cpu8086/`, `engines/pic8259/`
 
