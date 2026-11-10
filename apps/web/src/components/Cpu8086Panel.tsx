@@ -27,6 +27,20 @@ interface RunResult {
     trace: TraceEntry[]
 }
 
+interface PicEvent {
+    at_step: number
+    op: string
+    line: number
+    masked?: boolean
+}
+
+interface PicResult {
+    deliveries: { at_step: number; line: number; vector: number }[]
+    final_registers: { IRR: number; ISR: number; IMR: number }
+    scope: string
+    stop_reason?: string
+}
+
 const DEFAULT_PROGRAM = `MOV CX, 5
 MOV AX, 0
 MOV BX, 1
@@ -38,13 +52,17 @@ sum:
 
 const WORD_REGS = ['AX', 'BX', 'CX', 'DX', 'SI', 'DI', 'BP', 'SP', 'IP']
 
-const FLAG_NAMES = ['CF', 'PF', 'AF', 'ZF', 'SF', 'OF', 'IF']
+const FLAG_NAMES = ['CF', 'PF', 'AF', 'ZF', 'SF', 'OF', 'IF', 'DF']
 
 export function Cpu8086Panel(): JSX.Element {
     const [source, setSource] = useState(DEFAULT_PROGRAM)
     const [result, setResult] = useState<RunResult | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [maxSteps, setMaxSteps] = useState(200)
+    const [picBase, setPicBase] = useState(8)
+    const [picEvents, setPicEvents] = useState('[{ "at_step": 3, "op": "request", "line": 2 }]')
+    const [picResult, setPicResult] = useState<PicResult | null>(null)
+    const [picError, setPicError] = useState<string | null>(null)
 
     const run = useCallback(async (): Promise<void> => {
         setError(null)
@@ -64,6 +82,35 @@ export function Cpu8086Panel(): JSX.Element {
             setError(cause instanceof Error ? cause.message : String(cause))
         }
     }, [source, maxSteps])
+
+    const runPic = useCallback(async (): Promise<void> => {
+        setPicError(null)
+        setPicResult(null)
+        try {
+            const events = JSON.parse(picEvents) as PicEvent[]
+            const withProgram = window.confirm(
+                'Also run the current assembly with the PIC-derived schedule? (Cancel = resolve flow only)'
+            )
+            const payload: Record<string, unknown> = {
+                base_vector: picBase,
+                events,
+                ...(withProgram ? { program: { source, max_steps: maxSteps } } : {}),
+            }
+            const response = await fetch('/api/8086/pic', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            const body = await response.json()
+            if (!response.ok) {
+                setPicError(body.detail?.message ?? body.detail?.code ?? `HTTP ${response.status}`)
+                return
+            }
+            setPicResult(body as PicResult)
+        } catch (cause) {
+            setPicError(cause instanceof Error ? cause.message : String(cause))
+        }
+    }, [picBase, picEvents, source, maxSteps])
 
     useEffect(() => { void run() }, []) // initial run
 
@@ -93,6 +140,38 @@ export function Cpu8086Panel(): JSX.Element {
                         <button type="button" onClick={() => void run()}>▶ Run</button>
                     </div>
                     {error && <p className="banner-error">{error}</p>}
+                    <h3>8259 PIC (Phase C7)</h3>
+                    <div className="cpu8086-controls">
+                        <label>
+                            base_vector: <input type="number" value={picBase} min={0} max={248} step={8}
+                                onChange={(e) => setPicBase(Number(e.target.value) || 8)} />
+                        </label>
+                        <button type="button" onClick={() => void runPic()}>Resolve PIC flow</button>
+                    </div>
+                    <textarea
+                        className="asm-editor"
+                        value={picEvents}
+                        onChange={(e) => setPicEvents(e.target.value)}
+                        rows={3}
+                        spellCheck={false}
+                        aria-label="PIC scheduled events as JSON"
+                    />
+                    {picError && <p className="banner-error">{picError}</p>}
+                    {picResult && (
+                        <div className="counterexample">
+                            <p>scope {picResult.scope} · IRR={picResult.final_registers.IRR} ISR={picResult.final_registers.ISR} IMR={picResult.final_registers.IMR}</p>
+                            <ul className="issue-list">
+                                {picResult.deliveries.length === 0
+                                    ? <li className="issue">No vectors delivered.</li>
+                                    : picResult.deliveries.map((d) => (
+                                        <li key={`${d.at_step}-${d.vector}`} className="issue">
+                                            step {d.at_step}: IR{d.line} → vector {d.vector}
+                                            {picResult.stop_reason !== undefined ? ' (ran through CPU)' : ''}
+                                        </li>
+                                    ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
                 <div className="cpu8086-state">
                     <h3>Registers</h3>
