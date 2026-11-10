@@ -30,6 +30,7 @@ import {
   type EditorState,
 } from './lib/circuit'
 import { Canvas } from './components/Canvas'
+import { CurriculumPanel } from './components/CurriculumPanel'
 import { TruthTablePanel } from './components/TruthTablePanel'
 import { TracePanel } from './components/TracePanel'
 import { ValidationPanel } from './components/ValidationPanel'
@@ -42,7 +43,7 @@ const STORAGE_KEY = 'logicforge.circuit.v1'
 const SEQ_CYCLES = 8
 
 
-type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain'
+type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'learn'
 
 interface History {
   past: EditorState[]
@@ -285,11 +286,11 @@ export function App(): JSX.Element {
       )}
 
       <nav className="tab-bar" role="tablist" aria-label="Workspace views">
-        {(['circuit', '8086', 'verify', 'explain'] as WorkspaceTab[]).map((t) => (
+        {(['circuit', '8086', 'verify', 'explain', 'learn'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
             onClick={() => setTab(t)}>
-            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : 'Explain'}
+            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : 'Learn'}
           </button>
         ))}
       </nav>
@@ -390,6 +391,8 @@ export function App(): JSX.Element {
       {tab === 'explain' && (
         <ExplainPanel autoEvidence={null} />
       )}
+
+      {tab === 'learn' && <CurriculumPanel />}
 
       {showTt && <TruthTablePanel result={tt} error={ttError} onClose={() => setShowTt(false)} />}
     </div>
