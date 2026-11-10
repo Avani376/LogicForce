@@ -1,6 +1,7 @@
 # Limitations and Honest Claims — LogicForge
 
-Current as of Phase 2 build sessions (logic engine 0.1.0, sequential engine 0.2.0). This
+Current as of the Phases 0–10 + C1–C10 build (12 engines, 20 API endpoints — see
+[`docs/API.md`](API.md) for the implemented surface). This
 file is the anti-overclaim contract: nothing below is “planned soon” marketing; it is a
 list of what the platform cannot do today.
 
