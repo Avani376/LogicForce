@@ -60,6 +60,19 @@ of truth and every result traceable.
   exercises graded **by the engines themselves** — truth-table equivalence, QM
   minimality, bounded CPU runs — with evidence lines and scope labels, never
   string-matching and never an LLM.
+- **Grounded AI assistant** (`/api/assistant/ask` + Sparky): ask questions in
+  natural language and get answers **routed to real sources** — the explain
+  engine (cites actual trace steps), the lesson catalog, or authored product
+  guidance. Deterministic, rule-based, and honest by construction: without
+  engine evidence it refuses to invent an explanation (contract:
+  [`docs/semantics/assistant.md`](docs/semantics/assistant.md)).
+- **Sparky, the mascot** (`apps/web`): a cute chip-bot who blinks, bobs,
+  celebrates your passes, consoles your failures, guides you to the next step
+  with clickable CTAs, and doubles as the Ask-chat UI.
+- **Animated visualizer** (`apps/web`, Visuals tab): the 9-stage workflow with a
+  traveling pulse, event-activity bars, a truth-table heatmap with staggered
+  reveal, and draw-on waveforms — all rendered from **real session data only**,
+  with honest empty states.
 - **Operator workspace** (`apps/web`): accessible gate editor — palette, drag placement,
   click-to-wire, input toggles, live simulation, truth-table view, validation panel,
   sequential waveform viewer, undo/redo, save/load.
@@ -105,6 +118,7 @@ mypy engines/*/*/ apps/api/logicforge_api   # strict types (CI lists every packa
 | [`docs/COURSE_REPORT.md`](docs/COURSE_REPORT.md) | course deliverable — syllabus mapping |
 | [`docs/syllabus-map.md`](docs/syllabus-map.md) | per-item traceability matrix |
 | [`docs/TESTING.md`](docs/TESTING.md) | test strategy |
+| [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) | video walkthrough script (record the demo from this) |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | what the platform cannot do yet |
 
 ## Engineering rules (enforced)

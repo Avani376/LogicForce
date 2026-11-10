@@ -68,6 +68,12 @@ typed `UNSUPPORTED_INSTRUCTION`.
 |---|---|
 | `POST /api/explain` | Evidence-grounded explanation of the latest result — cites real trace steps; deterministic |
 
+## Assistant (Phase AI, `assistant.py` v0.1.0)
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/assistant/ask` | Grounded Q&A router: deterministic intent routing to the explain engine, the lesson catalog, or authored guidance. The `grounding` field states exactly what produced the answer (`engine_output` / `catalog` / `guidance`); with no evidence it refuses to invent (contract: `docs/semantics/assistant.md`) |
+
 ## Curriculum (Phase C10, `curriculum_engine` v0.1.0)
 
 | Endpoint | Purpose |
