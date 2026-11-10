@@ -7,7 +7,7 @@ curriculum catalog, or authored product guidance — and cites it. Same question
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from curriculum_engine import EXERCISES, LESSONS, CurriculumError, get_exercise
 from logic_engine import LogicEngineError
@@ -251,7 +251,7 @@ def _explain_answer(question: str, context: dict[str, Any] | None) -> tuple[dict
         from verify_engine.explain import explain, explanation_to_dict
 
         explanation = explanation_to_dict(explain(kind, context, question=question))
-        raw_findings = explanation.get("findings", [])
+        raw_findings = cast(list[object], explanation.get("findings", []))
         findings = [f for f in raw_findings if isinstance(f, dict)]
         summary = str(explanation.get("summary", ""))
         first_texts = [str(f.get("text", "")) for f in findings[:3]]
