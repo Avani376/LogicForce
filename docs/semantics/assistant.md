@@ -61,8 +61,10 @@ evidence is needed for a grounded explanation — it never invents one.
 ## Errors
 
 Typed 400 envelope: `ASSISTANT_ERROR` with `category`
-`EMPTY_QUESTION` (blank/oversized question) or `BAD_CONTEXT`
-(context present but not a JSON object). Engine errors surfaced while
+`EMPTY_QUESTION` (blank/oversized question). A `context` that is not a JSON
+object is rejected earlier, by the request schema, as a standard HTTP 422 —
+the engine-level `BAD_CONTEXT` guard applies to direct library callers.
+Engine errors surfaced while
 fulfilling an `explain` intent are returned as answers with
 `grounding: guidance` + the error text — the assistant degrades gracefully,
 never crashes, never invents.

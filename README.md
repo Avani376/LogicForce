@@ -1,8 +1,25 @@
 # LogicForge
 
-**Self-verifying digital system engineering platform** — specify → design → simulate →
-verify → fault-test → repair → optimize, with deterministic engines as the single source
-of truth and every result traceable.
+**Design digital hardware. Drive an 8086. Get graded by real engines. Meet Sparky.**
+
+LogicForge is a self-verifying digital-system engineering platform: specify → design →
+simulate → verify → fault-test → diagnose → repair → optimize → re-verify, with
+**deterministic engines as the single source of truth** and every result traceable.
+Twelve engines, 21 API endpoints, and a workspace where an interactive AI assistant
+answers questions *only* from real engine output — it refuses to invent.
+
+**Highlights**
+
+- ⚡ **Sparky the mascot** — blinks, bobs, celebrates your passes, consoles your
+  failures, guides you to the next step, and doubles as the Ask-chat.
+- 🧠 **Grounded AI** — ask anything; answers cite real trace steps or the lesson
+  catalog. No LLM, no fabrication — by construction.
+- 📊 **Animated visualizer** — the engineering loop, event bars, truth-table heatmaps
+  and draw-on waveforms, all rendered from genuine session data.
+- 🔬 **Full instruction-set 8086** — ALU, MUL/DIV, string ops with REP, interrupts and
+  the 8259 PIC, published timing, debugger traces.
+- 🎓 **Learn tab** — lessons and exercises graded by the engines themselves
+  (truth-table equivalence, Quine-McCluskey minimality, bounded CPU runs).
 
 > Status: **Phases 0–10 + curriculum phases C1–C10 complete**. All ten roadmap phases are
 > implemented and tested, plus the syllabus-driven curriculum track: number systems,
