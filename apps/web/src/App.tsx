@@ -30,6 +30,8 @@ import {
   type EditorState,
 } from './lib/circuit'
 import { Canvas } from './components/Canvas'
+import { SparkyMascot, type WorkspaceTabName } from './components/Sparky'
+import { Visualizer } from './components/Visualizer'
 import { CurriculumPanel } from './components/CurriculumPanel'
 import { TruthTablePanel } from './components/TruthTablePanel'
 import { TracePanel } from './components/TracePanel'
@@ -43,7 +45,7 @@ const STORAGE_KEY = 'logicforge.circuit.v1'
 const SEQ_CYCLES = 8
 
 
-type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'learn'
+type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'learn' | 'visuals'
 
 interface History {
   past: EditorState[]
@@ -286,11 +288,11 @@ export function App(): JSX.Element {
       )}
 
       <nav className="tab-bar" role="tablist" aria-label="Workspace views">
-        {(['circuit', '8086', 'verify', 'explain', 'learn'] as WorkspaceTab[]).map((t) => (
+        {(['circuit', '8086', 'verify', 'explain', 'learn', 'visuals'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
             onClick={() => setTab(t)}>
-            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : 'Learn'}
+            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : t === 'learn' ? 'Learn' : 'Visuals'}
           </button>
         ))}
       </nav>
@@ -393,6 +395,9 @@ export function App(): JSX.Element {
       )}
 
       {tab === 'learn' && <CurriculumPanel />}
+      {tab === 'visuals' && <Visualizer sim={sim} seqResult={seqResult} tt={tt} />}
+
+      <SparkyMascot currentTab={tab as WorkspaceTabName} onNavigate={(t) => setTab(t as WorkspaceTab)} />
 
       {showTt && <TruthTablePanel result={tt} error={ttError} onClose={() => setShowTt(false)} />}
     </div>

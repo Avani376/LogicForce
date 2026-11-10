@@ -5,6 +5,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { emitSparky } from './Sparky'
+
 interface TraceEntry {
     kind: string
     step: number
@@ -77,8 +79,18 @@ export function Cpu8086Panel(): JSX.Element {
                 setError(body.detail?.message ?? body.detail?.code ?? `HTTP ${response.status}`)
                 return
             }
-            setResult((await response.json()) as RunResult)
+            const body = (await response.json()) as RunResult
+            setResult(body)
+            if (body.stop_reason === 'hlt') {
+                emitSparky({
+                    mood: 'happy',
+                    message: `Halted cleanly after ${body.trace.length} steps — AX = ${body.registers.AX ?? 0}. Lovely!`,
+                })
+            } else {
+                emitSparky({ mood: 'thinking', message: `Run bounded at ${body.trace.length} steps (stop_reason: ${body.stop_reason}).` })
+            }
         } catch (cause) {
+            emitSparky({ mood: 'sad', message: 'That run hit an error — check the message above, the assembler is very specific!' })
             setError(cause instanceof Error ? cause.message : String(cause))
         }
     }, [source, maxSteps])

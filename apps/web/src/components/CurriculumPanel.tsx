@@ -5,6 +5,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { emitSparky } from './Sparky'
+
 interface LessonSummary {
   id: string
   unit: string
@@ -94,6 +96,11 @@ export function CurriculumPanel({ onNotify }: CurriculumPanelProps): JSX.Element
         return
       }
       setResult(body as GradedResult)
+      emitSparky(
+        body.passed
+          ? { mood: 'happy', message: 'Brilliant! A real engine just verified your answer — you earned that bounce! 🎉' }
+          : { mood: 'sad', message: "Not yet — but the engine told you exactly why. Read the evidence and try again, I'm rooting for you!" }
+      )
       if (onNotify !== undefined) {
         onNotify(body.passed ? 'Exercise passed — graded by the engine.' : 'Not yet — see the engine feedback.')
       }
