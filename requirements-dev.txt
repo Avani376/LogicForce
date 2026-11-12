@@ -1,0 +1,7 @@
+# LogicForge — development/test toolchain. Install together with requirements.txt:
+#   pip install -r requirements.txt -r requirements-dev.txt
+pytest==9.2.0
+pytest-cov==7.1.0
+hypothesis==6.170.14
+ruff==0.17.3
+mypy==2.4.1
