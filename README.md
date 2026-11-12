@@ -12,8 +12,11 @@ answers questions *only* from real engine output — it refuses to invent.
 
 - ⚡ **Sparky the mascot** — blinks, bobs, celebrates your passes, consoles your
   failures, guides you to the next step, and doubles as the Ask-chat.
-- 🧠 **Grounded AI** — ask anything; answers cite real trace steps or the lesson
-  catalog. No LLM, no fabrication — by construction.
+- 🧠 **AI with a brain** — grounded answers by default (cite real trace steps or
+  the lesson catalog); paste your own OpenAI-compatible API key in Sparky's
+  settings and the same chat switches to generative deep-reasoning, prompted
+  with the engine facts and labeled 🧠 generative vs ⚙️ grounded. Keys live in
+  your browser only.
 - 📊 **Animated visualizer** — the engineering loop, event bars, truth-table heatmaps
   and draw-on waveforms, all rendered from genuine session data.
 - 🔬 **Full instruction-set 8086** — ALU, MUL/DIV, string ops with REP, interrupts and
@@ -134,6 +137,8 @@ mypy engines/*/*/ apps/api/logicforge_api   # strict types (CI lists every packa
 | [`docs/API.md`](docs/API.md) | all implemented endpoints + planned ones |
 | [`docs/COURSE_REPORT.md`](docs/COURSE_REPORT.md) | course deliverable — syllabus mapping |
 | [`docs/syllabus-map.md`](docs/syllabus-map.md) | per-item traceability matrix |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to set up, the rules, and how to add things |
+| [`docs/PROJECT_CONTEXT.md`](docs/PROJECT_CONTEXT.md) | current state, architecture notes, open work — start here for your first PR |
 | [`docs/TESTING.md`](docs/TESTING.md) | test strategy |
 | [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) | video walkthrough script (record the demo from this) |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | what the platform cannot do yet |
