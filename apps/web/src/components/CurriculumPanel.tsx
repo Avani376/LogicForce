@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { playError, playSuccess } from '../lib/sounds'
 import { emitSparky } from './Sparky'
 
 interface LessonSummary {
@@ -96,6 +97,7 @@ export function CurriculumPanel({ onNotify }: CurriculumPanelProps): JSX.Element
         return
       }
       setResult(body as GradedResult)
+      if (body.passed) playSuccess(); else playError()
       emitSparky(
         body.passed
           ? { mood: 'happy', message: 'Brilliant! A real engine just verified your answer — you earned that bounce! 🎉' }

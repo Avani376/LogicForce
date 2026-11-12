@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { playError, playRunDone } from '../lib/sounds'
 import { emitSparky } from './Sparky'
 
 interface TraceEntry {
@@ -81,6 +82,7 @@ export function Cpu8086Panel(): JSX.Element {
             }
             const body = (await response.json()) as RunResult
             setResult(body)
+            playRunDone()
             if (body.stop_reason === 'hlt') {
                 emitSparky({
                     mood: 'happy',
@@ -90,6 +92,7 @@ export function Cpu8086Panel(): JSX.Element {
                 emitSparky({ mood: 'thinking', message: `Run bounded at ${body.trace.length} steps (stop_reason: ${body.stop_reason}).` })
             }
         } catch (cause) {
+            playError()
             emitSparky({ mood: 'sad', message: 'That run hit an error — check the message above, the assembler is very specific!' })
             setError(cause instanceof Error ? cause.message : String(cause))
         }

@@ -967,3 +967,84 @@ button:disabled {
 @keyframes draw-on {
   to { stroke-dashoffset: 0; }
 }
+
+/* ================= Sparky brain, badges, confetti, bold motion ================= */
+
+.sparky-head-actions { display: flex; gap: 6px; align-items: center; }
+.sparky-head-actions button {
+  border: none; background: rgba(255, 255, 255, 0.18); color: #ffffff;
+  border-radius: 8px; font-size: 10.5px; padding: 3px 8px; cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.sparky-head-actions button:hover { background: rgba(255, 255, 255, 0.32); transform: scale(1.06); }
+
+.sparky-msg-in { animation: msg-spring 0.42s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+@keyframes msg-spring {
+  from { transform: translateY(10px) scale(0.85); opacity: 0; }
+  60% { transform: translateY(-3px) scale(1.03); opacity: 1; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.sparky-badge {
+  display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.4px;
+  padding: 2px 8px; border-radius: 999px; margin-bottom: 5px; text-transform: uppercase;
+}
+.sparky-badge-generative { background: linear-gradient(90deg, #7c3aed, #d946ef); color: #ffffff; animation: badge-shimmer 2.2s linear infinite; background-size: 200% 100%; }
+.sparky-badge-grounded { background: #dbe4ff; color: #2d3561; }
+@keyframes badge-shimmer { to { background-position: -200% 0; } }
+
+.sparky-confetti { position: absolute; right: 34px; bottom: 60px; pointer-events: none; }
+.sparky-confetto {
+  position: absolute; width: 8px; height: 12px; border-radius: 2px;
+  animation: confetti-fall 1.1s ease-in forwards;
+  animation-delay: calc(var(--i) * 0.045s);
+}
+.sparky-confetto:nth-child(4n + 1) { background: #ffd166; left: 4px; }
+.sparky-confetto:nth-child(4n + 2) { background: #5b6ee1; left: 26px; }
+.sparky-confetto:nth-child(4n + 3) { background: #34c98e; left: 48px; }
+.sparky-confetto:nth-child(4n + 4) { background: #ff8fab; left: 70px; }
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(150px) rotate(320deg); opacity: 0; }
+}
+
+.sparky-settings {
+  width: 320px; background: #ffffff; border: 2px solid #5b6ee1; border-radius: 16px;
+  overflow: hidden; box-shadow: 0 14px 34px rgba(45, 53, 97, 0.28);
+  animation: msg-spring 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.sparky-settings-body { padding: 12px; display: flex; flex-direction: column; gap: 9px; font-size: 12px; color: #2d3561; }
+.sparky-settings-body label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: 11.5px; }
+.sparky-settings-body input {
+  border: 1.5px solid #c9d0f2; border-radius: 10px; padding: 7px 10px; font-size: 12.5px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.sparky-settings-body input:focus { outline: none; border-color: #5b6ee1; box-shadow: 0 0 0 3px rgba(91, 110, 225, 0.15); }
+.sparky-settings-actions { display: flex; gap: 8px; }
+.sparky-settings-actions .sparky-cta { flex: 1 1 auto; text-align: center; }
+
+/* Bold UI motion: tab underline pop, panel entrance, animated gradient accents */
+.tab-btn { position: relative; overflow: hidden; }
+.tab-btn::after {
+  content: ''; position: absolute; left: 50%; bottom: 2px; width: 0; height: 3px;
+  border-radius: 999px; background: linear-gradient(90deg, #5b6ee1, #d946ef);
+  transition: width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), left 0.25s ease;
+}
+.tab-btn:hover::after { width: 55%; left: 22%; }
+.tab-active::after { width: 62% !important; left: 19% !important; animation: underline-pop 0.3s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes underline-pop { from { width: 0; } to { width: 62%; } }
+
+.panel { animation: panel-enter 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes panel-enter {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+button { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+button:not(.sparky-bot):active { transform: scale(0.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sparky-idle, .sparky-eyes, .sparky-antenna, .pipeline-pulse, .pipeline-dot,
+  .bar-fill, .tt-cell-row, .draw-path, .sparky-msg-in, .panel, .sparky-confetti,
+  .sparky-badge-generative, .pipeline-stage { animation: none !important; }
+}

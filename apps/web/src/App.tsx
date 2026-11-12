@@ -30,6 +30,7 @@ import {
   type EditorState,
 } from './lib/circuit'
 import { Canvas } from './components/Canvas'
+import { playClick } from './lib/sounds'
 import { SparkyMascot, type WorkspaceTabName } from './components/Sparky'
 import { Visualizer } from './components/Visualizer'
 import { CurriculumPanel } from './components/CurriculumPanel'
@@ -291,7 +292,7 @@ export function App(): JSX.Element {
         {(['circuit', '8086', 'verify', 'explain', 'learn', 'visuals'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
-            onClick={() => setTab(t)}>
+            onClick={() => { playClick(); setTab(t) }}>
             {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : t === 'learn' ? 'Learn' : 'Visuals'}
           </button>
         ))}
