@@ -10,6 +10,8 @@ from __future__ import annotations
 import time
 
 from fastapi import APIRouter, FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import Response
 from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 
@@ -50,15 +52,19 @@ def health() -> dict[str, str]:
     }
 
 
-@app.middleware("http")
-async def observability_headers(request: Request, call_next):
+class ObservabilityMiddleware(BaseHTTPMiddleware):
     """Monitoring hooks: per-request latency + API version on every response."""
-    started = time.perf_counter()
-    response = await call_next(request)
-    process_ms = (time.perf_counter() - started) * 1000
-    response.headers["X-Process-Time-Ms"] = f"{process_ms:.2f}"
-    response.headers["X-API-Version"] = API_VERSION
-    return response
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        started = time.perf_counter()
+        response = await call_next(request)
+        process_ms = (time.perf_counter() - started) * 1000
+        response.headers["X-Process-Time-Ms"] = f"{process_ms:.2f}"
+        response.headers["X-API-Version"] = API_VERSION
+        return response
+
+
+app.add_middleware(ObservabilityMiddleware)
 
 
 app.include_router(root)
