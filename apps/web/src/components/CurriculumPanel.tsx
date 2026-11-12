@@ -34,11 +34,7 @@ interface GradedResult {
   evidence: string[]
 }
 
-interface CurriculumPanelProps {
-  onNotify?: (message: string) => void
-}
-
-export function CurriculumPanel({ onNotify }: CurriculumPanelProps): JSX.Element {
+export function CurriculumPanel(): JSX.Element {
   const [lessons, setLessons] = useState<LessonSummary[]>([])
   const [exercises, setExercises] = useState<ExerciseSummary[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -103,15 +99,12 @@ export function CurriculumPanel({ onNotify }: CurriculumPanelProps): JSX.Element
           ? { mood: 'happy', message: 'Brilliant! A real engine just verified your answer — you earned that bounce! 🎉' }
           : { mood: 'sad', message: "Not yet — but the engine told you exactly why. Read the evidence and try again, I'm rooting for you!" }
       )
-      if (onNotify !== undefined) {
-        onNotify(body.passed ? 'Exercise passed — graded by the engine.' : 'Not yet — see the engine feedback.')
-      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : String(cause))
     } finally {
       setGrading(false)
     }
-  }, [selected, submission, onNotify])
+  }, [selected, submission])
 
   if (loadError !== null) {
     return (
