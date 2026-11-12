@@ -1,12 +1,28 @@
 # LogicForge
 
-**Design digital hardware. Drive an 8086. Get graded by real engines. Meet Sparky.**
+<div align="center">
+  <img src="docs/assets/hero.svg" alt="LogicForge — deterministic digital-system engineering platform. Circuit pulses travel across a dark board while Sparky the mascot bobs and blinks beside the workflow: specify, design, simulate, verify, fault-test, repair, optimize, re-verify." width="100%"/>
+
+  **Design digital hardware. Drive an 8086. Get graded by real engines. Meet Sparky.**
+
+  [![CI](https://github.com/Avani376/LogicForce/actions/workflows/ci.yml/badge.svg)](https://github.com/Avani376/LogicForce/actions/workflows/ci.yml)
+  ![Python](https://img.shields.io/badge/python-3.12%2B-5b6ee1)
+  ![FastAPI](https://img.shields.io/badge/API-FastAPI-34c98e)
+  ![Frontend](https://img.shields.io/badge/UI-React%20%2B%20Vite-d946ef)
+  ![Tests](https://img.shields.io/badge/coverage-%E2%89%A590%25-ffd166)
+</div>
+
+---
 
 LogicForge is a self-verifying digital-system engineering platform: specify → design →
 simulate → verify → fault-test → diagnose → repair → optimize → re-verify, with
 **deterministic engines as the single source of truth** and every result traceable.
 Twelve engines, 21 API endpoints, and a workspace where an interactive AI assistant
 answers questions *only* from real engine output — it refuses to invent.
+
+<table>
+<tr>
+<td width="72%" valign="top">
 
 **Highlights**
 
@@ -17,12 +33,24 @@ answers questions *only* from real engine output — it refuses to invent.
   settings and the same chat switches to generative deep-reasoning, prompted
   with the engine facts and labeled 🧠 generative vs ⚙️ grounded. Keys live in
   your browser only.
-- 📊 **Animated visualizer** — the engineering loop, event bars, truth-table heatmaps
-  and draw-on waveforms, all rendered from genuine session data.
-- 🔬 **Full instruction-set 8086** — ALU, MUL/DIV, string ops with REP, interrupts and
-  the 8259 PIC, published timing, debugger traces.
+- 📊 **Animated dashboard** — count-up stat tiles, session-progress chips, an
+  event-mix donut, propagation sparkline, truth-table heatmaps with 1-density
+  bars and draw-on waveforms — all from genuine session data.
+- 🔬 **Full instruction-set 8086** — ALU, MUL/DIV, string ops with REP, interrupts
+  and the 8259 PIC, published timing, debugger traces.
 - 🎓 **Learn tab** — lessons and exercises graded by the engines themselves
   (truth-table equivalence, Quine-McCluskey minimality, bounded CPU runs).
+- 🔊 **Sound design** — synthesized interaction feedback, a speaking mascot and a
+  celebration fanfare; mutable in one click, honors reduced-motion.
+
+</td>
+<td width="28%" valign="middle" align="center">
+
+<img src="docs/assets/sparky.svg" alt="Sparky, the LogicForge mascot — a bobbing chip-bot with glowing antenna, waving arm and a cycling speech bubble." width="230"/>
+
+</td>
+</tr>
+</table>
 
 > Status: **Phases 0–10 + curriculum phases C1–C10 complete**. All ten roadmap phases are
 > implemented and tested, plus the syllabus-driven curriculum track: number systems,

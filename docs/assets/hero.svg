@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="LogicForge banner">
+  <defs>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a97ff"/>
+      <stop offset="0.55" stop-color="#5b6ee1"/>
+      <stop offset="1" stop-color="#d946ef"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1226"/>
+      <stop offset="1" stop-color="#181c3a"/>
+    </linearGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#22284d" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="300" rx="18" fill="url(#bgGrad)"/>
+  <rect x="0" y="0" width="900" height="300" rx="18" fill="url(#grid)" opacity="0.55"/>
+
+  <!-- circuit traces with traveling pulses -->
+  <g fill="none" stroke="#2a3158" stroke-width="2.5" stroke-linecap="round">
+    <path id="traceA" d="M 30 250 H 180 V 210 H 340"/>
+    <path id="traceB" d="M 30 270 H 220 V 240 H 420 V 265 H 560"/>
+    <path d="M 560 70 H 640 V 96"/>
+  </g>
+  <circle r="4.5" fill="#ffd166">
+    <animateMotion dur="5.2s" repeatCount="indefinite"><mpath href="#traceA"/></animateMotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.9;1" dur="5.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="4.5" fill="#34c98e">
+    <animateMotion dur="6.4s" repeatCount="indefinite" begin="1.6s"><mpath href="#traceB"/></animateMotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.9;1" dur="6.4s" repeatCount="indefinite" begin="1.6s"/>
+  </circle>
+  <circle r="4" fill="#ff8fab">
+    <animateMotion dur="4.6s" repeatCount="indefinite" begin="0.8s">
+      <mpath href="#traceC"/>
+    </animateMotion>
+  </circle>
+  <path id="traceC" d="M 40 60 H 200 V 92 H 330" fill="none" stroke="#2a3158" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- title -->
+  <text x="58" y="118" font-family="Segoe UI, Arial, sans-serif" font-size="58" font-weight="800" fill="url(#titleGrad)" letter-spacing="1">LogicForge</text>
+  <text x="60" y="152" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#9fb0ff">design · verify · learn — every number from a deterministic engine</text>
+
+  <!-- workflow stages, revealed in sequence -->
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">
+    <g fill="#34c98e"><text x="60" y="196">specify</text>
+      <animate attributeName="opacity" from="0" to="1" begin="0.2s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#5b6ee1"><text x="150" y="196">design</text>
+      <animate attributeName="opacity" from="0" to="1" begin="0.7s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#d946ef"><text x="240" y="196">simulate</text>
+      <animate attributeName="opacity" from="0" to="1" begin="1.2s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#ffd166"><text x="352" y="196">verify</text>
+      <animate attributeName="opacity" from="0" to="1" begin="1.7s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#ff8fab"><text x="440" y="196">fault-test</text>
+      <animate attributeName="opacity" from="0" to="1" begin="2.2s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#22d3ee"><text x="556" y="196">repair</text>
+      <animate attributeName="opacity" from="0" to="1" begin="2.7s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#8a97ff"><text x="640" y="196">optimize</text>
+      <animate attributeName="opacity" from="0" to="1" begin="3.2s" dur="0.4s" fill="freeze"/>
+    </g>
+    <g fill="#ffffff"><text x="742" y="196">re-verify</text>
+      <animate attributeName="opacity" from="0" to="1" begin="3.7s" dur="0.4s" fill="freeze"/>
+    </g>
+  </g>
+  <g stroke="#3a427a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9">
+    <path d="M 128 191 h 14"/><path d="M 218 191 h 14"/><path d="M 326 191 h 16"/>
+    <path d="M 412 191 h 18"/><path d="M 522 191 h 24"/><path d="M 606 191 h 24"/>
+    <path d="M 712 191 h 22"/>
+  </g>
+
+  <!-- fact chips -->
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="600">
+    <rect x="60" y="222" width="118" height="26" rx="13" fill="#1c2150" stroke="#3a427a"/>
+    <text x="119" y="239" fill="#9fb0ff" text-anchor="middle">12 engines</text>
+    <rect x="188" y="222" width="122" height="26" rx="13" fill="#1c2150" stroke="#3a427a"/>
+    <text x="249" y="239" fill="#9fb0ff" text-anchor="middle">21 API endpoints</text>
+    <rect x="320" y="222" width="140" height="26" rx="13" fill="#1c2150" stroke="#3a427a">
+      <animate attributeName="stroke" values="#3a427a;#34c98e;#3a427a" dur="3.6s" repeatCount="indefinite"/>
+    </rect>
+    <text x="390" y="239" fill="#9fb0ff" text-anchor="middle">CI-green · 90%+ coverage</text>
+  </g>
+
+  <!-- Sparky -->
+  <g transform="translate(690,118)">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -7; 0 0" dur="2.6s" repeatCount="indefinite"/>
+      <line x1="60" y1="26" x2="60" y2="12" stroke="#5b6ee1" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="60" cy="9" r="6" fill="#ffd166">
+        <animate attributeName="r" values="6;7.5;6" dur="1.8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0.5;1" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <rect x="24" y="26" width="72" height="64" rx="16" fill="#5b6ee1"/>
+      <rect x="32" y="34" width="56" height="48" rx="12" fill="#eef1ff"/>
+      <g stroke="#5b6ee1" stroke-width="5" stroke-linecap="round">
+        <line x1="40" y1="90" x2="40" y2="98"/>
+        <line x1="60" y1="90" x2="60" y2="98"/>
+        <line x1="80" y1="90" x2="80" y2="98"/>
+      </g>
+      <g fill="#2d3561">
+        <circle cx="48" cy="54" r="6"/>
+        <circle cx="72" cy="54" r="6"/>
+        <circle cx="50" cy="52" r="2" fill="#ffffff"/>
+        <circle cx="74" cy="52" r="2" fill="#ffffff"/>
+        <animate attributeName="opacity" values="1;1;0;1" keyTimes="0;0.9;0.94;1" dur="4.2s" repeatCount="indefinite"/>
+      </g>
+      <path d="M 52 68 q 8 6 16 0" stroke="#2d3561" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle cx="38" cy="62" r="3" fill="#ff8fab" opacity="0.85"/>
+      <circle cx="82" cy="62" r="3" fill="#ff8fab" opacity="0.85"/>
+    </g>
+    <!-- speech bubble: cycles three messages -->
+    <g font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600">
+      <g>
+        <rect x="96" y="30" width="96" height="30" rx="10" fill="#ffffff" stroke="#5b6ee1"/>
+        <text x="144" y="49" fill="#2d3561" text-anchor="middle">run the engines!</text>
+        <animate attributeName="opacity" values="1;1;0;0;0;1" keyTimes="0;0.28;0.34;0.62;0.96;1" dur="9s" repeatCount="indefinite"/>
+      </g>
+      <g opacity="0">
+        <rect x="96" y="30" width="96" height="30" rx="10" fill="#ffffff" stroke="#5b6ee1"/>
+        <text x="144" y="49" fill="#2d3561" text-anchor="middle">try the Learn tab</text>
+        <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.32;0.38;0.62;0.68;1" dur="9s" repeatCount="indefinite"/>
+      </g>
+      <g opacity="0">
+        <rect x="96" y="30" width="96" height="30" rx="10" fill="#ffffff" stroke="#5b6ee1"/>
+        <text x="144" y="49" fill="#2d3561" text-anchor="middle">ask me anything</text>
+        <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.64;0.70;0.92;0.98;1" dur="9s" repeatCount="indefinite"/>
+      </g>
+    </g>
+  </g>
+</svg>
