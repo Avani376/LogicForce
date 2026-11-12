@@ -26,6 +26,13 @@ jobs:
         run: mypy engines/logic/logic_engine engines/sequential/sequential_engine engines/verify/verify_engine engines/faults/fault_engine engines/repair/repair_engine engines/optimize/optimize_engine engines/cpu8086/cpu8086 engines/cosim/cosim_engine engines/numsys/numsys engines/boolean/boolean_engine engines/pic8259/pic8259 engines/curriculum/curriculum_engine apps/api/logicforge_api
       - name: Tests + coverage gate
         run: pytest --cov --cov-report=term-missing --cov-fail-under=90
+      - name: Engine boundary validation
+        run: python scripts/engine_validation.py
+      - name: Live API E2E probe
+        run: |
+          uvicorn logicforge_api.main:app --port 8071 > /dev/null 2>&1 &
+          sleep 4
+          python scripts/live_api_probe.py 8071
 
   web:
     runs-on: ubuntu-latest
