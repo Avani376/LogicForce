@@ -10,10 +10,10 @@ from __future__ import annotations
 import time
 
 from fastapi import APIRouter, FastAPI, Request
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.responses import Response
 from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import Response
 
 from logicforge_api import API_VERSION
 from logicforge_api.routers import (
