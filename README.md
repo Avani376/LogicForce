@@ -170,7 +170,7 @@ git clone https://github.com/Avani376/LogicForce.git && cd LogicForce
 
 # backend
 python -m venv .venv && source .venv/Scripts/activate   # Windows Git Bash
-pip install -r requirements.txt && pip install -e .
+pip install -r requirements.txt -r requirements-dev.txt && pip install -e .
 uvicorn logicforge_api.main:app --port 8000
 
 # frontend (second terminal)

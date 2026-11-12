@@ -12,7 +12,7 @@ cd LogicForce
 # Backend (Python 3.12+)
 python -m venv .venv
 source .venv/Scripts/activate        # Windows Git Bash; .venv/bin/activate elsewhere
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 pip install -e .
 
 # Frontend
