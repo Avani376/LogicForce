@@ -33,7 +33,6 @@ import { Canvas } from './components/Canvas'
 import { playHover, playThemeSting, playWhoosh } from './lib/sounds'
 import { SparkyMascot, type WorkspaceTabName } from './components/Sparky'
 import { Visualizer } from './components/Visualizer'
-import { CurriculumPanel } from './components/CurriculumPanel'
 import { TruthTablePanel } from './components/TruthTablePanel'
 import { TracePanel } from './components/TracePanel'
 import { ValidationPanel } from './components/ValidationPanel'
@@ -46,7 +45,7 @@ const STORAGE_KEY = 'logicforge.circuit.v1'
 const SEQ_CYCLES = 8
 
 
-type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'learn' | 'visuals'
+type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'visuals'
 
 interface History {
   past: EditorState[]
@@ -290,12 +289,12 @@ export function App(): JSX.Element {
       )}
 
       <nav className="tab-bar" role="tablist" aria-label="Workspace views">
-        {(['circuit', '8086', 'verify', 'explain', 'learn', 'visuals'] as WorkspaceTab[]).map((t) => (
+        {(['circuit', '8086', 'verify', 'explain', 'visuals'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
             onClick={() => { playWhoosh(); setTab(t) }}
             onMouseEnter={() => playHover()}>
-            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : t === 'learn' ? 'Learn' : 'Visuals'}
+            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : 'Visuals'}
           </button>
         ))}
       </nav>
@@ -397,7 +396,6 @@ export function App(): JSX.Element {
         <ExplainPanel autoEvidence={null} />
       )}
 
-      {tab === 'learn' && <CurriculumPanel />}
       {tab === 'visuals' && <Visualizer sim={sim} seqResult={seqResult} tt={tt} health={health} />}
 
       <SparkyMascot currentTab={tab as WorkspaceTabName} onNavigate={(t) => setTab(t as WorkspaceTab)} />

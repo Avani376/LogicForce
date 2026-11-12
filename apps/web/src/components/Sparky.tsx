@@ -26,7 +26,7 @@ export function emitSparky(detail: SparkyEvent): void {
   window.dispatchEvent(new CustomEvent('sparky:event', { detail }))
 }
 
-export type WorkspaceTabName = 'circuit' | '8086' | 'verify' | 'explain' | 'learn' | 'visuals'
+export type WorkspaceTabName = 'circuit' | '8086' | 'verify' | 'explain' | 'visuals'
 
 const TAB_TIPS: Record<WorkspaceTabName, string> = {
   circuit:
@@ -35,7 +35,6 @@ const TAB_TIPS: Record<WorkspaceTabName, string> = {
     'Write some assembly and press ▶ Run. Watch the registers light up — try the sum loop that is already loaded!',
   verify: 'Verify an invariant here. If it fails, you get a counterexample you can replay — failures are friends!',
   explain: 'Ask for an explanation and every claim will cite real trace steps. I never make things up!',
-  learn: 'Pick an exercise — a real engine grades your answer. Get it right and watch me celebrate!',
   visuals: 'Your session data comes alive here! Run a simulation or a truth table first so the charts have something true to show.',
 }
 

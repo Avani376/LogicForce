@@ -123,7 +123,7 @@
       </g>
       <g opacity="0">
         <rect x="96" y="30" width="96" height="30" rx="10" fill="#ffffff" stroke="#5b6ee1"/>
-        <text x="144" y="49" fill="#2d3561" text-anchor="middle">try the Learn tab</text>
+        <text x="144" y="49" fill="#2d3561" text-anchor="middle">watch the trace</text>
         <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.32;0.38;0.62;0.68;1" dur="9s" repeatCount="indefinite"/>
       </g>
       <g opacity="0">

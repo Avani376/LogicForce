@@ -62,7 +62,7 @@ engines/            one folder per engine, each is an installable package
   pic8259/          programmable interrupt controller model
   curriculum/       lessons + engine-graded exercises
 apps/api/           FastAPI routers — thin; engines do the work
-apps/web/           React + Vite workspace (Circuit, 8086, Verify, Explain, Learn, Visuals)
+apps/web/           React + Vite workspace (Circuit, 8086, Verify, Explain, Visuals)
 tests/              unit/, golden/, property/, integration/, per-engine folders
 docs/semantics/     normative contracts, one per engine
 ```

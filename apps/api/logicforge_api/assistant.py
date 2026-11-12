@@ -82,21 +82,22 @@ GUIDES: dict[str, dict[str, str]] = {
     "kmap": {
         "tab": "Learn",
         "text": (
-            "K-map and Quine-McCluskey minimization are covered in the Learn tab "
-            "(Unit 2/3) — including a minimize exercise that checks equivalence "
-            "AND minimality against the QM solution."
+            "K-map and Quine-McCluskey minimization run in the boolean engine — the "
+            "kmap_simplify and quine_mccluskey endpoints cross-check one against the "
+            "other, and the curriculum API has a minimize exercise that checks "
+            "equivalence AND minimality."
         ),
     },
     "gray": {
         "tab": "Learn",
         "text": (
-            "Gray codes are in the Learn tab (Unit 1): adjacent values differ in "
-            "exactly one bit; binary → Gray is XOR-shift."
+            "Gray codes are lesson L1 in the curriculum engine: adjacent values "
+            "differ in exactly one bit; binary → Gray is XOR-shift."
         ),
     },
     "bcd": {
         "tab": "Learn",
-        "text": "BCD, Excess-3 and ASCII codes are in the Learn tab (Unit 1).",
+        "text": "BCD, Excess-3 and ASCII codes are lesson L1 in the curriculum engine.",
     },
 }
 
@@ -287,7 +288,7 @@ def ask(question: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
             "kind": "exercise",
             "scope": "RULE_BASED",
             "sources": ["curriculum_engine 0.1.0"],
-            "suggestions": ["Open the Learn tab to submit an answer →"],
+            "suggestions": ["Grade answers via POST /api/curriculum/grade →"],
             "data": body["data"],
         }
 
@@ -301,7 +302,7 @@ def ask(question: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
             "kind": "lesson",
             "scope": "RULE_BASED",
             "sources": ["curriculum_engine 0.1.0"],
-            "suggestions": ["Open the Learn tab for the matching exercise →"],
+            "suggestions": ["Browse GET /api/curriculum/exercises →"],
             "data": lesson_body["data"],
         }
 

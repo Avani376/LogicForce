@@ -15,7 +15,7 @@ tooling: any screen recorder at 1920×1080, 30 fps, with the API
 | 5 | 0:40–0:50 | Fault & repair | Fault-inject a stuck-at, re-run, then repair-search | FAIL → counterexample → repair candidates, each re-verified |
 | 6 | 0:50–1:00 | 8086 | Open **8086 CPU**, press ▶ Run on the sum loop | Registers animate, trace scrolls, Sparky cheers at the clean HLT |
 | 7 | 1:00–1:10 | PIC | In the PIC section, resolve a flow | Deliveries appear: "step 3: IR2 → vector 10" |
-| 8 | 1:10–1:20 | Learn + AI | Open **Learn**, submit an answer; then click Sparky → "what is a K-map?" | Engine-graded PASS + Sparky celebration; grounded answer citing the catalog |
+| 8 | 1:10–1:20 | Sparky AI | Click Sparky → 💬 → "what is a K-map?" | Grounded answer citing the lesson catalog, with the ⚙️ grounded badge |
 | 9 | 1:20–1:30 | Visuals | Open **Visuals** | Pipeline pulse travels Specify→Re-Verify; event bars grow; truth-table heatmap and waveforms draw on |
 | 10 | 1:30–1:35 | Close | Zoom on the footer | "Deterministic engines. Honest claims. Cute mascot." |
 

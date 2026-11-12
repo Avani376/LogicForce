@@ -44,7 +44,7 @@ hallucinate gate behavior, fake counterexamples, and invented timing numbers.
 Contracts are written **before** code (`docs/semantics/` — 13 normative documents),
 and tests check the code against them. That discipline is the product.
 
-## The workspace — six tabs, one glance
+## The workspace — five tabs, one glance
 
 <div align="center">
 <img src="docs/assets/screenshots/circuit.png" alt="Circuit tab: gate canvas, live outputs, validation and trace" width="820"/>
@@ -93,17 +93,6 @@ exact instruction boundaries at which each vector reaches the CPU:
 
 <div align="center">
 <img src="docs/assets/screenshots/verify.png" alt="Verify tab with property form" width="820"/>
-</div>
-
-### 🎓 Learn — graded by engines, not string matching
-Six unit-tagged lessons and seven exercises. Answers are checked **by the engines**:
-expression submissions pass only if their truth table matches the target; minimization
-answers must reproduce the function on every row *and* beat the Quine-McCluskey
-solution's literal count; 8086 predictions are checked by actually running the pinned
-program. Feedback cites what the engines observed — never "wrong, try again".
-
-<div align="center">
-<img src="docs/assets/screenshots/learn-pass.png" alt="Learn tab: exercise graded PASS with evidence" width="820"/>
 </div>
 
 ### 📊 Visuals — the session dashboard
