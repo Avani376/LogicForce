@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220" role="img" aria-label="Try LogicForge — star the repository">
+  <defs>
+    <linearGradient id="finBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#141838"><animate attributeName="stop-color" values="#141838;#1c1040;#141838" dur="6s" repeatCount="indefinite"/></stop>
+      <stop offset="1" stop-color="#1a1f4d"><animate attributeName="stop-color" values="#1a1f4d;#2a1258;#1a1f4d" dur="6s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="finGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#34c98e"/>
+      <stop offset="0.5" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#d946ef"/>
+    </linearGradient>
+    <pattern id="finGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M 26 0 L 0 0 0 26" fill="none" stroke="#262c58" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="220" rx="18" fill="url(#finBg)"/>
+  <rect width="900" height="220" rx="18" fill="url(#finGrid)" opacity="0.5"/>
+
+  <!-- orbiting pulses on two circuit rails -->
+  <path id="finRailA" d="M 30 180 H 300 V 150 H 470" fill="none" stroke="#2a3158" stroke-width="2.5" stroke-linecap="round"/>
+  <path id="finRailB" d="M 870 40 H 620 V 70 H 480" fill="none" stroke="#2a3158" stroke-width="2.5" stroke-linecap="round"/>
+  <circle r="4.5" fill="#ffd166"><animateMotion dur="4.8s" repeatCount="indefinite"><mpath href="#finRailA"/></animateMotion></circle>
+  <circle r="4.5" fill="#34c98e"><animateMotion dur="5.6s" repeatCount="indefinite" begin="1.4s"><mpath href="#finRailB"/></animateMotion></circle>
+
+  <!-- Sparky mini waving -->
+  <g transform="translate(60,40) scale(0.62)">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="2.6s" repeatCount="indefinite"/>
+      <line x1="150" y1="86" x2="150" y2="62" stroke="#8a97ff" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="150" cy="54" r="10" fill="#ffd166">
+        <animate attributeName="opacity" values="1;0.5;1" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <rect x="86" y="86" width="128" height="112" rx="26" fill="#5b6ee1"/>
+      <rect x="98" y="98" width="104" height="88" rx="19" fill="#eef1ff"/>
+      <g fill="#2d3561"><ellipse cx="132" cy="140" rx="10" ry="11"/><ellipse cx="168" cy="140" rx="10" ry="11"/>
+        <circle cx="135" cy="136" r="3.4" fill="#ffffff"/><circle cx="171" cy="136" r="3.4" fill="#ffffff"/></g>
+      <path d="M 136 166 q 14 12 28 0" stroke="#2d3561" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <g>
+        <animateTransform attributeName="transform" type="rotate" values="-14 216 130; 18 216 130; -14 216 130" dur="1.3s" repeatCount="indefinite"/>
+        <line x1="204" y1="130" x2="238" y2="104" stroke="#8a97ff" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="240" cy="102" r="8" fill="#ffd166"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- headline + rotating shimmering CTA -->
+  <text x="250" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="800" fill="#ffffff">Ready to build what actually verifies itself?</text>
+  <text x="252" y="106" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#9fb0ff">Clone it. Run two commands. Sparky takes it from there.</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="252" y="128" width="290" height="40" rx="20" fill="#1c2150" stroke="url(#finGrad)" stroke-width="2">
+      <animate attributeName="stroke-width" values="2;3.4;2" dur="2.2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="397" y="154" font-size="16" font-weight="700" fill="url(#finGrad)" text-anchor="middle">git clone → 60 seconds → live</text>
+    <rect x="560" y="128" width="196" height="40" rx="20" fill="#ffd166">
+      <animate attributeName="opacity" values="1;0.82;1" dur="2.2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="658" y="154" font-size="16" font-weight="800" fill="#141838" text-anchor="middle">⭐ Star the repo</text>
+  </g>
+
+  <!-- loop dots -->
+  <g fill="#5b6ee1">
+    <circle cx="278" cy="196" r="4"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" repeatCount="indefinite"/></circle>
+    <circle cx="296" cy="196" r="4"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" begin="0.3s" repeatCount="indefinite"/></circle>
+    <circle cx="314" cy="196" r="4"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" begin="0.6s" repeatCount="indefinite"/></circle>
+    <circle cx="332" cy="196" r="4"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" begin="0.9s" repeatCount="indefinite"/></circle>
+  </g>
+  <text x="700" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#6b7aa8" text-anchor="end">LogicForge · deterministic engines · Sparky approved</text>
+</svg>
