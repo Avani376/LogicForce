@@ -126,7 +126,7 @@ ground an answer.
 ## Architecture in one look
 
 <div align="center">
-<img src="docs/assets/architecture.svg" alt="Readable architecture diagram in three lanes: the React workspace, the FastAPI API with all 21 endpoints, and the twelve pure deterministic engines, resting on a semantics-contracts foundation bar. A dashed arrow marks the optional bring-your-own-key AI provider outside the core." width="100%"/>
+<img src="docs/assets/architecture.svg" alt="Readable architecture diagram in three lanes: the React workspace, the FastAPI API with all 22 endpoints, and the twelve pure deterministic engines, resting on a semantics-contracts foundation bar. A dashed arrow marks the optional bring-your-own-key AI provider outside the core." width="100%"/>
 </div>
 
 **Follow one request through the diagram** — pressing ▶ Run in the 8086 tab:
@@ -185,7 +185,7 @@ Or with Docker: `docker compose up --build` → API on :8000, UI on :80.
 |---|---|
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | setup, the two non-negotiable rules, how to add anything |
 | [`docs/PROJECT_CONTEXT.md`](docs/PROJECT_CONTEXT.md) | honest current state, non-obvious internals, open work |
-| [`docs/API.md`](docs/API.md) | all 21 endpoints with contracts and error envelopes |
+| [`docs/API.md`](docs/API.md) | all 22 endpoints with contracts and error envelopes |
 | [`docs/semantics/`](docs/semantics/) | 13 normative engine contracts (written before code) |
 | [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) | scene-by-scene video-recording script |
 | [`docs/COURSE_REPORT.md`](docs/COURSE_REPORT.md) · [`docs/syllabus-map.md`](docs/syllabus-map.md) | course deliverable + per-item traceability |

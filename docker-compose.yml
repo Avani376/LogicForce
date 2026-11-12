@@ -1,5 +1,6 @@
 services:
   api:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile.api
@@ -12,6 +13,7 @@ services:
       retries: 3
 
   web:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile.web

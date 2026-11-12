@@ -19,7 +19,7 @@ this — it's the platform's main differentiator.
 
 ## Current state (honest)
 
-- 12 engine packages, 21 API endpoints, ~900 tests, coverage ~92% (gate: 90%).
+- 12 engine packages, 22 API endpoints, ~900 tests, coverage ~92% (gate: 90%).
 - 8086 covers the declared educational subset end to end: ALU, MUL/IMUL/DIV/IDIV,
   shifts/rotates, string ops with REP and the DF flag, CALL/RET, interrupts,
   published timing, addressing modes.

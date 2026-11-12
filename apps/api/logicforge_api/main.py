@@ -7,7 +7,9 @@ function of its request body.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, FastAPI
+import time
+
+from fastapi import APIRouter, FastAPI, Request
 from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 
@@ -46,6 +48,17 @@ def health() -> dict[str, str]:
         "engine_version": ENGINE_VERSION,
         "sequential_engine_version": SEQUENTIAL_ENGINE_VERSION,
     }
+
+
+@app.middleware("http")
+async def observability_headers(request: Request, call_next):
+    """Monitoring hooks: per-request latency + API version on every response."""
+    started = time.perf_counter()
+    response = await call_next(request)
+    process_ms = (time.perf_counter() - started) * 1000
+    response.headers["X-Process-Time-Ms"] = f"{process_ms:.2f}"
+    response.headers["X-API-Version"] = API_VERSION
+    return response
 
 
 app.include_router(root)

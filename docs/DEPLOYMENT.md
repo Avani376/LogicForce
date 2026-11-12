@@ -50,3 +50,27 @@ docker compose up --build
 - `Dockerfile.web`: Node 20 build stage (npm ci + tsc + vite) + nginx
 - `nginx.conf`: static frontend + /api reverse proxy to the api service
 - `docker-compose.yml`: api + web with health-check dependency
+
+## Production readiness checklist (added Phase 6)
+
+The API is stateless and horizontal-scale-ready. The items below are the
+remaining steps between this repo and a shared deployment:
+
+1. **Process model** — run `uvicorn logicforge_api.main:app --workers N` (N = 2×vCPU
+   is a sane start). The app is stateless, so workers scale linearly; the only
+   shared resource is the CPU.
+2. **TLS** — terminate HTTPS at your reverse proxy (nginx/Caddy/cloud LB). The
+   included nginx config in `Dockerfile.web` proxies `/api` same-origin; add
+   `ssl_certificate` directives there or front it with a cloud LB.
+3. **Monitoring** — every response now carries `X-Process-Time-Ms` and
+   `X-API-Version`; scrape them (or add Prometheus middleware) and alert on the
+   `/api/health` endpoint. Uvicorn logs to stdout in Docker — ship to your log sink.
+4. **Resource limits** — set CPU/memory caps per service in `docker-compose.yml`
+   (`deploy.resources` or `mem_limit`), sized for your worker count.
+5. **Restart policy** — both services use `restart: unless-stopped`.
+6. **Auth + persistence (D5, the real blockers)** — the API has no authentication
+   and no database. Before exposing beyond a trusted network, add an auth layer
+   (token/session at the proxy is acceptable for prototypes) and decide the
+   project-persistence design (see `docs/ENGINEERING_DECISIONS.md` D5).
+7. **AI keys** — `LOGICFORGE_AI_API_KEY` may be set as a server-side default for
+   the chat layer; per-user browser keys still take precedence. Never commit keys.
