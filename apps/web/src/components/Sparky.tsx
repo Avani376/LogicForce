@@ -12,7 +12,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { isMuted, playError, playPop, playSend, playSuccess, setMuted } from '../lib/sounds'
+import { isMuted, playConfetti, playError, playOpen, playPop, playSend, playSpeech, playSuccess, setMuted } from '../lib/sounds'
 
 type Mood = 'idle' | 'happy' | 'sad' | 'thinking'
 
@@ -135,6 +135,16 @@ export function SparkyMascot({
     resetTimer.current = window.setTimeout(() => setMood('idle'), 3500)
   }, [currentTab])
 
+  // Sparky "speaks" each reply — deterministic per message, so replies sound the same twice.
+  const lastCount = useRef(0)
+  useEffect(() => {
+    if (chat.length > lastCount.current) {
+      const last = chat[chat.length - 1]
+      if (last.who === 'sparky' && !thinking) playSpeech(last.text)
+    }
+    lastCount.current = chat.length
+  }, [chat, thinking])
+
   const sendQuestion = useCallback(async (): Promise<void> => {
     const question = draft.trim()
     if (question === '') return
@@ -194,6 +204,7 @@ export function SparkyMascot({
           ])
           setMood('happy')
           playSuccess()
+          playConfetti()
         }
       } else {
         // Grounded mode: the deterministic router (always available).
@@ -222,7 +233,7 @@ export function SparkyMascot({
           playPop()
         }
       }
-    } catch (cause) {
+    } catch (cause) {  // noqa: structure kept flat for readability
       setChat((c) => [
         ...c,
         { who: 'sparky', text: cause instanceof Error ? cause.message : String(cause) },
@@ -250,7 +261,7 @@ export function SparkyMascot({
             </button>
           )}
           <button type="button" className="sparky-cta sparky-cta-ghost"
-            onClick={() => { setChatOpen(true); setOpen(false) }}>
+            onClick={() => { playOpen(); setChatOpen(true); setOpen(false) }}>
             Ask me anything 💬
           </button>
         </div>
@@ -414,7 +425,7 @@ export function SparkyMascot({
       </button>
 
       <button type="button" className="sparky-chat-fab" aria-label="Open chat with Sparky"
-        onClick={() => { setChatOpen(true); setOpen(false) }}>💬</button>
+        onClick={() => { playOpen(); setChatOpen(true); setOpen(false) }}>💬</button>
     </div>
   )
 }

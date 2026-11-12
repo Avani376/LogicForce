@@ -30,7 +30,7 @@ import {
   type EditorState,
 } from './lib/circuit'
 import { Canvas } from './components/Canvas'
-import { playClick } from './lib/sounds'
+import { playHover, playThemeSting, playWhoosh } from './lib/sounds'
 import { SparkyMascot, type WorkspaceTabName } from './components/Sparky'
 import { Visualizer } from './components/Visualizer'
 import { CurriculumPanel } from './components/CurriculumPanel'
@@ -82,6 +82,7 @@ export function App(): JSX.Element {
   // --- engine health ---------------------------------------------------------
   useEffect(() => {
     let cancelled = false
+    playThemeSting()
     apiHealth()
       .then((h) => { if (!cancelled) setHealth(h) })
       .catch((cause: unknown) => {
@@ -292,7 +293,8 @@ export function App(): JSX.Element {
         {(['circuit', '8086', 'verify', 'explain', 'learn', 'visuals'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
-            onClick={() => { playClick(); setTab(t) }}>
+            onClick={() => { playWhoosh(); setTab(t) }}
+            onMouseEnter={() => playHover()}>
             {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : t === 'learn' ? 'Learn' : 'Visuals'}
           </button>
         ))}
@@ -396,7 +398,7 @@ export function App(): JSX.Element {
       )}
 
       {tab === 'learn' && <CurriculumPanel />}
-      {tab === 'visuals' && <Visualizer sim={sim} seqResult={seqResult} tt={tt} />}
+      {tab === 'visuals' && <Visualizer sim={sim} seqResult={seqResult} tt={tt} health={health} />}
 
       <SparkyMascot currentTab={tab as WorkspaceTabName} onNavigate={(t) => setTab(t as WorkspaceTab)} />
 
