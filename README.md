@@ -47,6 +47,10 @@ and tests check the code against them. That discipline is the product.
 ## The workspace — five tabs, one glance
 
 <div align="center">
+<img src="docs/assets/tour.svg" alt="Animated tour: a stylized workspace window cycles through the five tabs — Circuit canvas with a firing wire, 8086 registers, Verify PASS/FAIL verdicts, a Sparky grounded chat reply, and the Visuals donut — captioned Five views. One truth." width="100%"/>
+</div>
+
+<div align="center">
 <img src="docs/assets/screenshots/circuit.png" alt="Circuit tab: gate canvas, live outputs, validation and trace" width="820"/>
 </div>
 
