@@ -125,20 +125,33 @@ ground an answer.
 
 ## Architecture in one look
 
-```
-apps/web (React + Vite)  ──/api──▶  apps/api (FastAPI, thin routers)
-                                        │
-                                        ▼
-      engines/logic · sequential · verify · faults · repair · optimize
-      cpu8086 · cosim · numsys · boolean · pic8259 · curriculum
-                                        │
-                                        ▼
-                docs/semantics/*.md — contracts written BEFORE the code
-```
+<div align="center">
+<img src="docs/assets/architecture.svg" alt="Architecture diagram: the React workspace calls FastAPI routers, which call twelve pure deterministic engines; pulses travel between lanes, and a dashed path shows the optional bring-your-own-key AI provider. A contracts bar runs underneath." width="100%"/>
+</div>
 
-Every engine is a pure, installable package: no wall-clock, no randomness, no I/O.
-Typed `LogicEngineError` subclasses cross the API as structured 4xx envelopes —
-failures are never silent and never stringly-typed.
+**Follow one request through the diagram** — pressing ▶ Run in the 8086 tab:
+
+1. **Client** — `Cpu8086Panel` POSTs `{source, ivt, schedule, max_steps}` to
+   `/api/8086/run`. The UI never simulates anything itself; it only renders what
+   comes back.
+2. **API lane** — the router validates the request shape (Pydantic), resolves the
+   IVT labels through the assembler, and hands the program to the `cpu8086` engine.
+   Any typed `LogicEngineError` (bad mnemonic, stack violation, divide overflow)
+   becomes a structured 4xx envelope with `code`/`category` — never a silent default.
+3. **Engine lane** — the executor walks the instruction subset step by step,
+   firing scheduled interrupts at instruction boundaries and recording every
+   register/flag/memory delta into a trace.
+4. **Back up the lanes** — the response carries `stop_reason`, the full trace, and
+   the engine version; Sparky's event bus reacts to the clean HLT, and the Visuals
+   dashboard can chart it. Same request + same engine version ⇒ byte-identical body.
+5. **The contracts bar** — every behavior above is pinned by a document in
+   `docs/semantics/` written before the code, and the 909-test suite enforces
+   that the code never drifts from it.
+
+The dashed violet path is the one place an external service appears: Sparky's
+optional generative mode. Even there, the deterministic router's answer and your
+engine evidence are injected into the prompt first — the provider extends grounded
+facts, it does not replace them.
 
 ## What the tests guarantee
 
