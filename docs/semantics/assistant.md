@@ -69,6 +69,24 @@ fulfilling an `explain` intent are returned as answers with
 `grounding: guidance` + the error text — the assistant degrades gracefully,
 never crashes, never invents.
 
+## Generative layer (optional, BYOK)
+
+`POST /api/assistant/chat` — when the user supplies an API key (request header
+`X-Assistant-Key`, or server env `LOGICFORGE_AI_API_KEY`), the conversation is
+answered by an OpenAI-compatible chat model. Grounding rules still apply:
+
+- The server first runs the deterministic router (`ask()`) and injects its
+  answer, the matched catalog facts, and the user's engine evidence into the
+  system prompt. The model is instructed to extend that material, not replace
+  it, and to say "I don't know" outside it.
+- Responses carry `grounding: "generative"` and name the `model` used — the UI
+  labels them differently from grounded answers.
+- The key is never logged, never persisted server-side, and never committed.
+  `LOGICFORGE_AI_BASE_URL` selects the provider (any OpenAI-compatible API);
+  default `https://api.openai.com/v1`.
+- No key ⇒ typed `ASSISTANT_ERROR(NO_KEY)`; upstream failure ⇒ typed
+  `ASSISTANT_ERROR(UPSTREAM)` — the UI falls back to the grounded router.
+
 ## Out of scope
 
 Free-form LLM generation, conversation memory across requests (each ask is
