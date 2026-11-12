@@ -305,6 +305,7 @@ export function SparkyMascot({
           <div className="sparky-chat-input">
             <input
               value={draft}
+              maxLength={500}
               placeholder="e.g. what is a K-map?"
               aria-label="Ask Sparky a question"
               onChange={(e) => setDraft(e.target.value)}
@@ -339,7 +340,7 @@ export function SparkyMascot({
             </p>
             <label>
               API key
-              <input type="password" value={apiKey} placeholder="sk-…" aria-label="API key"
+              <input type="password" value={apiKey} maxLength={200} placeholder="sk-…" aria-label="API key"
                 onChange={(e) => setApiKey(e.target.value)} />
             </label>
             <label>

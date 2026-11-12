@@ -18,6 +18,11 @@ DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-4o-mini"
 KEY_HEADER = "X-Assistant-Key"
 TIMEOUT_SECONDS = 45
+MAX_MESSAGES = 20
+MAX_MESSAGE_CHARS = 4000
+MAX_GROUNDED_CHARS = 24000
+ALLOWED_ROLES = {"user", "assistant"}
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1", "[::1]"}
 
 SYSTEM_PROMPT_TEMPLATE = """You are Sparky, the mascot and guide of LogicForge — a digital-systems \
 engineering platform where deterministic engines are the single source of truth.
@@ -51,7 +56,10 @@ def resolve_key(header_key: str | None) -> str:
 
 
 def build_system_prompt(question: str, context: dict[str, Any] | None) -> str:
-    """Deterministic router output becomes the model's grounded material."""
+    """Deterministic router output becomes the model's grounded material.
+
+    The serialized payload is capped so a huge engine dump cannot blow up the
+    provider request or dilute the grounding."""
     grounded = ask(question, context)
     payload = {
         "router_answer": grounded["answer"],
@@ -60,7 +68,10 @@ def build_system_prompt(question: str, context: dict[str, Any] | None) -> str:
         "sources": grounded["sources"],
         "user_engine_evidence": context,
     }
-    return SYSTEM_PROMPT_TEMPLATE.format(grounded=script_safe_json(payload))
+    grounded_text = script_safe_json(payload)
+    if len(grounded_text) > MAX_GROUNDED_CHARS:
+        grounded_text = grounded_text[:MAX_GROUNDED_CHARS] + '","truncated":true}'
+    return SYSTEM_PROMPT_TEMPLATE.format(grounded=grounded_text)
 
 
 def script_safe_json(value: Any) -> str:
@@ -69,6 +80,38 @@ def script_safe_json(value: Any) -> str:
 
     text = json.dumps(value, ensure_ascii=True, separators=(",", ":"))
     return text.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+
+
+def validate_provider_url(base_url: str) -> str:
+    """SSRF guard: https only, except loopback for local dev; no credentials."""
+    from urllib.parse import urlparse
+
+    parsed = urlparse(base_url)
+    if parsed.scheme == "https" and parsed.hostname and parsed.username is None:
+        return base_url.rstrip("/")
+    if parsed.scheme == "http" and parsed.hostname in _LOCAL_HOSTS and parsed.username is None:
+        return base_url.rstrip("/")
+    raise AssistantError(
+        "BAD_PROVIDER",
+        "base_url must be an https:// URL (http is allowed only for localhost/127.0.0.1) "
+        "with no embedded credentials — this engine refuses to send your key anywhere else",
+    )
+
+
+def validate_conversation(messages: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Cap and sanitize the conversation history (assistant.md trust rules)."""
+    if len(messages) > MAX_MESSAGES:
+        raise AssistantError("BAD_CONTEXT", f"conversation exceeds {MAX_MESSAGES} messages")
+    cleaned: list[dict[str, str]] = []
+    for message in messages:
+        role = message.get("role", "")
+        content = str(message.get("content", ""))
+        if role not in ALLOWED_ROLES:
+            raise AssistantError("BAD_CONTEXT", f"message role must be 'user' or 'assistant', got {role!r}")
+        if len(content) > MAX_MESSAGE_CHARS:
+            content = content[:MAX_MESSAGE_CHARS]
+        cleaned.append({"role": role, "content": content})
+    return cleaned
 
 
 def chat(
@@ -80,7 +123,13 @@ def chat(
     model: str | None = None,
 ) -> dict[str, Any]:
     """Call an OpenAI-compatible endpoint. Typed errors on upstream failure."""
+    api_key = api_key.strip()
+    if not api_key or len(api_key) > 512 or any(ch.isspace() for ch in api_key):
+        raise AssistantError("BAD_CONTEXT", "malformed API key — expected a single token without whitespace")
+    if base_url is not None:
+        base_url = validate_provider_url(base_url)
     chosen_base = (base_url or os.environ.get("LOGICFORGE_AI_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
+    messages = validate_conversation(messages)
     chosen_model = model or DEFAULT_MODEL
     system_prompt = build_system_prompt(question, context)
     payload = {

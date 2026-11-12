@@ -11,6 +11,8 @@ from logicforge_api.assistant_chat import (
     build_system_prompt,
     chat,
     resolve_key,
+    validate_conversation,
+    validate_provider_url,
 )
 
 
@@ -138,3 +140,41 @@ def json_loads_safe(raw: bytes | None) -> object:
     import json
 
     return json.loads(raw.decode() if isinstance(raw, bytes) else "{}")
+
+
+class TestProviderSecurity:
+    def test_http_non_local_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("http://169.254.169.254/v1")
+        assert exc.value.category == "BAD_PROVIDER"
+
+    def test_credentials_in_url_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("https://user:key@api.example.com/v1")
+        assert exc.value.category == "BAD_PROVIDER"
+
+    def test_https_remote_accepted(self) -> None:
+        assert validate_provider_url("https://api.openai.com/v1").endswith("/v1")
+
+    def test_http_localhost_accepted(self) -> None:
+        assert validate_provider_url("http://127.0.0.1:8000/v1") == "http://127.0.0.1:8000/v1"
+
+    def test_conversation_caps(self) -> None:
+        too_many = [{"role": "user", "content": "x"} for _ in range(21)]
+        with pytest.raises(AssistantError) as exc:
+            validate_conversation(too_many)
+        assert exc.value.category == "BAD_CONTEXT"
+
+    def test_role_whitelist(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_conversation([{"role": "system", "content": "evil"}])
+        assert exc.value.category == "BAD_CONTEXT"
+
+    def test_long_content_truncated(self) -> None:
+        cleaned = validate_conversation([{"role": "user", "content": "a" * 5000}])
+        assert len(cleaned[0]["content"]) == 4000
+
+    def test_malformed_key_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            chat(messages=[], question="hi", context=None, api_key="two words")
+        assert exc.value.category == "BAD_CONTEXT"
