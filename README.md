@@ -126,7 +126,7 @@ ground an answer.
 ## Architecture in one look
 
 <div align="center">
-<img src="docs/assets/architecture.svg" alt="Architecture diagram: the React workspace calls FastAPI routers, which call twelve pure deterministic engines; pulses travel between lanes, and a dashed path shows the optional bring-your-own-key AI provider. A contracts bar runs underneath." width="100%"/>
+<img src="docs/assets/architecture.svg" alt="Readable architecture diagram in three lanes: the React workspace, the FastAPI API with all 21 endpoints, and the twelve pure deterministic engines, resting on a semantics-contracts foundation bar. A dashed arrow marks the optional bring-your-own-key AI provider outside the core." width="100%"/>
 </div>
 
 **Follow one request through the diagram** — pressing ▶ Run in the 8086 tab:
@@ -198,6 +198,20 @@ state-graph view, cascade multi-PIC, per-iteration REP timing. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to claim one.
 
 ---
+
+## The bottom line
+
+**If you remember five things about LogicForge, make them these:**
+
+1. **Determinism is the product.** Twelve pure engines, zero wall-clock, zero randomness — 100× byte-identical replay tests hold the line.
+2. **Every claim is labeled.** `EXHAUSTIVE(k)` / `BOUNDED(k)` / `INCOMPLETE` — you always know how strong a result is.
+3. **Contracts come first.** 13 normative documents in `docs/semantics/` were written before the code; tests keep the code honest to them.
+4. **Failures speak.** Typed error envelopes, replayable counterexamples, detection reports — nothing fails silently.
+5. **The AI is on a leash.** Grounded by default, generative only with your own key, always labeled, never allowed to invent a result.
+
+Circuits you can prove. Programs you can trace. Repairs that must re-verify.
+An assistant that tells you what it knows — and what it doesn't.
+**That is LogicForge.**
 
 <div align="center">
   <img src="docs/assets/finale.svg" alt="Finale banner: Sparky waves beside a shimmering call to action — clone it, run two commands, go live; star the repository." width="100%"/>
