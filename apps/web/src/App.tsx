@@ -73,6 +73,32 @@ export function App(): JSX.Element {
   const [tt, setTt] = useState<TruthTableResult | null>(null)
   const [ttError, setTtError] = useState<string | null>(null)
   const [showTt, setShowTt] = useState(false)
+
+  const handleExportReport = useCallback((): void => {
+    const lines = [
+      '# LogicForge engineering report',
+      `Generated: ${new Date().toISOString()}`,
+      `Engine: ${health?.engine_version ?? 'unknown'} · API v${health?.api_version ?? '?'}`,
+      '',
+      '## Circuit',
+      `- components: ${present.components.length} · nets: ${present.nets.length}`,
+      sim ? `- simulate: ${sim.event_count} events · scope ${sim.scope} · hash ${sim.input_hash.slice(0, 16)}…` : '- simulate: not run this session',
+      seqResult ? `- sequential: ${seqResult.cycles.length} cycles · scope ${seqResult.scope}` : '- sequential: not run this session',
+      tt ? `- truth table: ${tt.rows.length} rows · ${tt.scope}` : '- truth table: not generated this session',
+      validation !== null ? `- validation errors: ${validation.errors.length} - warnings: ${validation.warnings.length}` : '- validation: not run',
+      '',
+      '## Outputs (last simulation)',
+      ...(sim ? Object.entries(sim.outputs).map(([k, v]) => `- ${k} = ${v}`) : ['- (none)']),
+    ]
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = 'logicforge-report.md'
+    anchor.click()
+    URL.revokeObjectURL(url)
+    setStatusMsg('Engineering report exported (markdown)')
+  }, [present, sim, seqResult, tt, validation, health])
   const [tab, setTab] = useState<WorkspaceTab>('circuit')
 
   const docJson = useMemo(() => JSON.stringify(toDoc(present)), [present])
@@ -211,6 +237,37 @@ export function App(): JSX.Element {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toDoc(present))); setStatusMsg('Saved to browser storage')
   }, [present])
 
+  const handleSaveVersion = useCallback((): void => {
+    const doc = toDoc(present)
+    const key = 'logicforge.versions'
+    let versions: { name: string; ts: number; doc: unknown }[] = []
+    try { versions = JSON.parse(localStorage.getItem(key) ?? '[]') as typeof versions } catch { versions = [] }
+    const name = `v${versions.length + 1} · ${new Date().toLocaleTimeString()}`
+    versions.unshift({ name, ts: Date.now(), doc })
+    localStorage.setItem(key, JSON.stringify(versions.slice(0, 10)))
+    setStatusMsg(`Saved ${name}`)
+  }, [present])
+
+  const handleRestoreVersion = useCallback((index: number): void => {
+    const key = 'logicforge.versions'
+    let versions: { name: string; ts: number; doc: unknown }[] = []
+    try { versions = JSON.parse(localStorage.getItem(key) ?? '[]') as typeof versions } catch { versions = [] }
+    const entry = versions[index]
+    if (entry === undefined) { setStatusMsg('Version not found'); return }
+    const loaded = fromDoc(entry.doc as never)
+    if (typeof loaded === 'string') { setStatusMsg(loaded); return }
+    commit(loaded); setStatusMsg(`Restored ${entry.name}`)
+  }, [commit])
+
+  const [versionList, setVersionList] = useState<{ name: string; ts: number }[]>([])
+  const refreshVersions = useCallback((): void => {
+    try {
+      const versions = JSON.parse(localStorage.getItem('logicforge.versions') ?? '[]') as { name: string; ts: number }[]
+      setVersionList(versions.map((v) => ({ name: v.name, ts: v.ts })))
+    } catch { setVersionList([]) }
+  }, [])
+  useEffect(() => { if (tab === 'circuit') refreshVersions() }, [tab, refreshVersions])
+
   const handleLoad = useCallback((): void => {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw === null) { setStatusMsg('Nothing saved yet'); return }
@@ -310,8 +367,20 @@ export function App(): JSX.Element {
         <button type="button" onClick={redo} disabled={history.current.future.length === 0}>Redo</button>
         <span className="toolbar-sep" aria-hidden="true" />
         <button type="button" onClick={handleSave}>Save</button>
+        <button type="button" onClick={() => { handleSaveVersion(); refreshVersions() }}>+ Version</button>
+        <select
+          aria-label="Restore a saved version"
+          defaultValue=""
+          onChange={(e) => { const i = Number(e.target.value); if (!Number.isNaN(i)) handleRestoreVersion(i); e.target.value = '' }}
+        >
+          <option value="">Versions…</option>
+          {versionList.map((v, i) => (
+            <option key={v.ts} value={i}>{v.name}</option>
+          ))}
+        </select>
         <button type="button" onClick={handleLoad}>Load</button>
         <button type="button" onClick={handleExport}>Export</button>
+        <button type="button" onClick={handleExportReport}>Report</button>
         <label className="import-label">
           Import
           <input type="file" accept="application/json,.json" onChange={(event) => {
