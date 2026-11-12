@@ -277,7 +277,7 @@ export function App(): JSX.Element {
     <div className="workspace">
       <header className="topbar">
         <h1>LogicForge</h1>
-        <span className="subtitle">design · verify · learn — every number from a deterministic engine</span>
+        <span className="subtitle">design · verify · visualize — every number from a deterministic engine</span>
         <span className={`engine-chip ${health === null ? 'engine-off' : 'engine-on'}`} role="status"
           aria-label={health === null ? 'Engine status: offline' : `Engine status: online, version ${health.engine_version}`}>
           {health === null ? 'engine offline' : `engine ${health.engine_version} · api v${health.api_version}`}
