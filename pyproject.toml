@@ -4,7 +4,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "logicForce"
+name = "logicforce"  # dist name is normalized to lowercase; the brand stays LogicForce
 version = "0.1.0"
 description = "LogicForce — self-verifying digital system engineering platform (deterministic engines)"
 requires-python = ">=3.12"
@@ -38,8 +38,8 @@ packages = [
   "boolean_engine",
   "pic8259",
   "curriculum_engine",
-  "logicForce_api",
-  "logicForce_api.routers",
+  "logicforge_api",
+  "logicforge_api.routers",
 ]
 
 [tool.setuptools.package-dir]
@@ -55,8 +55,8 @@ numsys = "engines/numsys/numsys"
 boolean_engine = "engines/boolean/boolean_engine"
 pic8259 = "engines/pic8259/pic8259"
 curriculum_engine = "engines/curriculum/curriculum_engine"
-logicForce_api = "apps/api/logicForce_api"
-"logicForce_api.routers" = "apps/api/logicForce_api/routers"
+logicforge_api = "apps/api/logicforge_api"
+"logicforge_api.routers" = "apps/api/logicforge_api/routers"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -78,5 +78,5 @@ extend-exclude = [".venv", "apps/web", "scripts"]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
 
 [tool.coverage.run]
-source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "cpu8086", "cosim_engine", "numsys", "boolean_engine", "pic8259", "curriculum_engine", "logicForce_api"]
+source = ["logic_engine", "sequential_engine", "verify_engine", "fault_engine", "repair_engine", "optimize_engine", "cpu8086", "cosim_engine", "numsys", "boolean_engine", "pic8259", "curriculum_engine", "logicforge_api"]
 branch = true
