@@ -1,7 +1,7 @@
 # LogicForce
 
 <div align="center">
-  <img src="docs/assets/hero.svg" alt="LogicForge banner: circuit pulses travel a dark board while Sparky the mascot bobs beside the workflow stages specify, design, simulate, verify, fault-test, repair, optimize, re-verify." width="100%"/>
+  <img src="docs/assets/hero.svg" alt="LogicForce banner: circuit pulses travel a dark board while Sparky the mascot bobs beside the workflow stages specify, design, simulate, verify, fault-test, repair, optimize, re-verify." width="100%"/>
 
   **Design digital hardware. Drive an 8086. Get graded by real engines. Meet Sparky.**
 
@@ -16,7 +16,7 @@
 
 ## The 30-second pitch
 
-LogicForge is a **self-verifying digital-system engineering platform**. You design
+LogicForce is a **self-verifying digital-system engineering platform**. You design
 circuits on a canvas and 8086 assembly in an editor; twelve deterministic engines
 simulate, verify, break, diagnose, repair, and optimize your work — and every single
 result carries a **scope label** (`EXHAUSTIVE(k)`, `BOUNDED(k)`) plus a SHA-256 input
@@ -31,9 +31,9 @@ give them *answers without evidence*. A simulator says "output = 1" but not why.
 "fix" is accepted because it looks plausible. And modern AI tutors happily
 hallucinate gate behavior, fake counterexamples, and invented timing numbers.
 
-**The solution.** LogicForge inverts the trust model:
+**The solution.** LogicForce inverts the trust model:
 
-| Common tool behavior | LogicForge behavior |
+| Common tool behavior | LogicForce behavior |
 |---|---|
 | Simulation with no provenance | Every run emits an ordered **trace** and a SHA-256 `input_hash` — same inputs ⇒ byte-identical replay, enforced by 100× replay tests |
 | "It's fixed" | A repair is only accepted after **re-verification against the full property suite** |
@@ -171,7 +171,7 @@ git clone https://github.com/Avani376/LogicForce.git && cd LogicForce
 # backend
 python -m venv .venv && source .venv/Scripts/activate   # Windows Git Bash
 pip install -r requirements.txt -r requirements-dev.txt && pip install -e .
-uvicorn logicforge_api.main:app --port 8000
+uvicorn logicforce_api.main:app --port 8000
 
 # frontend (second terminal)
 cd apps/web && npm install && npm run dev   # → http://localhost:5173
@@ -201,7 +201,7 @@ state-graph view, cascade multi-PIC, per-iteration REP timing. See
 
 ## The bottom line
 
-**If you remember five things about LogicForge, make them these:**
+**If you remember five things about LogicForce, make them these:**
 
 1. **Determinism is the product.** Twelve pure engines, zero wall-clock, zero randomness — 100× byte-identical replay tests hold the line.
 2. **Every claim is labeled.** `EXHAUSTIVE(k)` / `BOUNDED(k)` / `INCOMPLETE` — you always know how strong a result is.
@@ -211,7 +211,7 @@ state-graph view, cascade multi-PIC, per-iteration REP timing. See
 
 Circuits you can prove. Programs you can trace. Repairs that must re-verify.
 An assistant that tells you what it knows — and what it doesn't.
-**That is LogicForge.**
+**That is LogicForce.**
 
 <div align="center">
   <img src="docs/assets/finale.svg" alt="Finale banner: Sparky waves beside a shimmering call to action — clone it, run two commands, go live; star the repository." width="100%"/>
