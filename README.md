@@ -1,4 +1,4 @@
-# LogicForge
+# LogicForce
 
 <div align="center">
   <img src="docs/assets/hero.svg" alt="LogicForge banner: circuit pulses travel a dark board while Sparky the mascot bobs beside the workflow stages specify, design, simulate, verify, fault-test, repair, optimize, re-verify." width="100%"/>
