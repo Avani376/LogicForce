@@ -1,4 +1,4 @@
-# Contributing to LogicForge
+# Contributing to LogicForce
 
 Short version: pick an issue, keep engines deterministic, write the contract
 before the code, and make CI green before you ask for review.
@@ -22,7 +22,7 @@ cd apps/web && npm install
 Run both:
 
 ```bash
-uvicorn logicforge_api.main:app --port 8000    # terminal 1
+uvicorn logicForce_api.main:app --port 8000    # terminal 1
 cd apps/web && npm run dev                     # terminal 2 — http://localhost:5173
 ```
 
@@ -37,7 +37,7 @@ mypy engines/logic/logic_engine engines/sequential/sequential_engine \
      engines/repair/repair_engine engines/optimize/optimize_engine \
      engines/cpu8086/cpu8086 engines/cosim/cosim_engine engines/numsys/numsys \
      engines/boolean/boolean_engine engines/pic8259/pic8259 \
-     engines/curriculum/curriculum_engine apps/api/logicforge_api
+     engines/curriculum/curriculum_engine apps/api/logicForce_api
 cd apps/web && npm run build
 ```
 
@@ -85,7 +85,7 @@ Results carry scope labels: `EXHAUSTIVE(k)`, `BOUNDED(k)`, `SAMPLED(n)`,
 ## How to add things
 
 **A new API endpoint:** engine function first (with tests), then a thin router
-in `apps/api/logicforge_api/routers/`, typed 4xx mapping in the same style as
+in `apps/api/logicForce_api/routers/`, typed 4xx mapping in the same style as
 `routers/cpu8086.py`, an integration test in `tests/integration/`, and a row in
 `docs/API.md`.
 
