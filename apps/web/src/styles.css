@@ -1103,3 +1103,19 @@ button:not(.sparky-bot):active { transform: scale(0.96); }
 
 .bar-fill-density { background: linear-gradient(90deg, #34c98e, #1fa873); }
 .density-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+
+/* ================= FSM lab ================= */
+
+.fsm-svg { width: 100%; max-width: 660px; }
+.fsm-state-label { font-weight: 700; fill: #ffffff; font-size: 14px; }
+.fsm-edge-label { font-size: 11px; fill: #9fb0ff; text-anchor: middle; font-family: Consolas, monospace; }
+
+/* ================= Fault lab ================= */
+
+.issue-list { margin: 6px 0; }
+
+/* ================= Waveform analysis ================= */
+
+.wf-stats { margin-top: 8px; }
+.wf-stats th, .wf-stats td { text-align: left; padding: 4px 8px; font-size: 12px; }
+.wf-stats th { color: #9fb0ff; }

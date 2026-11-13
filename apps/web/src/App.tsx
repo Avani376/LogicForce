@@ -31,6 +31,8 @@ import {
 } from './lib/circuit'
 import { Canvas } from './components/Canvas'
 import { playHover, playThemeSting, playWhoosh } from './lib/sounds'
+import { FaultLab } from './components/FaultLab'
+import { FsmLab } from './components/FsmLab'
 import { SparkyMascot, type WorkspaceTabName } from './components/Sparky'
 import { Visualizer } from './components/Visualizer'
 import { TruthTablePanel } from './components/TruthTablePanel'
@@ -45,7 +47,7 @@ const STORAGE_KEY = 'logicforge.circuit.v1'
 const SEQ_CYCLES = 8
 
 
-type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'explain' | 'visuals'
+type WorkspaceTab = 'circuit' | '8086' | 'verify' | 'fsm' | 'faults' | 'explain' | 'visuals'
 
 interface History {
   past: EditorState[]
@@ -346,12 +348,12 @@ export function App(): JSX.Element {
       )}
 
       <nav className="tab-bar" role="tablist" aria-label="Workspace views">
-        {(['circuit', '8086', 'verify', 'explain', 'visuals'] as WorkspaceTab[]).map((t) => (
+        {(['circuit', '8086', 'verify', 'fsm', 'faults', 'explain', 'visuals'] as WorkspaceTab[]).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t}
             className={`tab-btn ${tab === t ? 'tab-active' : ''}`}
             onClick={() => { playWhoosh(); setTab(t) }}
             onMouseEnter={() => playHover()}>
-            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'explain' ? 'Explain' : 'Visuals'}
+            {t === 'circuit' ? 'Circuit' : t === '8086' ? '8086 CPU' : t === 'verify' ? 'Verify' : t === 'fsm' ? 'FSM' : t === 'faults' ? 'Faults' : t === 'explain' ? 'Explain' : 'Visuals'}
           </button>
         ))}
       </nav>
@@ -465,6 +467,8 @@ export function App(): JSX.Element {
         <ExplainPanel autoEvidence={null} />
       )}
 
+      {tab === 'fsm' && <FsmLab />}
+      {tab === 'faults' && <FaultLab circuitDoc={docJson} outputSignals={present.components.filter(c => c.type === 'OUTPUT').map(c => c.ioName ?? '')} />}
       {tab === 'visuals' && <Visualizer sim={sim} seqResult={seqResult} tt={tt} health={health} />}
 
       <SparkyMascot currentTab={tab as WorkspaceTabName} onNavigate={(t) => setTab(t as WorkspaceTab)} />
