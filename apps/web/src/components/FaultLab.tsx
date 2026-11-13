@@ -39,7 +39,7 @@ const EXAMPLE_COMB_FAULT = {
   fault_schema_version: 1,
   id: 'F-sa0',
   operator: 'stuck_at',
-  target: { component_id: '', pin: 'out' },
+  target: { component_id: '', pin: 'a' },
   params: { value: '0' },
 }
 
@@ -53,7 +53,21 @@ const EXAMPLE_FSM_FAULT = {
 
 export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Element {
   const [modelKind, setModelKind] = useState<'combinational' | 'fsm'>('combinational')
-  const [faultText, setFaultText] = useState(JSON.stringify(EXAMPLE_COMB_FAULT, null, 2))
+  const computeCircuitFault = useCallback((): string => {
+    let doc: { components?: { id: string; type: string }[] } = {}
+    try { doc = JSON.parse(circuitDoc) as typeof doc } catch { doc = {} }
+    const gate = doc.components?.find((c) => !['INPUT', 'OUTPUT', 'CONST0', 'CONST1'].includes(c.type))
+    const fault = { ...EXAMPLE_COMB_FAULT, target: { component_id: gate?.id ?? '', pin: 'a' } }
+    return JSON.stringify(fault, null, 2)
+  }, [circuitDoc])
+
+  const [faultText, setFaultText] = useState(() => {
+    let doc: { components?: { id: string; type: string }[] } = {}
+    try { doc = JSON.parse(circuitDoc) as typeof doc } catch { doc = {} }
+    const gate = doc.components?.find((c) => !['INPUT', 'OUTPUT', 'CONST0', 'CONST1'].includes(c.type))
+    const fault = { ...EXAMPLE_COMB_FAULT, target: { component_id: gate?.id ?? '', pin: 'a' } }
+    return JSON.stringify(fault, null, 2)
+  })
   const [invariant, setInvariant] = useState('')
   const [experiment, setExperiment] = useState<ExperimentResult | null>(null)
   const [repair, setRepair] = useState<RepairResult | null>(null)
@@ -65,12 +79,8 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     setExperiment(null)
     setRepair(null)
     if (kind === 'fsm') { setFaultText(JSON.stringify(EXAMPLE_FSM_FAULT, null, 2)); return }
-    let doc: { components?: { id: string; type: string }[] } = {}
-    try { doc = JSON.parse(circuitDoc) as typeof doc } catch { doc = {} }
-    const gate = doc.components?.find((c) => !['INPUT', 'OUTPUT', 'CONST0', 'CONST1'].includes(c.type))
-    const fault = { ...EXAMPLE_COMB_FAULT, target: { component_id: gate?.id ?? '', pin: 'out' } }
-    setFaultText(JSON.stringify(fault, null, 2))
-  }, [circuitDoc])
+    setFaultText(computeCircuitFault())
+  }, [circuitDoc, computeCircuitFault])
 
   const runExperiment = useCallback(async (): Promise<void> => {
     setError(null)
@@ -206,7 +216,7 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
               value={invariant}
               onChange={(e) => setInvariant(e.target.value)}
               aria-label="Detection invariant"
-              placeholder={`detection invariant, e.g. !(${outputSignals[0] ?? 'a'} & ${outputSignals[1] ?? 'b'})`}
+              placeholder={`detection invariant over outputs, e.g. !(${outputSignals[0] ?? 'carry'} & ${outputSignals[1] ?? 'sum'})`}
             />
           </div>
         )}

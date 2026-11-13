@@ -44,7 +44,7 @@ hallucinate gate behavior, fake counterexamples, and invented timing numbers.
 Contracts are written **before** code (`docs/semantics/` — 13 normative documents),
 and tests check the code against them. That discipline is the product.
 
-## The workspace — five tabs, one glance
+## The workspace — seven tabs, one glance
 
 <div align="center">
 <img src="docs/assets/tour.svg" alt="Animated tour: a stylized workspace window cycles through the five tabs — Circuit canvas with a firing wire, 8086 registers, Verify PASS/FAIL verdicts, a Sparky grounded chat reply, and the Visuals donut — captioned Five views. One truth." width="100%"/>
@@ -97,6 +97,26 @@ exact instruction boundaries at which each vector reaches the CPU:
 
 <div align="center">
 <img src="docs/assets/screenshots/verify.png" alt="Verify tab with property form" width="820"/>
+</div>
+
+### 🧭 FSM lab — see the machine
+Paste any state machine and the state graph draws itself: circular layout,
+self-loops, transition-labeled arrows, initial-state marker. Simulate an input
+sequence for a per-cycle table, or run the reachability check — states no input
+sequence can reach are dimmed.
+
+<div align="center">
+<img src="docs/assets/screenshots/fsm-lab.png" alt="FSM lab: state graph with initial-state marker and cycle table" width="680"/>
+</div>
+
+### 💥 Faults — the diagnosis dashboard
+Inject faults (stuck-at on the current circuit, transition redirects on FSMs),
+run the detection experiment, and read the diagnosis report: nominal vs faulty
+verdicts per property, the first divergence, then a repair search where every
+candidate is re-verified against the property suite.
+
+<div align="center">
+<img src="docs/assets/screenshots/faults.png" alt="Fault lab: diagnosis report and repair search" width="820"/>
 </div>
 
 ### 📊 Visuals — the session dashboard

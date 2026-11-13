@@ -83,8 +83,8 @@ before the code, and tests check code against contract.
 
 ## Open work (pick one)
 
-1. FSM state-graph visualization in the web workspace (the FSM engine and the
-   reachability endpoint already exist).
+1. ~~FSM state-graph visualization~~ Done (Phase 7): the FSM lab renders the
+   state graph, simulates sequences and dims unreachable states.
 2. Cascade (multi-PIC) support behind a contract amendment.
 3. Per-iteration timing for REP string ops in `engines/cpu8086/cpu8086/timing.py`.
 4. Persistence (project/version storage) — needs a design decision on D5 first.
