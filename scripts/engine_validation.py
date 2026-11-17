@@ -2,6 +2,7 @@
 
 Run: .venv/Scripts/python scripts/engine_validation.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -10,8 +11,9 @@ sys.path.insert(0, "engines/logic")
 sys.path.insert(0, "engines/cpu8086")
 sys.path.insert(0, "engines/pic8259")
 
-from cpu8086.machine import assemble_and_load  # noqa: E402
-from cpu8086.machine import _to_signed  # noqa: E402
+from cpu8086.machine import (
+    assemble_and_load,  # noqa: E402
+)
 from logic_engine import parse_circuit, simulate  # noqa: E402
 from pic8259 import Pic8259  # noqa: E402
 

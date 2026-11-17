@@ -2,9 +2,11 @@
 
 Run: .venv/Scripts/python scripts/live_api_probe.py [port]
 """
+
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import httpx
@@ -24,21 +26,34 @@ def check(name: str, ok: bool, note: str = "") -> None:
 
 
 # Golden half-adder — the exact committed fixture, loaded as the circuit doc.
-with open(Path(__file__).resolve().parent.parent / "tests" / "golden" / "fixtures" / "half_adder.json", encoding="utf-8") as fh:
+with open(
+    Path(__file__).resolve().parent.parent / "tests" / "golden" / "fixtures" / "half_adder.json", encoding="utf-8"
+) as fh:
     half_adder = json.load(fh)["circuit"]
 
 # circuits
 st, b = call("POST", "/api/circuits/simulate", {"circuit": half_adder, "inputs": {"a": "1", "b": "1"}})
 check("simulate a=1,b=1 -> carry 1", st == 200 and b["outputs"].get("carry_out") == "1", str(b.get("outputs")))
 st, b = call("POST", "/api/circuits/truth-table", {"circuit": half_adder})
-check("truth-table 4 rows EXHAUSTIVE", st == 200 and len(b["rows"]) == 4 and "EXHAUSTIVE" in b["scope"], str(b.get("scope")))
+check(
+    "truth-table 4 rows EXHAUSTIVE",
+    st == 200 and len(b["rows"]) == 4 and "EXHAUSTIVE" in b["scope"],
+    str(b.get("scope")),
+)
 st, b = call("POST", "/api/circuits/simulate", {"schema_version": 1})
 check("circuit missing nets -> 422 schema", st == 422, str(st))
 
 # sequential + fsm (golden fixture — the same doc the integration suite uses)
-with open(Path(__file__).resolve().parent.parent / "tests" / "golden" / "fixtures_seq" / "seq_divide_by_2.json", encoding="utf-8") as fh:
+with open(
+    Path(__file__).resolve().parent.parent / "tests" / "golden" / "fixtures_seq" / "seq_divide_by_2.json",
+    encoding="utf-8",
+) as fh:
     seq_fixture = json.load(fh)
-st, b = call("POST", "/api/sequential/simulate", {"circuit": seq_fixture["circuit"], "cycles": 2, "inputs_per_cycle": seq_fixture["inputs_per_cycle"][:2]})
+st, b = call(
+    "POST",
+    "/api/sequential/simulate",
+    {"circuit": seq_fixture["circuit"], "cycles": 2, "inputs_per_cycle": seq_fixture["inputs_per_cycle"][:2]},
+)
 check("sequential simulate runs", st == 200 and "BOUNDED" in b["scope"], str(st))
 fsm = {
     "fsm_schema_version": 1,
@@ -59,17 +74,21 @@ st, b = call("POST", "/api/fsm/reachable", {"fsm": fsm})
 check("fsm reachable", st == 200, str(st))
 
 # verify
-st, b = call("POST", "/api/verify", {
-    "kind": "fsm_invariant",
-    "model": fsm,
-    "property": {
-        "property_schema_version": 1,
-        "id": "P1",
+st, b = call(
+    "POST",
+    "/api/verify",
+    {
         "kind": "fsm_invariant",
-        "statement": "z is deterministic",
-        "expression": "z",
+        "model": fsm,
+        "property": {
+            "property_schema_version": 1,
+            "id": "P1",
+            "kind": "fsm_invariant",
+            "statement": "z is deterministic",
+            "expression": "z",
+        },
     },
-})
+)
 check("verify endpoint responds", st in (200, 400), str(st))
 
 # 8086
@@ -79,7 +98,9 @@ st, b = call("POST", "/api/8086/run", {"source": "MOV AX, 5\nADD AX, 3\nHLT", "m
 check("run AX=8", st == 200 and b["registers"]["AX"] == 8, str(b.get("registers", {}).get("AX")))
 st, b = call("POST", "/api/8086/run", {"source": "MOV AL, 12\nMOV BL, 10\nMUL BL\nHLT", "max_steps": 10})
 check("run MUL AX=120", st == 200 and b["registers"]["AX"] == 120, str(b.get("registers", {}).get("AX")))
-st, b = call("POST", "/api/8086/run", {"source": "MOV AL, 0xAB\nMOV DI, 0x400\nMOV CX, 4\nREP STOSB\nHLT", "max_steps": 10})
+st, b = call(
+    "POST", "/api/8086/run", {"source": "MOV AL, 0xAB\nMOV DI, 0x400\nMOV CX, 4\nREP STOSB\nHLT", "max_steps": 10}
+)
 check("run REP STOSB", st == 200, str(st))
 st, b = call("POST", "/api/8086/run", {"source": "MOV AX, 5\nMOV BX, 0\nDIV BX\nHLT", "max_steps": 10})
 check("divide-by-zero -> 400 typed", st == 400 and b["detail"]["code"] == "CPU_RUNTIME_ERROR", str(st))
@@ -95,14 +116,29 @@ st, b = call("POST", "/api/8086/pic", {"base_vector": 8, "events": [{"at_step": 
 check("pic bad op -> 400", st == 400 and b["detail"]["category"] == "BAD_EVENT", str(st))
 
 # explain
-st, b = call("POST", "/api/explain", {"kind": "cpu_trace", "explanation_schema_version": 1, "evidence": {"trace": [{"kind": "instruction", "step": 1, "ip": 0, "instruction": "HLT", "halted": True}], "stop_reason": "hlt"}})
+st, b = call(
+    "POST",
+    "/api/explain",
+    {
+        "kind": "cpu_trace",
+        "explanation_schema_version": 1,
+        "evidence": {
+            "trace": [{"kind": "instruction", "step": 1, "ip": 0, "instruction": "HLT", "halted": True}],
+            "stop_reason": "hlt",
+        },
+    },
+)
 check("explain cpu_trace", st == 200 and b.get("summary"), str(st))
 
 # curriculum
 st, b = call("GET", "/api/curriculum/lessons")
 check("lessons 6", st == 200 and len(b["lessons"]) == 6, str(st))
 st, b = call("GET", "/api/curriculum/exercises")
-check("exercises 7, no answers leaked", st == 200 and len(b["exercises"]) == 7 and all("data" not in e for e in b["exercises"]), str(st))
+check(
+    "exercises 7, no answers leaked",
+    st == 200 and len(b["exercises"]) == 7 and all("data" not in e for e in b["exercises"]),
+    str(st),
+)
 st, b = call("GET", "/api/curriculum/exercises/nope")
 check("exercise 404", st == 404, str(st))
 st, b = call("POST", "/api/curriculum/grade", {"exercise_id": "num-convert-hex2dec", "submission": "0x2F"})
@@ -119,7 +155,10 @@ st, b = call("POST", "/api/assistant/ask", {"question": "test me"})
 check("assistant exercise", st == 200 and b["kind"] == "exercise", str(st))
 st, b = call("POST", "/api/assistant/ask", {"question": "what is a flip-flop?"})
 check("assistant lesson", st == 200 and b["kind"] == "lesson", str(st))
-ctx = {"trace": [{"kind": "instruction", "step": 1, "ip": 0, "instruction": "HLT", "halted": True}], "stop_reason": "hlt"}
+ctx = {
+    "trace": [{"kind": "instruction", "step": 1, "ip": 0, "instruction": "HLT", "halted": True}],
+    "stop_reason": "hlt",
+}
 st, b = call("POST", "/api/assistant/ask", {"question": "why did it stop?", "context": ctx})
 check("assistant explain grounded", st == 200 and b["grounding"] == "engine_output", str(b.get("grounding")))
 st, b = call("POST", "/api/assistant/ask", {"question": "why did it fail?"})
