@@ -84,8 +84,9 @@ answered by an OpenAI-compatible chat model. Grounding rules still apply:
 - The key is never logged, never persisted server-side, and never committed.
   `LOGICFORGE_AI_BASE_URL` selects the provider (any OpenAI-compatible API);
   default `https://api.openai.com/v1`. Provider URLs are validated — **https
-  required** (http accepted only for localhost/127.0.0.1), no embedded
-  credentials — the key is never sent anywhere else. Conversations are capped
+  only**, no embedded credentials, and **loopback/private/reserved hosts are
+  rejected** (validation is syntactic — no DNS resolution). The key is never
+  sent anywhere but a public provider. Conversations are capped
   (≤ 20 messages, ≤ 4000 chars each) and the grounded payload embedded in the
   prompt is capped at 24 000 characters. Violations return `BAD_PROVIDER` /
   `BAD_CONTEXT`.

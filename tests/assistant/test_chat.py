@@ -67,13 +67,17 @@ class TestUpstreamCalls:
         assert exc.value.category == "NO_KEY"
 
     def test_unreachable_provider_is_typed(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        def refusing(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("connection refused", request=request)
+
+        _inject_transport(monkeypatch, refusing)
         with pytest.raises(AssistantError) as exc:
             chat(
                 messages=[{"role": "user", "content": "hi"}],
                 question="hi",
                 context=None,
                 api_key="k",
-                base_url="http://127.0.0.1:1",  # nothing listens here — deterministic failure
+                base_url="https://provider.example.com/v1",
             )
         assert exc.value.category == "UPSTREAM"
 
@@ -156,8 +160,25 @@ class TestProviderSecurity:
     def test_https_remote_accepted(self) -> None:
         assert validate_provider_url("https://api.openai.com/v1").endswith("/v1")
 
-    def test_http_localhost_accepted(self) -> None:
-        assert validate_provider_url("http://127.0.0.1:8000/v1") == "http://127.0.0.1:8000/v1"
+    def test_http_loopback_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("http://127.0.0.1:8000/v1")
+        assert exc.value.category == "BAD_PROVIDER"
+
+    def test_https_loopback_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("https://localhost/v1")
+        assert exc.value.category == "BAD_PROVIDER"
+
+    def test_private_ip_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("https://192.168.1.10/v1")
+        assert exc.value.category == "BAD_PROVIDER"
+
+    def test_link_local_rejected(self) -> None:
+        with pytest.raises(AssistantError) as exc:
+            validate_provider_url("https://169.254.169.254/v1")
+        assert exc.value.category == "BAD_PROVIDER"
 
     def test_conversation_caps(self) -> None:
         too_many = [{"role": "user", "content": "x"} for _ in range(21)]

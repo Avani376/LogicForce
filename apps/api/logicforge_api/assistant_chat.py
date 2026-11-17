@@ -83,19 +83,41 @@ def script_safe_json(value: Any) -> str:
 
 
 def validate_provider_url(base_url: str) -> str:
-    """SSRF guard: https only, except loopback for local dev; no credentials."""
+    """SSRF guard: https only, no credentials, and the host must not be
+    loopback/private/reserved — the key must only travel to a real provider.
+
+    Validation is syntactic (no DNS): a public hostname that resolves to a
+    private IP cannot be caught here, which is documented in assistant.md."""
+    from ipaddress import ip_address
     from urllib.parse import urlparse
 
     parsed = urlparse(base_url)
-    if parsed.scheme == "https" and parsed.hostname and parsed.username is None:
-        return base_url.rstrip("/")
-    if parsed.scheme == "http" and parsed.hostname in _LOCAL_HOSTS and parsed.username is None:
-        return base_url.rstrip("/")
-    raise AssistantError(
-        "BAD_PROVIDER",
-        "base_url must be an https:// URL (http is allowed only for localhost/127.0.0.1) "
-        "with no embedded credentials — this engine refuses to send your key anywhere else",
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme != "https" or not host or parsed.username is not None or parsed.password is not None:
+        raise AssistantError(
+            "BAD_PROVIDER",
+            "base_url must be an https:// URL with no embedded credentials — "
+            "this engine refuses to send your key anywhere else",
+        )
+    try:
+        ip = ip_address(host)
+    except ValueError:
+        ip = None
+    blocked = (
+        host in _LOCAL_HOSTS
+        or host.endswith(".local")
+        or (
+            ip is not None
+            and (ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_unspecified)
+        )
     )
+    if blocked:
+        raise AssistantError(
+            "BAD_PROVIDER",
+            f"provider host {host!r} is loopback/private/reserved — server-side requests "
+            "must target a public https provider",
+        )
+    return base_url.rstrip("/")
 
 
 def validate_conversation(messages: list[dict[str, str]]) -> list[dict[str, str]]:
