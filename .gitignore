@@ -28,3 +28,6 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+# Security-scanner local state (machine-specific, churny)
+.mimosa/
