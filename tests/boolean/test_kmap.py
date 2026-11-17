@@ -99,9 +99,21 @@ class TestCrossCheck:
     def test_4var_sample(self) -> None:
         """Deterministic 4-variable samples (no random module in tests)."""
         fixed_samples = [
-            [0], [15], [1, 2], [3, 6, 9], [5, 10], [7, 11, 13], [0, 5, 10, 15],
-            [1, 3, 5, 7, 9, 11], [2, 4, 6, 8, 10, 12, 14], [0, 1, 14, 15],
-            [6, 9], [4, 8, 12], [2, 5, 7], [1, 4, 13], [8, 3],
+            [0],
+            [15],
+            [1, 2],
+            [3, 6, 9],
+            [5, 10],
+            [7, 11, 13],
+            [0, 5, 10, 15],
+            [1, 3, 5, 7, 9, 11],
+            [2, 4, 6, 8, 10, 12, 14],
+            [0, 1, 14, 15],
+            [6, 9],
+            [4, 8, 12],
+            [2, 5, 7],
+            [1, 4, 13],
+            [8, 3],
         ]
         for minterms in fixed_samples:
             _verify_qm_coverage(minterms, [], 4)
