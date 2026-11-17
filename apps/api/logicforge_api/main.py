@@ -7,9 +7,12 @@ function of its request body.
 
 from __future__ import annotations
 
+import os
 import time
 
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
@@ -77,3 +80,22 @@ app.include_router(cpu8086.router)
 app.include_router(explain.router)
 app.include_router(curriculum.router)
 app.include_router(assistant.router)
+
+# Single-origin production mode: when SERVE_WEB_DIST points at a built frontend,
+# the API process serves it too (one container, one origin — used by Dockerfile.full).
+# Mounted after all API routers, so /api/* always takes precedence. SPA routes
+# (deep links like /fsm) fall back to index.html via the catch-all below.
+_web_dist = os.environ.get("SERVE_WEB_DIST", "")
+if _web_dist and os.path.isdir(_web_dist):
+    _assets_dir = os.path.join(_web_dist, "assets")
+    app.mount("/assets", StaticFiles(directory=_assets_dir), name="web-assets")
+
+    @app.get("/{spa_path:path}", include_in_schema=False)
+    def spa_fallback(spa_path: str) -> Response:
+        """Serve index.html for client-side routes; 404 for missing asset files."""
+        if spa_path.startswith("api/") or spa_path.startswith("docs"):
+            raise HTTPException(status_code=404, detail={"code": "NOT_FOUND"})
+        candidate = os.path.join(_web_dist, spa_path)
+        if spa_path and os.path.isfile(candidate):
+            return FileResponse(candidate)
+        return FileResponse(os.path.join(_web_dist, "index.html"))

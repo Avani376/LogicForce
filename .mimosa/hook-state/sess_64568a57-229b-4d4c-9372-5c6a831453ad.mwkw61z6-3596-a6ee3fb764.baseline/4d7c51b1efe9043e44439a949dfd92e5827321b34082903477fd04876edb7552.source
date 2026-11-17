@@ -1,0 +1,6 @@
+# LogicForge — runtime dependencies (pinned for reproducibility).
+# Development tools live in requirements-dev.txt.
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx==0.28.1

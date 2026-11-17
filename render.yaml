@@ -1,0 +1,13 @@
+# Render Blueprint — one service, one origin: the API process serves the built UI.
+# 1. Push this repo to GitHub.  2. In Render: New → Blueprint → pick the repo.  3. Deploy.
+# The free plan works; the public https URL appears when the deploy finishes.
+services:
+  - type: web
+    name: logicforge
+    runtime: docker
+    dockerfilePath: ./Dockerfile.full
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: LOGICFORGE_AI_API_KEY
+        sync: false   # optional: set in the dashboard to give Sparky server-side AI defaults

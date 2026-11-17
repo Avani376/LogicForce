@@ -9,15 +9,10 @@ from boolean_engine import kmap_simplify, quine_mccluskey
 
 
 def _evaluate_expression(expression: str, variables: list[str], values: dict[str, bool]) -> bool:
-    """Evaluate a generated SOP expression for the given input values."""
-    result = expression
-    for name in variables:
-        val = values[name]
-        result = result.replace(f"!{name}", str(int(not val)))
-        result = result.replace(name, str(int(val)))
-    # evaluate with Python
-    safe_expr = result.replace("!", " not ").replace("&", " and ").replace("|", " or ")
-    return bool(eval(safe_expr))  # noqa: S307 - generated from our own patterns
+    """Evaluate a generated SOP expression with the boolean engine (no eval)."""
+    from boolean_engine import evaluate, parse
+
+    return evaluate(parse(expression), values)
 
 
 def _verify_qm_coverage(minterms: list[int], dont_cares: list[int], num_vars: int) -> None:
@@ -102,10 +97,11 @@ class TestCrossCheck:
 
     @pytest.mark.xfail(reason="QM cover edge case under investigation")
     def test_4var_sample(self) -> None:
-        """Sample 4-variable functions with 4-bit minterm values (0-15)."""
-        import random
-
-        rng = random.Random(42)
-        for _ in range(20):
-            minterms = rng.sample(range(16), rng.randint(1, 15))
+        """Deterministic 4-variable samples (no random module in tests)."""
+        fixed_samples = [
+            [0], [15], [1, 2], [3, 6, 9], [5, 10], [7, 11, 13], [0, 5, 10, 15],
+            [1, 3, 5, 7, 9, 11], [2, 4, 6, 8, 10, 12, 14], [0, 1, 14, 15],
+            [6, 9], [4, 8, 12], [2, 5, 7], [1, 4, 13], [8, 3],
+        ]
+        for minterms in fixed_samples:
             _verify_qm_coverage(minterms, [], 4)

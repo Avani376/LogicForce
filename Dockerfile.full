@@ -1,0 +1,25 @@
+# Full single-container deployment: API + built frontend in one process (one origin).
+FROM node:20-slim AS build
+WORKDIR /app
+COPY apps/web/package.json apps/web/package-lock.json ./
+RUN npm ci
+COPY apps/web/ .
+RUN npm run build
+
+FROM python:3.12-slim
+WORKDIR /app
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1
+COPY requirements.txt pyproject.toml README.md ./
+COPY engines/ engines/
+COPY apps/api/ apps/api/
+RUN pip install -r requirements.txt && pip install -e . \
+    && adduser --disabled-password --gecos "" appuser
+COPY --from=build /app/dist /app/web-dist
+USER appuser
+ENV SERVE_WEB_DIST=/app/web-dist
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"
+CMD ["uvicorn", "logicforge_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

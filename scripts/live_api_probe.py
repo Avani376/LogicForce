@@ -5,27 +5,18 @@ Run: .venv/Scripts/python scripts/live_api_probe.py [port]
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
-import urllib.error
-import urllib.request
 
-BASE = f"http://127.0.0.1:{sys.argv[1] if len(sys.argv) > 1 else '8071'}"
+import httpx
+
+BASE = "http://127.0.0.1:8071"  # fixed loopback target; CI boots the API on this port
+_client = httpx.Client(base_url=BASE, timeout=20)
 results: list[tuple[str, str, str]] = []
 
 
 def call(method: str, path: str, body: object | None = None):
-    req = urllib.request.Request(
-        BASE + path,
-        data=None if body is None else json.dumps(body).encode(),
-        headers={"Content-Type": "application/json"},
-        method=method,
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=20) as r:
-            return r.status, json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        return e.code, json.loads(e.read())
+    response = _client.request(method, path, json=body)
+    return response.status_code, response.json()
 
 
 def check(name: str, ok: bool, note: str = "") -> None:

@@ -43,13 +43,29 @@ const EXAMPLE_COMB_FAULT = {
   params: { value: '0' },
 }
 
+const EXAMPLE_FSM_MODEL = {
+  fsm_schema_version: 1,
+  inputs: ['x'],
+  outputs: ['a1', 'a2'],
+  states: ['s0', 's1'],
+  initial: 's0',
+  transitions: [
+    { from: 's0', when: { x: '0' }, to: 's0', outputs: { a1: '1', a2: '0' } },
+    { from: 's0', when: { x: '1' }, to: 's1', outputs: { a1: '0', a2: '0' } },
+    { from: 's1', when: { x: '0' }, to: 's1', outputs: { a1: '0', a2: '1' } },
+    { from: 's1', when: { x: '1' }, to: 's0', outputs: { a1: '1', a2: '0' } },
+  ],
+}
+
 const EXAMPLE_FSM_FAULT = {
   fault_schema_version: 1,
   id: 'F-tx',
   operator: 'transition_redirect',
   target: { transition_index: 0 },
-  params: { to: 'B', set_outputs: {} },
+  params: { to: 's1', set_outputs: { a1: '1', a2: '1' } },
 }
+
+const EXAMPLE_FSM_INVARIANT = '!(a1 & a2)'
 
 export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Element {
   const [modelKind, setModelKind] = useState<'combinational' | 'fsm'>('combinational')
@@ -61,6 +77,8 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     return JSON.stringify(fault, null, 2)
   }, [circuitDoc])
 
+  const [fsmModelText, setFsmModelText] = useState(JSON.stringify(EXAMPLE_FSM_MODEL, null, 2))
+  const [fsmInvariantText, setFsmInvariantText] = useState(EXAMPLE_FSM_INVARIANT)
   const [faultText, setFaultText] = useState(() => {
     let doc: { components?: { id: string; type: string }[] } = {}
     try { doc = JSON.parse(circuitDoc) as typeof doc } catch { doc = {} }
@@ -82,6 +100,31 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     setFaultText(computeCircuitFault())
   }, [circuitDoc, computeCircuitFault])
 
+  const buildProperties = useCallback(
+    (kind: 'combinational' | 'fsm', comb: string, fsm: string): Record<string, unknown>[] => {
+      if (kind === 'combinational') {
+        return comb.trim() === ''
+          ? []
+          : [{
+              property_schema_version: 1,
+              id: 'P-ui',
+              kind: 'combinational_invariant',
+              expression: comb.trim(),
+            }]
+      }
+      return fsm.trim() === ''
+        ? []
+        : [{
+            property_schema_version: 1,
+            id: 'P-fsm',
+            kind: 'fsm_invariant',
+            statement: 'workspace detection invariant',
+            expression: fsm.trim(),
+          }]
+    },
+    [],
+  )
+
   const runExperiment = useCallback(async (): Promise<void> => {
     setError(null)
     setExperiment(null)
@@ -89,16 +132,11 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     setBusy(true)
     try {
       const fault = JSON.parse(faultText) as Record<string, unknown>
-      const model = modelKind === 'combinational' ? (JSON.parse(circuitDoc) as Record<string, unknown>) : null
-      const properties: Record<string, unknown>[] =
-        modelKind === 'combinational' && invariant.trim() !== ''
-          ? [{
-              property_schema_version: 1,
-              id: 'P-ui',
-              kind: 'combinational_invariant',
-              expression: invariant.trim(),
-            }]
-          : []
+      const model =
+        modelKind === 'combinational'
+          ? (JSON.parse(circuitDoc) as Record<string, unknown>)
+          : (JSON.parse(fsmModelText) as Record<string, unknown>)
+      const properties: Record<string, unknown>[] = buildProperties(modelKind, invariant, fsmInvariantText)
       const response = await fetch('/api/fault-experiments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -115,7 +153,7 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     } finally {
       setBusy(false)
     }
-  }, [faultText, modelKind, circuitDoc, invariant])
+  }, [faultText, modelKind, circuitDoc, invariant, fsmModelText, fsmInvariantText])
 
   const runRepair = useCallback(async (): Promise<void> => {
     setError(null)
@@ -123,7 +161,10 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     setBusy(true)
     try {
       const fault = JSON.parse(faultText) as Record<string, unknown>
-      const model = modelKind === 'combinational' ? (JSON.parse(circuitDoc) as Record<string, unknown>) : null
+      const model =
+        modelKind === 'combinational'
+          ? (JSON.parse(circuitDoc) as Record<string, unknown>)
+          : (JSON.parse(fsmModelText) as Record<string, unknown>)
       const applyResponse = await fetch('/api/faults/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -134,15 +175,7 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
         setError(applyBody.detail?.message ?? applyBody.detail?.code ?? `HTTP ${applyResponse.status}`)
         return
       }
-      const properties: Record<string, unknown>[] =
-        modelKind === 'combinational' && invariant.trim() !== ''
-          ? [{
-              property_schema_version: 1,
-              id: 'P-ui',
-              kind: 'combinational_invariant',
-              expression: invariant.trim(),
-            }]
-          : []
+      const properties: Record<string, unknown>[] = buildProperties(modelKind, invariant, fsmInvariantText)
       const response = await fetch('/api/repair-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -196,10 +229,28 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
           </button>
         </div>
         {modelKind === 'fsm' && (
-          <p className="muted">
-            In FSM mode, paste the FSM document as "model" inside the fault JSON payload —
-            the experiment endpoint receives it via the apply call below.
-          </p>
+          <>
+            <label className="muted" htmlFor="fsm-model-text">
+              FSM model document (the experiment applies the fault to this machine)
+            </label>
+            <textarea
+              id="fsm-model-text"
+              className="asm-editor"
+              rows={10}
+              value={fsmModelText}
+              onChange={(e) => setFsmModelText(e.target.value)}
+              spellCheck={false}
+            />
+            <div className="verify-form">
+              <input
+                className="verify-input"
+                value={fsmInvariantText}
+                onChange={(e) => setFsmInvariantText(e.target.value)}
+                aria-label="FSM detection invariant"
+                placeholder="detection invariant over outputs, e.g. !(a1 & a2)"
+              />
+            </div>
+          </>
         )}
         <textarea
           className="asm-editor"

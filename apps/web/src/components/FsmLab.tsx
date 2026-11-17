@@ -53,6 +53,8 @@ export function FsmLab(): JSX.Element {
   const [cycles, setCycles] = useState<FsmCycle[] | null>(null)
   const [finalState, setFinalState] = useState<string | null>(null)
   const [reachable, setReachable] = useState<string[] | null>(null)
+  const [invariantText, setInvariantText] = useState('z')
+  const [verifyResult, setVerifyResult] = useState<{ verdict: string; scope: string; explored_cases: number; counterexample: Record<string, unknown> | null } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const parsed = useMemo((): { fsm: FsmDoc | null; problem: string | null } => {
@@ -106,6 +108,36 @@ export function FsmLab(): JSX.Element {
       setError(cause instanceof Error ? cause.message : String(cause))
     }
   }, [parsed.fsm])
+
+  const verifyInvariant = useCallback(async (): Promise<void> => {
+    setError(null)
+    setVerifyResult(null)
+    try {
+      const response = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'fsm_invariant',
+          model: parsed.fsm,
+          property: {
+            property_schema_version: 1,
+            id: 'P-ui',
+            kind: 'fsm_invariant',
+            statement: 'workspace invariant',
+            expression: invariantText.trim(),
+          },
+        }),
+      })
+      const body = await response.json()
+      if (!response.ok) {
+        setError(body.detail?.message ?? body.detail?.code ?? `HTTP ${response.status}`)
+        return
+      }
+      setVerifyResult(body as { verdict: string; scope: string; explored_cases: number; counterexample: Record<string, unknown> | null })
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : String(cause))
+    }
+  }, [parsed.fsm, invariantText])
 
   const graph = useMemo(() => {
     if (parsed.fsm === null) return null
@@ -194,6 +226,16 @@ export function FsmLab(): JSX.Element {
           <button type="button" onClick={() => void computeReachable()} disabled={parsed.fsm === null}>
             Reachable states
           </button>
+          <input
+            className="verify-input"
+            value={invariantText}
+            onChange={(e) => setInvariantText(e.target.value)}
+            aria-label="FSM invariant expression over outputs"
+            placeholder="invariant over outputs, e.g. z"
+          />
+          <button type="button" onClick={() => void verifyInvariant()} disabled={parsed.fsm === null || invariantText.trim() === ''}>
+            Verify
+          </button>
         </div>
         {parsed.problem !== null && <p className="banner-error">JSON problem: {parsed.problem}</p>}
         {error !== null && <p className="banner-error">{error}</p>}
@@ -223,6 +265,19 @@ export function FsmLab(): JSX.Element {
             Reachable from <strong>{parsed.fsm?.initial}</strong>: {reachable.join(', ')} —
             unreachable states are dimmed in the graph.
           </p>
+        )}
+        {verifyResult !== null && (
+          <div className={`verify-result ${verifyResult.verdict === 'PASS' ? 'panel-ok' : 'panel-error'}`}>
+            <span className="scope-chip">{verifyResult.scope}</span>
+            <span className={`verdict-chip verdict-${verifyResult.verdict}`}>{verifyResult.verdict}</span>
+            <span className="muted">{verifyResult.explored_cases} case(s) explored</span>
+            {verifyResult.counterexample !== null && (
+              <div>
+                <h3>Counterexample</h3>
+                <pre className="counterexample">{JSON.stringify(verifyResult.counterexample, null, 2)}</pre>
+              </div>
+            )}
+          </div>
         )}
       </section>
 
