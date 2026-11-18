@@ -23,11 +23,18 @@ interface TraceEntry {
     resumed_at?: number
 }
 
+interface MemoryDump {
+    segment: number
+    offset: number
+    bytes: number[]
+}
+
 interface RunResult {
     stop_reason: string
     registers: Record<string, number>
     flags: Record<string, number>
     trace: TraceEntry[]
+    memory?: MemoryDump[]
 }
 
 interface PicEvent {
@@ -66,14 +73,35 @@ export function Cpu8086Panel(): JSX.Element {
     const [picEvents, setPicEvents] = useState('[{ "at_step": 3, "op": "request", "line": 2 }]')
     const [picResult, setPicResult] = useState<PicResult | null>(null)
     const [picError, setPicError] = useState<string | null>(null)
+    const [running, setRunning] = useState(false)
+    const [breakpointsText, setBreakpointsText] = useState('')
+    const [memOffset, setMemOffset] = useState(0x300)
+    const [memLength, setMemLength] = useState(16)
+
+    const parseBreakpoints = useCallback((): number[] => {
+        return breakpointsText
+            .split(/[\s,]+/)
+            .filter((t) => t.trim() !== '')
+            .map((t) => parseInt(t, 16))
+            .filter((v) => !Number.isNaN(v))
+    }, [breakpointsText])
 
     const run = useCallback(async (): Promise<void> => {
         setError(null)
+        setRunning(true)
         try {
             const response = await fetch('/api/8086/run', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ source, max_steps: maxSteps, breakpoints: [] }),
+                body: JSON.stringify({
+                    source,
+                    max_steps: maxSteps,
+                    breakpoints: parseBreakpoints(),
+                    memory_dumps: [
+                        { segment: 0, offset: memOffset, length: memLength },
+                        { segment: 0, offset: 0xFFEC, length: 16 }, // stack window below SP
+                    ],
+                }),
             })
             if (!response.ok) {
                 const body = await response.json()
@@ -95,8 +123,10 @@ export function Cpu8086Panel(): JSX.Element {
             playError()
             emitSparky({ mood: 'sad', message: 'That run hit an error — check the message above, the assembler is very specific!' })
             setError(cause instanceof Error ? cause.message : String(cause))
+        } finally {
+            setRunning(false)
         }
-    }, [source, maxSteps])
+    }, [source, maxSteps, parseBreakpoints, memOffset, memLength])
 
     const runPic = useCallback(async (): Promise<void> => {
         setPicError(null)
@@ -152,7 +182,27 @@ export function Cpu8086Panel(): JSX.Element {
                             max_steps: <input type="number" value={maxSteps} min={1} max={100000}
                                 onChange={(e) => setMaxSteps(Number(e.target.value) || 200)} />
                         </label>
-                        <button type="button" onClick={() => void run()}>▶ Run</button>
+                        <label>
+                            breakpoints: <input value={breakpointsText} placeholder="e.g. 4, 0xA"
+                                aria-label="Breakpoint instruction indices (hex or decimal)"
+                                onChange={(e) => setBreakpointsText(e.target.value)} />
+                        </label>
+                        <button type="button" onClick={() => void run()} disabled={running}>
+                            {running ? 'Running…' : '▶ Run'}
+                        </button>
+                    </div>
+                    <div className="cpu8086-controls">
+                        <label>
+                            memory at 0:{' '}
+                            <input type="number" value={memOffset} min={0} max={65535}
+                                aria-label="Memory dump start offset"
+                                onChange={(e) => setMemOffset(Number(e.target.value) || 0)} />
+                        </label>
+                        <label>
+                            length: <input type="number" value={memLength} min={1} max={256}
+                                aria-label="Memory dump length"
+                                onChange={(e) => setMemLength(Number(e.target.value) || 16)} />
+                        </label>
                     </div>
                     {error && <p className="banner-error">{error}</p>}
                     <h3>8259 PIC (Phase C7)</h3>
@@ -206,6 +256,36 @@ export function Cpu8086Panel(): JSX.Element {
                             </span>
                         ))}
                     </div>
+                    <h3>Memory</h3>
+                    {(() => {
+                        const dump = result?.memory?.[0]
+                        if (!dump) return <p className="muted">Run to snapshot memory at the offset above.</p>
+                        const rows: string[] = []
+                        for (let i = 0; i < dump.bytes.length; i += 8) {
+                            const chunk = dump.bytes.slice(i, i + 8)
+                            const addr = (dump.offset + i).toString(16).toUpperCase().padStart(4, '0')
+                            rows.push(`${addr}: ${chunk.map((b) => b.toString(16).toUpperCase().padStart(2, '0')).join(' ')}`)
+                        }
+                        return <pre className="counterexample memory-grid">{rows.join('\n')}</pre>
+                    })()}
+                    {(() => {
+                        const dump = result?.memory?.[1]
+                        if (!dump) return null
+                        const sp = regs.SP ?? 0xFFFE
+                        const words: string[] = []
+                        for (let i = 0; i + 1 < dump.bytes.length; i += 2) {
+                            const value = dump.bytes[i] | (dump.bytes[i + 1] << 8)
+                            words.push(`0x${(0xFFEC + i).toString(16).toUpperCase().padStart(4, '0')}: 0x${value.toString(16).toUpperCase().padStart(4, '0')}`)
+                        }
+                        return (
+                            <>
+                                <h3>Stack window</h3>
+                                <pre className="counterexample memory-grid">{words.join('\n')}</pre>
+                                <p className="muted">SP = 0x{sp.toString(16).toUpperCase().padStart(4, '0')}</p>
+                            </>
+                        )
+                    })()}
+
                     <h3>Trace</h3>
                     <div className="trace-scroll">
                         <table className="trace-table">
