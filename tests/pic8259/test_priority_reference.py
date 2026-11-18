@@ -63,6 +63,6 @@ class TestPriorityResolution:
         steps.append((pic.int_vector(), None))  # IR3 blocked by IR1 in service
         pic.write_ocw2(0x20)  # EOI clears IR1
         steps.append((pic.int_vector(), 11))  # IR3 now serviceable
-        for (vector, _), expected_vector in zip(steps, (9, None, 11)):
+        for (vector, _), expected_vector in zip(steps, (9, None, 11), strict=False):
             assert vector == expected_vector
         assert steps[-1][0] == 11

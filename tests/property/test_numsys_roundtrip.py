@@ -105,7 +105,7 @@ class TestGrayRoundTrip:
             return
         ga = gray_encode(format(a, "08b")).result
         gb = gray_encode(format(b, "08b")).result
-        assert sum(1 for x, y in zip(ga, gb) if x != y) == 1
+        assert sum(1 for x, y in zip(ga, gb, strict=False) if x != y) == 1
 
 
 class TestBcdAndExcess3:

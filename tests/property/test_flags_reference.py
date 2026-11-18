@@ -28,7 +28,7 @@ def _ref_add(a: int, b: int, cin: int, width: int) -> dict[str, int]:
     """Reference ADD flags — written from the spec, independent of the engine."""
     mask = (1 << width) - 1
     result = (a + b + cin) & mask
-    sa, sb, sr = _signed(a, width), _signed(b, width), _signed(result, width)
+    sa, sb, _sr = _signed(a, width), _signed(b, width), _signed(result, width)
     s = sa + sb + cin
     return {
         "CF": 1 if a + b + cin > mask else 0,
