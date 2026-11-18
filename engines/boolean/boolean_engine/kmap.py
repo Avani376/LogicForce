@@ -16,6 +16,17 @@ def _terms_differ_by_one_bit(a: int, b: int) -> bool:
     return diff != 0 and (diff & (diff - 1)) == 0
 
 
+def _dash_positions(term: str) -> tuple[int, ...]:
+    return tuple(i for i, ch in enumerate(term) if ch == "-")
+
+
+def _mergeable(a_key: str, b_key: str, a_val: int, b_val: int) -> bool:
+    """Two implicants merge only if their dashes sit in identical positions and
+    the non-dash bits differ in exactly one position. Comparing dash-as-zero
+    values alone would wrongly merge e.g. 0-0 with 01- (dashes misaligned)."""
+    return _dash_positions(a_key) == _dash_positions(b_key) and _terms_differ_by_one_bit(a_val, b_val)
+
+
 def _merge_terms(a: str, b: str) -> str:
     """Merge two binary strings that differ in exactly one position (replace with '-')."""
     result = list(a)
@@ -48,7 +59,7 @@ def quine_mccluskey(minterms: list[int], dont_cares: list[int], num_vars: int) -
             for b_key in keys[i + 1 :]:
                 a_val = int(a_key.replace("-", "0"), 2)
                 b_val = int(b_key.replace("-", "0"), 2)
-                if _terms_differ_by_one_bit(a_val, b_val):
+                if _mergeable(a_key, b_key, a_val, b_val):
                     merged = _merge_terms(a_key, b_key)
                     combined = current[a_key] | current[b_key]
                     next_group[merged] = combined

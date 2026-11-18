@@ -45,6 +45,9 @@ def _tokenize(text: str) -> list[tuple[str, str]]:
             word = text[start:i].upper()
             if word in ("0", "1"):
                 tokens.append(("lit", word))
+            elif word in ("NAND", "NOR"):
+                # gate-word operators: the NAND/NOR transform outputs re-parse
+                tokens.append(("op", word))
             else:
                 tokens.append(("var", word))
         else:
@@ -83,9 +86,15 @@ class _Parser:
 
     def parse_and(self) -> BoolExpr:
         node = self.parse_unary()
-        while (t := self.peek()) and t == ("op", "&"):
+        while (t := self.peek()) and t[0] == "op" and (t[1] == "&" or t[1] in ("NAND", "NOR")):
             self.advance()
-            node = BoolExpr("and", left=node, right=self.parse_unary())
+            right = self.parse_unary()
+            if t[1] == "&":
+                node = BoolExpr("and", left=node, right=right)
+            elif t[1] == "NAND":
+                node = BoolExpr("nand", left=node, right=right)
+            else:
+                node = BoolExpr("nor", left=node, right=right)
         return node
 
     def parse_unary(self) -> BoolExpr:
@@ -252,8 +261,12 @@ def verify_theorems() -> list[dict[str, object]]:
     return results
 
 
-def to_nand_only(expr: BoolExpr) -> dict[str, object]:
-    """Convert AND/OR/NOT to NAND-only equivalent, verified by exhaustive truth table."""
+def to_nand_only(expr: BoolExpr | str) -> dict[str, object]:
+    """Convert AND/OR/NOT to NAND-only equivalent, verified by exhaustive truth table.
+
+    Accepts an expression text or a parsed BoolExpr for convenience."""
+    if isinstance(expr, str):
+        expr = parse(expr)
 
     def to_nand(node: BoolExpr) -> BoolExpr:
         if node.kind in ("lit", "var"):
@@ -287,8 +300,12 @@ def to_nand_only(expr: BoolExpr) -> dict[str, object]:
     }
 
 
-def to_nor_only(expr: BoolExpr) -> dict[str, object]:
-    """Convert AND/OR/NOT to NOR-only equivalent, verified by exhaustive truth table."""
+def to_nor_only(expr: BoolExpr | str) -> dict[str, object]:
+    """Convert AND/OR/NOT to NOR-only equivalent, verified by exhaustive truth table.
+
+    Accepts an expression text or a parsed BoolExpr for convenience."""
+    if isinstance(expr, str):
+        expr = parse(expr)
 
     def to_nor(node: BoolExpr) -> BoolExpr:
         if node.kind in ("lit", "var"):
