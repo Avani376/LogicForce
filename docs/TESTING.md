@@ -43,5 +43,8 @@ Every bug fix ships with the test that would have caught it.
 ## Later categories (planned, from the master prompt)
 
 Sequential/clock tests (Phase 2), verification counterexamples (3), fault detection (4),
+differential flag/QM/PIC reference layers (property), Playwright browser E2E (10
+real-user workflows in CI), security + dependency scanning jobs, Docker build +
+smoke-test job — all wired into the CI pipeline.
 repair re-verification (4), optimization equivalence (5), 8086 differential tests (6),
 UI/Playwright (1c onward). Not claimed as done until their phase exit criteria pass.
