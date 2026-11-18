@@ -8,12 +8,10 @@ on any operand pair, the differential test fails with the counterexample.
 
 from __future__ import annotations
 
+from cpu8086.machine import assemble_and_load
+from cpu8086.registers import inc_dec_flags, sub_flags
 from hypothesis import given, settings
 from hypothesis import strategies as st
-
-from cpu8086.errors import CpuRuntimeError
-from cpu8086.machine import assemble_and_load
-from cpu8086.registers import inc_dec_flags, neg_flags, sub_flags
 
 
 def _signed(value: int, width: int) -> int:
@@ -145,7 +143,6 @@ class TestIncDecNegDifferential:
     @settings(max_examples=80, deadline=None)
     @given(v=st.integers(min_value=0, max_value=0xFFFF), up=st.booleans())
     def test_inc_dec_via_machine(self, v: int, up: bool) -> None:
-        from cpu8086.registers import inc_dec_flags
 
         verb = "INC" if up else "DEC"
         machine = assemble_and_load(f"MOV AX, {v}\n{verb} AX\nHLT")

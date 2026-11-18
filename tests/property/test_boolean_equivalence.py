@@ -4,10 +4,9 @@ engine's own evaluator (independent of the transform code being tested)."""
 
 from __future__ import annotations
 
+from boolean_engine import evaluate, kmap_simplify, parse, quine_mccluskey
 from hypothesis import given, settings
 from hypothesis import strategies as st
-
-from boolean_engine import evaluate, kmap_simplify, parse, quine_mccluskey
 
 VARS = ["a", "b", "c"]
 ENVS = [{v: bool(i >> k & 1) for k, v in enumerate(VARS)} for i in range(8)]
