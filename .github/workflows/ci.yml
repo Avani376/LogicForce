@@ -49,3 +49,92 @@ jobs:
       - name: Build (typecheck + vite)
         run: npm run build
         working-directory: apps/web
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e .
+          pip install pip-audit
+      - name: Python dependency scan (pip-audit)
+        run: pip-audit --skip-editable
+      - name: npm dependency scan
+        run: npm audit --omit=dev
+        working-directory: apps/web
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install frontend
+        run: npm ci
+        working-directory: apps/web
+      - name: Build frontend
+        run: npm run build
+        working-directory: apps/web
+      - name: Install Playwright chromium
+        run: npx playwright install chromium
+        working-directory: apps/web
+      - name: Start single-origin stack (UI + API on :8000)
+        run: |
+          SERVE_WEB_DIST=apps/web/dist uvicorn logicforge_api.main:app --port 8000 &
+      - name: Wait for stack
+        run: |
+          ok=0
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+            if curl -sf http://localhost:8000/api/health > /dev/null && curl -sf http://localhost:8000/ > /dev/null; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+          [ "$ok" = "1" ] || exit 1
+      - name: Browser E2E (real user workflows)
+        run: npx playwright test
+        working-directory: apps/web
+        env:
+          E2E_BASE_URL: http://localhost:8000
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -f Dockerfile.api -t logicforge-api .
+      - name: Build full single-origin image
+        run: docker build -f Dockerfile.full -t logicforge-full .
+      - name: Build web image
+        run: docker build -f Dockerfile.web -t logicforge-web .
+      - name: Smoke test full image
+        run: |
+          docker run -d --name logicforge-smoke -p 8090:8000 logicforge-full
+          ok=0
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+            if curl -sf http://localhost:8090/api/health > /dev/null && curl -sf http://localhost:8090/ > /dev/null; then
+              ok=1
+              break
+            fi
+            sleep 2
+          done
+          [ "$ok" = "1" ] || exit 1
+          docker rm -f logicforge-smoke
