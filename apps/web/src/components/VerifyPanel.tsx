@@ -21,9 +21,10 @@ export function VerifyPanel({ circuitDoc, outputSignals, inputSignals }: VerifyP
   const [expression, setExpression] = useState('')
   const [result, setResult] = useState<VerifyResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
 
   const verify = useCallback(async (): Promise<void> => {
-    setError(null); setResult(null)
+    setError(null); setResult(null); setBusy(true)
     try {
       const circuit = JSON.parse(circuitDoc) as Record<string, unknown>
       const response = await fetch('/api/verify', {
@@ -39,6 +40,8 @@ export function VerifyPanel({ circuitDoc, outputSignals, inputSignals }: VerifyP
       setResult(body as VerifyResult)
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : String(cause))
+    } finally {
+      setBusy(false)
     }
   }, [circuitDoc, expression])
 
@@ -55,7 +58,9 @@ export function VerifyPanel({ circuitDoc, outputSignals, inputSignals }: VerifyP
           onChange={(e) => setExpression(e.target.value)}
           placeholder={`e.g. !(${outputSignals[0] ?? 'a'} & ${outputSignals[1] ?? 'b'})`}
           aria-label="Property expression" />
-        <button type="button" onClick={() => void verify()}>Verify</button>
+        <button type="button" onClick={() => void verify()} disabled={busy || expression.trim() === ''}>
+          {busy ? 'Verifying…' : 'Verify'}
+        </button>
       </div>
       {error && <p className="banner-error">{error}</p>}
       {result && (

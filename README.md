@@ -85,7 +85,8 @@ A full educational instruction set: MOV/XCHG, the ALU family, INC/DEC/NEG,
 rotates, **string ops with REP/REPE/REPNE and the DF flag**, PUSH/POP, jumps/LOOP/
 CALL/RET, **software and hardware interrupts** (IVT, NMI/INTR with IF masking, IRET
 restoring every flag), IN/OUT, and a **published-timing model**. Segmented 1 MiB
-memory with mod-2²⁰ wraparound, stack, breakpoints, step/run, and a full trace.
+memory with mod-2²⁰ wraparound, and a **real debugger**: breakpoints, step/run,
+register/flag grids, a memory snapshot viewer, and a stack window at SS:SP.
 
 <div align="center">
 <img src="docs/assets/screenshots/cpu8086.png" alt="8086 tab: assembly editor, registers, flags, trace" width="820"/>

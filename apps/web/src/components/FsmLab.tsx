@@ -69,10 +69,11 @@ export function FsmLab(): JSX.Element {
     }
   }, [fsmText])
 
-  const simulate = useCallback(async (): Promise<void> => {
+  const simulate = useCallback(async (sequenceOverride?: Record<string, string>[]): Promise<void> => {
     setError(null)
     try {
-      const sequence = JSON.parse(sequenceText) as Record<string, string>[]
+      const sequence =
+        sequenceOverride ?? (JSON.parse(sequenceText) as Record<string, string>[])
       const response = await fetch('/api/fsm/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -275,6 +276,22 @@ export function FsmLab(): JSX.Element {
               <div>
                 <h3>Counterexample</h3>
                 <pre className="counterexample">{JSON.stringify(verifyResult.counterexample, null, 2)}</pre>
+                {(() => {
+                  const sequence = verifyResult.counterexample.inputs_sequence
+                  if (!Array.isArray(sequence)) return null
+                  return (
+                    <button
+                      type="button"
+                      className="sparky-cta"
+                      onClick={() => {
+                        setSequenceText(JSON.stringify(sequence))
+                        void simulate(sequence as Record<string, string>[])
+                      }}
+                    >
+                      Replay counterexample ▶
+                    </button>
+                  )
+                })()}
               </div>
             )}
           </div>

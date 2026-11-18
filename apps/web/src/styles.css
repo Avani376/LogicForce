@@ -1135,3 +1135,11 @@ button:not(.sparky-bot):active { transform: scale(0.96); }
     overflow-x: auto;
     white-space: pre;
 }
+
+/* ================= Accessibility: visible focus everywhere ================= */
+
+:focus-visible {
+    outline: 3px solid #ffd166;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
