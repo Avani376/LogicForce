@@ -7,7 +7,6 @@ lines the coverage report flagged (audit finding N2).
 from __future__ import annotations
 
 import pytest
-
 from cpu8086.errors import AsmError, CpuRuntimeError, UnsupportedInstructionError
 from curriculum_engine.errors import CURRICULUM_CATEGORIES, CurriculumError
 from pic8259.errors import PIC_CATEGORIES, PicError
