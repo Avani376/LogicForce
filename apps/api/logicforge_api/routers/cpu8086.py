@@ -96,8 +96,7 @@ def run_endpoint(request: RunRequest) -> dict[str, Any]:
                 "segment": dump.segment,
                 "offset": dump.offset,
                 "bytes": [
-                    machine.memory.read_byte(dump.segment, (dump.offset + i) & 0xFFFF)
-                    for i in range(dump.length)
+                    machine.memory.read_byte(dump.segment, (dump.offset + i) & 0xFFFF) for i in range(dump.length)
                 ],
             }
             for dump in request.memory_dumps
