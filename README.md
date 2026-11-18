@@ -47,7 +47,7 @@ and tests check the code against them. That discipline is the product.
 ## The workspace — seven tabs, one glance
 
 <div align="center">
-<img src="docs/assets/tour.svg" alt="Animated tour: a stylized workspace window cycles through the five tabs — Circuit canvas with a firing wire, 8086 registers, Verify PASS/FAIL verdicts, a Sparky grounded chat reply, and the Visuals donut — captioned Five views. One truth." width="100%"/>
+<img src="docs/assets/tour.svg" alt="Animated tour: a stylized workspace window cycles through workspace views — Circuit canvas with a firing wire, 8086 registers, Verify PASS/FAIL verdicts, a Sparky grounded chat reply, and the Visuals donut — captioned Seven views. One truth." width="100%"/>
 </div>
 
 <div align="center">
