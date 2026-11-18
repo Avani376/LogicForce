@@ -21,7 +21,7 @@ def _reference_best(irr: int, isr: int, imr: int, floor: int) -> int | None:
 
     candidates = [line for line in range(8) if (irr >> line) & 1 and not (imr >> line) & 1]
     isr_lines = [line for line in range(8) if (isr >> line) & 1]
-    best_isr = min((rank(l) for l in isr_lines), default=None)
+    best_isr = min((rank(isr_line) for isr_line in isr_lines), default=None)
     for line in sorted(candidates, key=rank):
         if best_isr is None or rank(line) < best_isr:
             return line
