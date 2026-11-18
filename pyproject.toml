@@ -60,7 +60,8 @@ logicforge_api = "apps/api/logicforge_api"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q --import-mode=importlib"
+
 filterwarnings = ["error::DeprecationWarning:logic_engine.*"]
 
 [tool.mypy]

@@ -71,6 +71,9 @@ class TestUpstreamCalls:
             raise httpx.ConnectError("connection refused", request=request)
 
         _inject_transport(monkeypatch, refusing)
+        monkeypatch.setattr(
+            "logicforge_api.assistant_chat.resolve_provider_addresses", lambda url: url
+        )  # isolate the upstream path from real DNS
         with pytest.raises(AssistantError) as exc:
             chat(
                 messages=[{"role": "user", "content": "hi"}],

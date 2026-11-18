@@ -8,7 +8,10 @@ The API key is read per-request and never persisted or logged.
 from __future__ import annotations
 
 import os
+import socket
+from ipaddress import ip_address
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 
@@ -88,9 +91,6 @@ def validate_provider_url(base_url: str) -> str:
 
     Validation is syntactic (no DNS): a public hostname that resolves to a
     private IP cannot be caught here, which is documented in assistant.md."""
-    from ipaddress import ip_address
-    from urllib.parse import urlparse
-
     parsed = urlparse(base_url)
     host = (parsed.hostname or "").lower()
     if parsed.scheme != "https" or not host or parsed.username is not None or parsed.password is not None:
@@ -136,6 +136,36 @@ def validate_conversation(messages: list[dict[str, str]]) -> list[dict[str, str]
     return cleaned
 
 
+def resolve_provider_addresses(base_url: str) -> list[str]:
+    """Resolve the provider host and return every address it maps to.
+
+    DNS-rebinding defense (assistant.md): all resolved addresses must be public.
+    A name that resolves to loopback/private/reserved space is rejected before any
+    request is made. Validation is resolution-time; the residual check-then-use
+    window is documented in the contract."""
+    host = (urlparse(base_url).hostname or "").lower()
+    if host in _LOCAL_HOSTS:
+        raise AssistantError("BAD_PROVIDER", f"provider host {host!r} is loopback — rejected")
+    try:
+        infos = socket.getaddrinfo(host, 443, proto=socket.IPPROTO_TCP)
+    except socket.gaierror as exc:
+        raise AssistantError(
+            "BAD_PROVIDER",
+            f"provider host {host!r} could not be resolved ({exc.__class__.__name__})",
+        ) from exc
+    addresses: list[str] = []
+    for info in infos:
+        address = str(info[4][0])
+        ip = ip_address(address)
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_unspecified:
+            raise AssistantError(
+                "BAD_PROVIDER",
+                f"provider host {host!r} resolves to a non-public address ({address}) — rejected",
+            )
+        addresses.append(address)
+    return addresses
+
+
 def chat(
     messages: list[dict[str, str]],
     question: str,
@@ -151,6 +181,8 @@ def chat(
     if base_url is not None:
         base_url = validate_provider_url(base_url)
     chosen_base = (base_url or os.environ.get("LOGICFORGE_AI_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
+    # DNS-rebinding defense: resolve now and reject non-public addresses.
+    resolve_provider_addresses(chosen_base)
     messages = validate_conversation(messages)
     chosen_model = model or DEFAULT_MODEL
     system_prompt = build_system_prompt(question, context)
@@ -161,7 +193,8 @@ def chat(
         "max_tokens": 600,
     }
     try:
-        with httpx.Client(timeout=TIMEOUT_SECONDS) as client:
+        # follow_redirects=False: a provider must not bounce our key to another host.
+        with httpx.Client(timeout=TIMEOUT_SECONDS, follow_redirects=False) as client:
             response = client.post(
                 f"{chosen_base}/chat/completions",
                 headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
@@ -189,6 +222,7 @@ def chat(
         answer = body["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as exc:
         raise AssistantError("UPSTREAM", "the provider response had no answer content — try again") from exc
+    grounded = build_system_prompt(question, context)
     return {
         "answer": answer,
         "grounding": "generative",
@@ -196,4 +230,5 @@ def chat(
         "scope": "GENERATIVE",
         "model": chosen_model,
         "sources": ["openai-compatible provider", "logicforge grounded router"],
+        "data": {"grounded_router_ran": True, "system_prompt_chars": len(grounded)},
     }

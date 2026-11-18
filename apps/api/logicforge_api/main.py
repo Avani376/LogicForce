@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from logic_engine import ENGINE_VERSION
 from sequential_engine import SEQUENTIAL_ENGINE_VERSION
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from logicforge_api import API_VERSION
 from logicforge_api.routers import (
@@ -68,6 +68,23 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
 
 
 app.add_middleware(ObservabilityMiddleware)
+
+from logicforge_api.hardening import (  # noqa: E402  — after app creation, before routes
+    BodySizeLimitMiddleware,
+    RateLimitMiddleware,
+)
+
+app.add_middleware(BodySizeLimitMiddleware)
+app.add_middleware(RateLimitMiddleware)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception) -> Response:
+    """Never leak stack traces to clients; keep the standard envelope shape."""
+    return JSONResponse(
+        status_code=500,
+        content={"detail": {"code": "INTERNAL_ERROR", "message": "unexpected server error — the request was rejected"}},
+    )
 
 
 app.include_router(root)

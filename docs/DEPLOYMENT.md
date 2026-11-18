@@ -74,3 +74,21 @@ remaining steps between this repo and a shared deployment:
    project-persistence design (see `docs/ENGINEERING_DECISIONS.md` D5).
 7. **AI keys** — `LOGICFORGE_AI_API_KEY` may be set as a server-side default for
    the chat layer; per-user browser keys still take precedence. Never commit keys.
+
+## Hardening defaults (Phase 2 — security & backend hardening)
+
+The API ships with the OWASP API Top 10 controls enabled by default:
+
+- **Rate limits** (per client IP, in-memory sliding window): 240 req/min global,
+  30 req/min on `/api/assistant/*` (which triggers upstream work). 429 responses
+  carry `Retry-After`. Tune or disable with `LOGICFORGE_RATE_LIMIT` and
+  `LOGICFORGE_ASSISTANT_RATE_LIMIT` (a value of `off` disables).
+- **Body-size cap**: requests over 1 MiB are rejected with 413
+  (`LOGICFORGE_MAX_BODY_BYTES` to tune).
+- **Global error handler**: unhandled exceptions return a generic 500 envelope —
+  no stack traces or internals leak to clients.
+- **BYOK hardening**: provider URLs must be https to a **public** host —
+  loopback/private/reserved literals and resolved addresses are rejected
+  (DNS-rebinding defense), redirects are not followed, the key is never echoed
+  or stored, and every generative response carries provenance
+  (`data.grounded_router_ran`) showing the grounded router ran first.
