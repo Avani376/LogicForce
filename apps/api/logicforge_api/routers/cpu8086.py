@@ -24,12 +24,21 @@ class ScheduledInterruptIn(BaseModel):
     number: int
 
 
+class MemoryDumpIn(BaseModel):
+    """Debugger memory region to snapshot after the run (bounded)."""
+
+    segment: int = Field(default=0, ge=0, le=0xFFFF)
+    offset: int = Field(default=0, ge=0, le=0xFFFF)
+    length: int = Field(default=16, ge=1, le=256)
+
+
 class RunRequest(BaseModel):
     source: str
     max_steps: int = 10_000
     breakpoints: list[int] = Field(default_factory=list)
     interrupts: dict[int, str] = Field(default_factory=dict)
     schedule: list[ScheduledInterruptIn] = Field(default_factory=list)
+    memory_dumps: list[MemoryDumpIn] = Field(default_factory=list)
 
 
 class StepRequest(BaseModel):
@@ -82,6 +91,17 @@ def run_endpoint(request: RunRequest) -> dict[str, Any]:
         "stop_reason": stop_reason,
         "registers": machine.registers.snapshot(),
         "flags": dict(machine.registers.flags),
+        "memory": [
+            {
+                "segment": dump.segment,
+                "offset": dump.offset,
+                "bytes": [
+                    machine.memory.read_byte(dump.segment, (dump.offset + i) & 0xFFFF)
+                    for i in range(dump.length)
+                ],
+            }
+            for dump in request.memory_dumps
+        ],
         "trace": [
             {
                 "kind": record.kind,

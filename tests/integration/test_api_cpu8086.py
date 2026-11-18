@@ -83,3 +83,51 @@ def test_step_endpoint_halted_cpu_is_400() -> None:
 def test_shape_error_is_422() -> None:
     response = client.post("/api/8086/run", json={"max_steps": 5})
     assert response.status_code == 422
+
+
+def test_run_memory_dump_region() -> None:
+    response = client.post(
+        "/api/8086/run",
+        json={
+            "source": "MOV BYTE [0x300], 0xAB\nMOV BYTE [0x301], 0xCD\nHLT",
+            "max_steps": 10,
+            "memory_dumps": [{"segment": 0, "offset": 0x300, "length": 4}],
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    dump = body["memory"][0]
+    assert dump["segment"] == 0 and dump["offset"] == 0x300
+    assert dump["bytes"] == [0xAB, 0xCD, 0, 0]
+
+
+def test_run_stack_dump_after_push() -> None:
+    response = client.post(
+        "/api/8086/run",
+        json={
+            "source": "MOV AX, 0x1234\nPUSH AX\nHLT",
+            "max_steps": 10,
+            "memory_dumps": [
+                {"segment": 0, "offset": 0xFFEC, "length": 16},
+                {"segment": 0, "offset": 0xFFFC, "length": 4},
+            ],
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["memory"]) == 2
+    # SP after PUSH is 0xFFFC; the pushed word sits at SS:0xFFFC (little-endian)
+    top = body["memory"][1]["bytes"]
+    assert top == [0x34, 0x12, 0, 0]
+
+
+def test_run_memory_dump_length_cap_is_422() -> None:
+    response = client.post(
+        "/api/8086/run",
+        json={
+            "source": "HLT",
+            "max_steps": 5,
+            "memory_dumps": [{"segment": 0, "offset": 0, "length": 999}],
+        },
+    )
+    assert response.status_code == 422
