@@ -73,11 +73,13 @@ function rowOrder(keys: string[]): string[] {
 
 export function WaveformPanel({ result }: WaveformPanelProps): JSX.Element | null {
   const [hoverCycle, setHoverCycle] = useState<number | null>(null)
+  const [scrubCycle, setScrubCycle] = useState<number | null>(null)
   if (result === null) return null
   const keys = rowOrder(Object.keys(result.waveforms))
   const cycleCount = result.cycles.length
   const width = LABEL_W + cycleCount * COL_W + 12
   const height = TOP_PAD + keys.length * ROW_H + 10
+
 
   return (
     <section className="waveform-panel" aria-label="Sequential waveform viewer">
@@ -163,6 +165,20 @@ export function WaveformPanel({ result }: WaveformPanelProps): JSX.Element | nul
           />
         )}
         </svg>
+      </div>
+      <div className="waveform-scrubber" aria-label="Cycle scrubber">
+        <button type="button" aria-label="Previous cycle" disabled={scrubCycle === null || scrubCycle <= 0}
+          onClick={() => setScrubCycle((c) => (c !== null ? Math.max(0, c - 1) : 0))}>◀</button>
+        <span className="scrub-label">
+          {scrubCycle !== null ? `cycle ${scrubCycle}` : 'hover to inspect · click ◀ ▶ to step'}
+        </span>
+        <button type="button" aria-label="Next cycle" disabled={scrubCycle === null || scrubCycle >= cycleCount - 1}
+          onClick={() => setScrubCycle((c) => (c !== null ? Math.min(cycleCount - 1, c + 1) : 0))}>▶</button>
+        {scrubCycle !== null && (
+          <span className="scrub-readout">
+            {Object.entries(result.waveforms).map(([k, vals]) => `${k}=${vals[scrubCycle] ?? '?'}`).join(' · ')}
+          </span>
+        )}
       </div>
       <table className="trace-table wf-stats" aria-label="Per-signal analysis">
         <thead>
