@@ -229,11 +229,18 @@ docker run -p 8000:8000 logicforge
 
 ### Public deployment (Render)
 
-The repo ships a `render.yaml` Blueprint:
+<div align="center">
 
-1. Sign in at [render.com](https://render.com) with your GitHub account.
-2. **New → Blueprint** → select `Avani376/LogicForce`.
-3. **Apply** — Render builds the single-origin image and publishes a public HTTPS URL
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Avani376/LogicForce)
+
+</div>
+
+The repo ships a `render.yaml` Blueprint — click the button above, connect your
+GitHub account, and Render builds the single-origin image automatically.
+
+1. Click **Deploy to Render** (or go to [render.com](https://render.com), sign in with
+   GitHub, then **New → Blueprint** → select `Avani376/LogicForce`).
+2. **Apply** — Render builds the single-origin image and publishes a public HTTPS URL
    once `/api/health` passes.
 
 ### Environment variables
