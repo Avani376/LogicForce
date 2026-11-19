@@ -401,8 +401,7 @@ See [`docs/PROJECT_CONTEXT.md`](docs/PROJECT_CONTEXT.md) for the full shortlist 
 
 ## License
 
-[MIT](LICENSE) — no license file has been added yet; this will be added before the
-first tagged release.
+[MIT](LICENSE)
 
 ## Acknowledgements
 
