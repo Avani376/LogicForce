@@ -243,10 +243,10 @@ def _operand_width(operand: Operand) -> int:
     return operand.width
 
 
-def _with_inferred_width(operand: Operand, other: Operand | None) -> Operand:
+def _with_inferred_width(operand: Operand | None, other: Operand | None) -> Operand | None:
     """Pin an unprefixed memory operand's width from a register sibling
     (e.g. MOV [DI], AL is a byte move — the register defines the width)."""
-    if operand.kind != "mem" or operand.width != 0:
+    if operand is None or operand.kind != "mem" or operand.width != 0:
         return operand
     if other is not None and other.kind == "reg":
         inferred = 8 if other.name in BYTE_REG_NAMES else 16
