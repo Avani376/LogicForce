@@ -9,8 +9,20 @@ import sys
 
 # Add the repo-relative engine package roots so the engines are importable.
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _engine in ("logic", "sequential", "verify", "faults", "repair", "optimize",
-                "cpu8086", "cosim", "numsys", "boolean", "pic8259", "curriculum"):
+for _engine in (
+    "logic",
+    "sequential",
+    "verify",
+    "faults",
+    "repair",
+    "optimize",
+    "cpu8086",
+    "cosim",
+    "numsys",
+    "boolean",
+    "pic8259",
+    "curriculum",
+):
     _p = os.path.join(_ROOT, "engines", _engine)
     if _p not in sys.path:
         sys.path.insert(0, _p)
