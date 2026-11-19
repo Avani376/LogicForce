@@ -1,1 +1,23 @@
-{"services":{"app":{"root":".","entrypoint":"api/index.py"}},"name":"logicforge"}
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30,
+      "includeFiles": "engines/**, apps/api/**, apps/web/dist/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
+  ],
+  "env": {
+    "SERVE_WEB_DIST": "/var/task/apps/web/dist"
+  }
+}

@@ -8,7 +8,8 @@ import os
 import sys
 
 # Add the repo-relative engine package roots so the engines are importable.
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# The entry point is at <root>/api/index.py, so the root is 2 levels up.
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _engine in (
     "logic",
     "sequential",
