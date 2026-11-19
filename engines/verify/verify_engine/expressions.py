@@ -185,6 +185,14 @@ def expression_signals(node: ExprNode) -> tuple[str, ...]:
     return tuple(ordered)
 
 
+def _child(node: ExprNode, side: str) -> ExprNode:
+    """Typed narrowing for optional AST children — malformed trees fail fast."""
+    child = node.left if side == "left" else node.right
+    if child is None:
+        raise SchemaError("BOOLEAN_AST_MALFORMED", f"{node.kind} node is missing its {side} child")
+    return child
+
+
 def evaluate_expression(node: ExprNode, env: Mapping[str, LogicValue]) -> LogicValue:
     """Evaluate the AST in the four-valued domain (no short-circuits).
 
@@ -196,9 +204,9 @@ def evaluate_expression(node: ExprNode, env: Mapping[str, LogicValue]) -> LogicV
     if node.kind == "var":
         return env.get(node.value, LogicValue.UNKNOWN)
     if node.kind == "not":
-        return not_(evaluate_expression(node.left, env))  # type: ignore[arg-type]
-    left = evaluate_expression(node.left, env)  # type: ignore[arg-type]
-    right = evaluate_expression(node.right, env)  # type: ignore[arg-type]
+        return not_(evaluate_expression(_child(node, "left"), env))
+    left = evaluate_expression(_child(node, "left"), env)
+    right = evaluate_expression(_child(node, "right"), env)
     if node.value == "&":
         return and_(left, right)
     if node.value == "|":

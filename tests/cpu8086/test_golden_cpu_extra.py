@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 from cpu8086 import assemble
 from cpu8086.machine import Cpu
 
@@ -31,8 +30,8 @@ def test_golden_stack_frame_with_local_vars() -> None:
     assert machine.registers.get("BX") == 0x2222  # restored from stack (LIFO)
 
 
-@pytest.mark.xfail(reason="SI addressing: assembler implicit size fix needs further testing")
 def test_golden_memory_copy_via_si_di() -> None:
+    """SI/DI byte copy with LOOP — register-pinned memory width (Phase 6 fix)."""
     """Copy 4 bytes from [SI] to [DI] using a LOOP."""
     machine = Cpu(
         assemble(

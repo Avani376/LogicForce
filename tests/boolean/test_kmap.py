@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from itertools import product
 
-import pytest
 from boolean_engine import kmap_simplify, quine_mccluskey
 
 
@@ -16,18 +15,24 @@ def _evaluate_expression(expression: str, variables: list[str], values: dict[str
 
 
 def _verify_qm_coverage(minterms: list[int], dont_cares: list[int], num_vars: int) -> None:
-    """The QM expression must be 1 for all minterms and 0 for all non-minterm/non-dc inputs."""
+    """The QM expression must be 1 for all minterms and 0 for inputs that are
+    neither minterms nor don't-cares — don't-care rows may legally be either."""
     result = quine_mccluskey(minterms, dont_cares, num_vars)
     expression = str(result["expression"])
     names = [chr(65 + i) for i in range(num_vars)]
     for values in product([False, True], repeat=num_vars):
         env = dict(zip(names, values, strict=False))
         minterm_value = sum((1 << (num_vars - 1 - i)) for i, v in enumerate(values) if v)
-        expected = minterm_value in minterms
-        actual = _evaluate_expression(expression, names, env)
-        assert actual == expected, (
-            f"QM expression '{expression}' gives {actual} for {env} (minterm {minterm_value}, expected {expected})"
-        )
+        if minterm_value in minterms:
+            assert _evaluate_expression(expression, names, env) is True, (
+                f"QM expression '{expression}' does not cover minterm {minterm_value}"
+            )
+        elif minterm_value in dont_cares:
+            continue  # don't-care rows may legally be either value
+        else:
+            assert _evaluate_expression(expression, names, env) is False, (
+                f"QM expression '{expression}' covers non-minterm {minterm_value} (not a don't-care)"
+            )
 
 
 class TestQM:
@@ -82,20 +87,17 @@ class TestKMap:
 class TestCrossCheck:
     """Exhaustive: for ALL 3-variable functions, QM expression matches the minterms."""
 
-    @pytest.mark.xfail(reason="QM cover edge case under investigation")
     def test_all_3var_functions(self) -> None:
         for func_value in range(256):
             minterms = [i for i in range(8) if (func_value >> i) & 1]
             _verify_qm_coverage(minterms, [], 3)
 
-    @pytest.mark.xfail(reason="QM cover edge case under investigation")
     def test_all_2var_functions_with_dc(self) -> None:
         for func_value in range(16):
             minterms = [i for i in range(4) if (func_value >> i) & 1]
             dont_cares = [i for i in range(4) if not (func_value >> i) & 1 and i % 2 == 0]
             _verify_qm_coverage(minterms, dont_cares, 2)
 
-    @pytest.mark.xfail(reason="QM cover edge case under investigation")
     def test_4var_sample(self) -> None:
         """Deterministic 4-variable samples (no random module in tests)."""
         fixed_samples = [

@@ -200,12 +200,8 @@ def _parse_memory_operand(text: str, line: int, width: int) -> Operand:
     if len(terms) == 1 and combo not in _BASE_COMBOS:
         raise AsmError(line, "SYNTAX", f"invalid base register {body!r}")
     default_segment = "SS" if "BP" in combo else "DS"
-    if width == 0:
-        raise AsmError(
-            line,
-            "SIZE_MISMATCH",
-            "memory operand needs an explicit BYTE or WORD size prefix (e.g. 'MOV BYTE [BX], 7')",
-        )
+    # width == 0 is allowed through here: two-operand instructions infer it from
+    # a register sibling in _check_operand_compat; unary forms still require it.
     return Operand(
         kind="mem",
         width=width,
@@ -247,9 +243,31 @@ def _operand_width(operand: Operand) -> int:
     return operand.width
 
 
+def _with_inferred_width(operand: Operand, other: Operand | None) -> Operand:
+    """Pin an unprefixed memory operand's width from a register sibling
+    (e.g. MOV [DI], AL is a byte move — the register defines the width)."""
+    if operand.kind != "mem" or operand.width != 0:
+        return operand
+    if other is not None and other.kind == "reg":
+        inferred = 8 if other.name in BYTE_REG_NAMES else 16
+        return Operand(
+            kind=operand.kind,
+            name=operand.name,
+            value=operand.value,
+            label=operand.label,
+            width=inferred,
+            mem_terms=operand.mem_terms,
+            mem_disp=operand.mem_disp,
+            default_segment=operand.default_segment,
+        )
+    return operand
+
+
 def _check_operand_compat(mnemonic: str, line: int, dest: Operand | None, src: Operand | None) -> None:
     if dest is not None and dest.kind == "mem" and src is not None and src.kind == "mem":
         raise AsmError(line, "SYNTAX", "memory-to-memory operations are not supported")
+    dest = _with_inferred_width(dest, src)
+    src = _with_inferred_width(src, dest)
     if dest is not None and dest.kind == "mem" and dest.width == 0:
         raise AsmError(
             line,

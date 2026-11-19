@@ -81,7 +81,7 @@ def test_memory_operands_parse_terms_and_defaults() -> None:
         ("NEG 5", "SYNTAX", "immediate"),
         ("POP 5", "SYNTAX", "immediate"),
         ("MOV BYTE AX, 1", "SYNTAX", "size prefix"),
-        ("MOV [BX], AX", "SIZE_MISMATCH", "BYTE or WORD"),
+        ("MOV [BX], 7", "SIZE_MISMATCH", "BYTE or WORD"),  # immediate cannot pin the width
         ("INC WORD [BX", "SYNTAX", "unbalanced"),
     ],
 )
