@@ -19,14 +19,17 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import JSONResponse, Response
 
 from logicforge_api import API_VERSION
+from logicforge_api.logging_setup import configure_logging
 from logicforge_api.routers import (
     assistant,
+    backup,
     circuits,
     cpu8086,
     curriculum,
     explain,
     faults,
     optimize,
+    projects,
     sequential,
     verify,
 )
@@ -41,17 +44,24 @@ app = FastAPI(
     version=ENGINE_VERSION,
 )
 
+configure_logging()
+
 root = APIRouter(prefix="/api", tags=["meta"])
 
 
 @root.get("/health")
-def health() -> dict[str, str]:
-    """Liveness plus versions, for reproducibility bookkeeping."""
+def health() -> dict[str, str | bool]:
+    """Liveness plus versions and persistence mode, for monitoring."""
+    from logicforge_api import auth as auth_module
+    from logicforge_api.persistence import _DB_PATH  # noqa: PLC2701 — health introspects its own module
+
     return {
         "status": "ok",
         "api_version": API_VERSION,
         "engine_version": ENGINE_VERSION,
         "sequential_engine_version": SEQUENTIAL_ENGINE_VERSION,
+        "auth_enabled": auth_module.auth_is_enabled(),
+        "database": _DB_PATH,
     }
 
 
@@ -97,6 +107,9 @@ app.include_router(cpu8086.router)
 app.include_router(explain.router)
 app.include_router(curriculum.router)
 app.include_router(assistant.router)
+app.include_router(projects.router)
+app.include_router(projects.runs_router)
+app.include_router(backup.router)
 
 # Single-origin production mode: when SERVE_WEB_DIST points at a built frontend,
 # the API process serves it too (one container, one origin — used by Dockerfile.full).
