@@ -1,0 +1,1 @@
+{"services":{"app":{"root":".","entrypoint":"api/index.py"}},"name":"logicforge"}
