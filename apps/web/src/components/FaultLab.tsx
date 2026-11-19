@@ -87,6 +87,13 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
     return JSON.stringify(fault, null, 2)
   })
   const [invariant, setInvariant] = useState('')
+  const [batchText, setBatchText] = useState('[]')
+  const [batchBusy, setBatchBusy] = useState(false)
+  const [batchError, setBatchError] = useState<string | null>(null)
+  const [batchReport, setBatchReport] = useState<{
+    total: number; detected_count: number; coverage_pct: number;
+    results: { id: string; detected: boolean; first_divergence: unknown }[]
+  } | null>(null)
   const [experiment, setExperiment] = useState<ExperimentResult | null>(null)
   const [repair, setRepair] = useState<RepairResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -154,6 +161,50 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
       setBusy(false)
     }
   }, [faultText, modelKind, circuitDoc, invariant, fsmModelText, fsmInvariantText])
+
+  const runBatch = useCallback(async (): Promise<void> => {
+    setBatchError(null)
+    setBatchReport(null)
+    setBatchBusy(true)
+    try {
+      const faults = JSON.parse(batchText) as Record<string, unknown>[]
+      if (!Array.isArray(faults)) { setBatchError('expected a JSON array of faults'); return }
+      const model =
+        modelKind === 'combinational'
+          ? (JSON.parse(circuitDoc) as Record<string, unknown>)
+          : (JSON.parse(fsmModelText) as Record<string, unknown>)
+      const properties: Record<string, unknown>[] = buildProperties(modelKind, invariant, fsmInvariantText)
+      const results: { id: string; detected: boolean; first_divergence: unknown }[] = []
+      for (const fault of faults) {
+        const response = await fetch('/api/fault-experiments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model_kind: modelKind, model, fault, properties }),
+        })
+        const body = await response.json()
+        if (!response.ok) {
+          results.push({ id: String(fault.id ?? '?'), detected: false, first_divergence: null })
+          continue
+        }
+        results.push({
+          id: String(fault.id ?? '?'),
+          detected: (body as ExperimentResult).detected,
+          first_divergence: (body as ExperimentResult).behavior?.first_divergence ?? null,
+        })
+      }
+      const detected_count = results.filter((r) => r.detected).length
+      setBatchReport({
+        total: results.length,
+        detected_count,
+        coverage_pct: results.length > 0 ? Math.round((detected_count / results.length) * 100) : 0,
+        results,
+      })
+    } catch (cause) {
+      setBatchError(cause instanceof Error ? cause.message : String(cause))
+    } finally {
+      setBatchBusy(false)
+    }
+  }, [batchText, modelKind, circuitDoc, invariant, fsmModelText, fsmInvariantText])
 
   const runRepair = useCallback(async (): Promise<void> => {
     setError(null)
@@ -280,6 +331,51 @@ export function FaultLab({ circuitDoc, outputSignals }: FaultLabProps): JSX.Elem
           </button>
         </div>
         {error !== null && <p className="banner-error">{error}</p>}
+
+        <h3>Batch fault coverage</h3>
+        <p className="muted">
+          Paste a JSON array of faults to test them all at once — see which are
+          detected by the property suite and which escape it.
+        </p>
+        <textarea
+          className="asm-editor"
+          rows={6}
+          value={batchText}
+          onChange={(e) => setBatchText(e.target.value)}
+          spellCheck={false}
+          aria-label="Batch fault JSON array"
+          placeholder='[{ "fault_schema_version": 1, "id": "F1", … }, …]'
+        />
+        <div className="verify-form">
+          <button type="button" onClick={() => void runBatch()} disabled={batchBusy || batchText.trim() === ''}>
+            {batchBusy ? 'Running…' : 'Run batch coverage'}
+          </button>
+        </div>
+        {batchError !== null && <p className="banner-error">{batchError}</p>}
+        {batchReport !== null && (
+          <div className="counterexample" aria-label="Fault coverage report">
+            <p>
+              <strong>{batchReport.detected_count}/{batchReport.total}</strong> detected ·
+              coverage {batchReport.coverage_pct}%
+            </p>
+            <table className="trace-table">
+              <thead><tr><th>fault</th><th>detected</th><th>divergence</th></tr></thead>
+              <tbody>
+                {batchReport.results.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.id}</td>
+                    <td>
+                      <span className={`verdict-chip ${r.detected ? 'verdict-PASS' : 'verdict-FAIL'}`}>
+                        {r.detected ? 'YES' : 'ESCAPED'}
+                      </span>
+                    </td>
+                    <td>{r.first_divergence !== null ? 'yes' : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       {experiment !== null && (
