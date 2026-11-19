@@ -52,6 +52,7 @@ export function FsmLab(): JSX.Element {
   const [sequenceText, setSequenceText] = useState(JSON.stringify(EXAMPLE_SEQUENCE))
   const [cycles, setCycles] = useState<FsmCycle[] | null>(null)
   const [finalState, setFinalState] = useState<string | null>(null)
+  const [simPath, setSimPath] = useState<[string, string][] | null>(null)
   const [reachable, setReachable] = useState<string[] | null>(null)
   const [invariantText, setInvariantText] = useState('z')
   const [verifyResult, setVerifyResult] = useState<{ verdict: string; scope: string; explored_cases: number; counterexample: Record<string, unknown> | null } | null>(null)
@@ -86,6 +87,15 @@ export function FsmLab(): JSX.Element {
       }
       setCycles(body.cycles as FsmCycle[])
       setFinalState(body.final_state as string)
+      // Track the traversed transitions for graph highlighting.
+      if (parsed.fsm !== null) {
+        const path: [string, string][] = []
+        const sts = (body.cycles as FsmCycle[]).map((c) => c.state)
+        for (let i = 0; i + 1 < sts.length; i++) {
+          path.push([sts[i], sts[i + 1]])
+        }
+        setSimPath(path)
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : String(cause))
     }
@@ -160,6 +170,7 @@ export function FsmLab(): JSX.Element {
     const edges = transitions.map((t, i) => {
       const from = pos.get(t.from) ?? { x: cx, y: cy }
       const to = pos.get(t.to) ?? { x: cx, y: cy }
+      const traversed = simPath !== null && simPath.some(([f, tt]) => f === t.from && tt === t.to)
       if (t.from === t.to) {
         const a = angleOf(t.from)
         const ox = cx + (R + nodeR + 16) * Math.cos(a)
@@ -170,6 +181,7 @@ export function FsmLab(): JSX.Element {
           labelX: ox,
           labelY: oy,
           label: whenLabel(t.when),
+          traversed,
         }
       }
       const mx = (from.x + to.x) / 2
@@ -192,10 +204,11 @@ export function FsmLab(): JSX.Element {
         labelX: (cxp + mx) / 2,
         labelY: (cyp + my) / 2,
         label: whenLabel(t.when),
+        traversed,
       }
     })
     return { W, H, nodeR, pos, edges, initial, states }
-  }, [parsed.fsm])
+  }, [parsed.fsm, simPath])
 
   return (
     <div className="workspace" aria-label="FSM lab">
@@ -312,7 +325,13 @@ export function FsmLab(): JSX.Element {
               </defs>
               {graph.edges.map((edge) => (
                 <g key={edge.key}>
-                  <path d={edge.path} fill="none" stroke="#8a97ff" strokeWidth={1.8} markerEnd="url(#fsm-arrow)" />
+                  <path
+                    d={edge.path}
+                    fill="none"
+                    stroke={edge.traversed ? '#34c98e' : '#8a97ff'}
+                    strokeWidth={edge.traversed ? 2.8 : 1.8}
+                    markerEnd="url(#fsm-arrow)"
+                  />
                   <text x={edge.labelX} y={edge.labelY - 4} className="fsm-edge-label">{edge.label}</text>
                 </g>
               ))}
