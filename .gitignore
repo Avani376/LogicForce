@@ -31,3 +31,9 @@ Thumbs.db
 
 # Security-scanner local state (machine-specific, churny)
 .mimosa/
+
+# Runtime data files
+logicforge.db
+logicforge.db-shm
+logicforge.db-wal
+apps/web/test-results/
